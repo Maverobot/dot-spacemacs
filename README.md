@@ -19,8 +19,11 @@ git checkout develop
 To use this config file:
 ```
 git clone https://github.com/Maverobot/dot-spacemacs.git ~/.spacemacs.d
+
 # Backup your ~/.spacemacs file if it already exits.
 ln -s ~/.spacemacs.d/.spacemacs ~/.spacemacs -f
+
+# Setup ycmd
 cd ~/.spacemacs.d
 ./setup.sh
 ```
