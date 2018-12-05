@@ -351,6 +351,3 @@ you should place your code here."
   ;; Make w key in vim mode move to end of the word (not stopped by _)
   (with-eval-after-load 'evil
     (defalias #'forward-evil-word #'forward-evil-symbol))
-
-;; Do not write anything past this comment. This is where Emacs will
-;; auto-generate custom variable definitions.
