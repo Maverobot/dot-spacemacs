@@ -39,8 +39,13 @@ values."
      ;; ----------------------------------------------------------------
      helm
      gtags
-     auto-completion
      git
+     (auto-completion :variables
+                      auto-completion-return-key-behavior 'complete
+                      auto-completion-tab-key-behavior 'complete
+                      auto-completion-complete-with-key-sequence nil
+                      auto-completion-complete-with-key-sequence-delay 0.1
+                      auto-completion-private-snippets-directory nil)
      (c-c++ :variables
             c-c++-enable-clang-support t
             c-c++-default-mode-for-headers 'c++-mode
@@ -54,6 +59,7 @@ values."
             shell-default-height 30
             shell-default-position 'bottom)
      ;; spell-checking
+     ycmd
      (syntax-checking :variables syntax-checking-enable-by-default nil)
      )
    ;; List of additional packages that will be installed without being
@@ -332,6 +338,9 @@ you should place your code here."
                 '((c-c++ :variables
                          c-c++-default-mode-for-headers 'c++-mode)))
 
+  ;; ycmd
+  (setq ycmd-server-command (list "python3" (file-truename "~/.spacemacs.d/ycmd/ycmd")))
+
   ;; Project grep
   (spacemacs/set-leader-keys "ps" 'projectile-grep)
 
@@ -344,6 +353,7 @@ you should place your code here."
     :config
     (setq company-idle-delay 0)
     (setq company-minimum-prefix-length 2))
+
   (with-eval-after-load 'company
     (define-key company-active-map (kbd "M-n") nil)
     (define-key company-active-map (kbd "M-p") nil)
@@ -359,7 +369,7 @@ you should place your code here."
   ;; Bind clang-format-buffer to tab on the c++-mode only:
   (add-hook 'c++-mode-hook 'clang-format-bindings)
   (defun clang-format-bindings ()
-    (define-key c++-mode-map [tab] 'clang-format-buffer))
+    (define-key c++-mode-map (kbd "C-=") 'clang-format-buffer))
   )
 
   ;; Make w key in vim mode move to end of the word (not stopped by _)
