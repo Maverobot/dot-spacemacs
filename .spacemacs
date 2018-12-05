@@ -327,6 +327,10 @@ you should place your code here."
         engine/browser-function 'browse-url-generic
         browse-url-generic-program "firefox")
 
+  ;; Default c++ mode
+  (setq-default dotspacemacs-configuration-layers
+                '((c-c++ :variables
+                         c-c++-default-mode-for-headers 'c++-mode)))
 
   ;; Project grep
   (spacemacs/set-leader-keys "ps" 'projectile-grep)
