@@ -30,7 +30,7 @@ values."
    dotspacemacs-configuration-layer-path '()
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(
+   '(yaml
      python
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
@@ -52,7 +52,6 @@ values."
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom)
-     (c-c++ :variables c-c++-enable-clang-support t)
      ;; spell-checking
      (syntax-checking :variables syntax-checking-enable-by-default nil)
      )
@@ -139,7 +138,7 @@ values."
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
    dotspacemacs-default-font '("Source Code Pro"
-                               :size 15
+                               :size 13
                                :weight normal
                                :width normal
                                :powerline-scale 1.3)
@@ -184,7 +183,7 @@ values."
    dotspacemacs-display-default-layout nil
    ;; If non nil then the last auto saved layouts are resume automatically upon
    ;; start. (default nil)
-   dotspacemacs-auto-resume-layouts nil
+   dotspacemacs-auto-resume-layouts t
    ;; Size (in MB) above which spacemacs will prompt to open the large file
    ;; literally to avoid performance issues. Opening a file literally means that
    ;; no major mode or minor modes are active. (default is 1)
@@ -226,7 +225,7 @@ values."
    dotspacemacs-loading-progress-bar t
    ;; If non nil the frame is fullscreen when Emacs starts up. (default nil)
    ;; (Emacs 24.4+ only)
-   dotspacemacs-fullscreen-at-startup nil
+   dotspacemacs-fullscreen-at-startup t
    ;; If non nil `spacemacs/toggle-fullscreen' will not use native fullscreen.
    ;; Use to disable fullscreen animations in OSX. (default nil)
    dotspacemacs-fullscreen-use-non-native nil
@@ -306,7 +305,13 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
-  )
+  (setq-default
+   dotspacemacs-themes '(ir-black
+                         planet
+                         alect-black
+   ;; other themes
+                        ))
+)
 
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
