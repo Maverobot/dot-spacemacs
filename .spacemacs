@@ -328,6 +328,9 @@ you should place your code here."
         browse-url-generic-program "firefox")
 
 
+  ;; Project grep
+  (spacemacs/set-leader-keys "ps" 'projectile-grep)
+
   ;; Python interpreter
   (setq python-shell-interpreter "/usr/bin/python3")
 
