@@ -340,6 +340,7 @@ you should place your code here."
   ;; ycmd
   (setq ycmd-server-command (list "python3" (file-truename "~/.spacemacs.d/ycmd/ycmd")))
   (setq ycmd-force-semantic-completion t)
+  (spacemacs/set-leader-keys "ef" 'ycmd-fixit)
 
   ;; Project grep
   (spacemacs/set-leader-keys "ps" 'projectile-grep)
