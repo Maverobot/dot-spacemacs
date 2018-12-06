@@ -38,7 +38,6 @@ values."
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      helm
-     gtags
      git
      (auto-completion :variables
                       auto-completion-return-key-behavior 'complete
