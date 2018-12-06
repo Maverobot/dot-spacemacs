@@ -355,11 +355,11 @@ you should place your code here."
     (define-key company-active-map (kbd "C-j") #'company-select-next)
     (define-key company-active-map (kbd "C-k") #'company-select-previous))
   (with-eval-after-load 'company
+    (add-hook 'company-mode-hook 'company-bindings)
     (add-hook 'c++-mode-hook 'company-mode)
-    (add-hook 'c++-mode-hook 'company-bindings)
     (add-hook 'c-mode-hook 'company-mode))
   (defun company-bindings ()
-    (define-key c++-mode-map [tab] 'company-complete))
+    (define-key company-mode-map [tab] 'company-complete))
 
   ;; Bind clang-format-region to C-M-tab in all modes:
   (global-set-key [C-M-tab] 'clang-format-region)
