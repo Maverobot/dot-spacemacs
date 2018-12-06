@@ -352,8 +352,8 @@ you should place your code here."
   (with-eval-after-load 'company
     (define-key company-active-map (kbd "M-n") nil)
     (define-key company-active-map (kbd "M-p") nil)
-    (define-key company-active-map (kbd "C-j") #'company-select-next)
-    (define-key company-active-map (kbd "C-k") #'company-select-previous))
+    (define-key company-active-map (kbd "C-j") 'company-select-next)
+    (define-key company-active-map (kbd "C-k") 'company-select-previous))
   (with-eval-after-load 'company
     (add-hook 'company-mode-hook 'company-bindings)
     (add-hook 'c++-mode-hook 'company-mode)
