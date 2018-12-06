@@ -30,13 +30,14 @@ values."
    dotspacemacs-configuration-layer-path '()
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(yaml
-     python
+   '(
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
+     yaml
+     python
      helm
      git
      (auto-completion :variables
@@ -49,7 +50,6 @@ values."
             c-c++-enable-clang-support t
             c-c++-default-mode-for-headers 'c++-mode
             )
-     ;; better-defaults
      emacs-lisp
      markdown
      org
@@ -352,8 +352,8 @@ you should place your code here."
   (with-eval-after-load 'company
     (define-key company-active-map (kbd "M-n") nil)
     (define-key company-active-map (kbd "M-p") nil)
-    (define-key company-active-map (kbd "C-j") #'company-select-next)
-    (define-key company-active-map (kbd "C-k") #'company-select-previous))
+    (define-key company-active-map (kbd "C-j") 'company-select-next)
+    (define-key company-active-map (kbd "C-k") 'company-select-previous))
   (with-eval-after-load 'company
     (add-hook 'company-mode-hook 'company-bindings)
     (add-hook 'c++-mode-hook 'company-mode)
