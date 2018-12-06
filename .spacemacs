@@ -57,7 +57,6 @@ values."
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom)
-     ;; spell-checking
      ycmd
      (syntax-checking :variables syntax-checking-enable-by-default nil)
      )
@@ -312,9 +311,9 @@ executes.
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
   (setq-default
-   dotspacemacs-themes '(planet
-                         ir-black
-                         alect-black
+   dotspacemacs-themes '(
+                         zenburn
+                         planet
    ;; other themes
                         ))
 )
