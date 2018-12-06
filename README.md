@@ -27,3 +27,6 @@ ln -s ~/.spacemacs.d/.spacemacs ~/.spacemacs -f
 cd ~/.spacemacs.d
 ./setup.sh
 ```
+
+
+For cmake - including catkin_make(ROS) - projects it is necessary to compile the projects with flag `-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`. 
