@@ -349,16 +349,17 @@ you should place your code here."
     :config
     (setq company-idle-delay 0)
     (setq company-minimum-prefix-length 2))
-
   (with-eval-after-load 'company
     (define-key company-active-map (kbd "M-n") nil)
     (define-key company-active-map (kbd "M-p") nil)
     (define-key company-active-map (kbd "C-j") #'company-select-next)
     (define-key company-active-map (kbd "C-k") #'company-select-previous))
-
   (with-eval-after-load 'company
     (add-hook 'c++-mode-hook 'company-mode)
+    (add-hook 'c++-mode-hook 'company-bindings)
     (add-hook 'c-mode-hook 'company-mode))
+  (defun company-bindings ()
+    (define-key c++-mode-map [tab] 'company-complete))
 
   ;; Bind clang-format-region to C-M-tab in all modes:
   (global-set-key [C-M-tab] 'clang-format-region)
