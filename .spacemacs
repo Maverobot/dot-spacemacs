@@ -332,11 +332,6 @@ you should place your code here."
         engine/browser-function 'browse-url-generic
         browse-url-generic-program "firefox")
 
-  ;; Default c++ mode
-  (setq-default dotspacemacs-configuration-layers
-                '((c-c++ :variables
-                         c-c++-default-mode-for-headers 'c++-mode)))
-
   ;; ycmd
   (setq ycmd-server-command (list "python3" (file-truename "~/.spacemacs.d/ycmd/ycmd")))
   (setq ycmd-force-semantic-completion t)
