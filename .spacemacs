@@ -52,7 +52,7 @@ values."
             )
      emacs-lisp
      markdown
-     org
+     (org :variables org-want-todo-bindings t)
      search-engine
      (shell :variables
             shell-default-height 30
