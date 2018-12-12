@@ -369,7 +369,7 @@ you should place your code here."
   (add-hook 'c++-mode-hook 'clang-format-bindings)
   (defun clang-format-bindings ()
     (define-key c++-mode-map (kbd "C-=") 'clang-format-buffer))
-  )
+
   ;; Kill all buffers
   (defun nuke-all-buffers ()
     (interactive)
@@ -379,4 +379,5 @@ you should place your code here."
 
   ;; Make w key in vim mode move to end of the word (not stopped by _)
   (with-eval-after-load 'evil
-    (defalias #'forward-evil-word #'forward-evil-symbol))
+    (defalias #'forward-evil-word #'forward-evil-symbol)))
+
