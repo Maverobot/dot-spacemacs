@@ -370,6 +370,12 @@ you should place your code here."
   (defun clang-format-bindings ()
     (define-key c++-mode-map (kbd "C-=") 'clang-format-buffer))
   )
+  ;; Kill all buffers
+  (defun nuke-all-buffers ()
+    (interactive)
+    (mapcar 'kill-buffer (buffer-list))
+    (delete-other-windows))
+  (global-set-key (kbd "C-x K") 'nuke-all-buffers)
 
   ;; Make w key in vim mode move to end of the word (not stopped by _)
   (with-eval-after-load 'evil
