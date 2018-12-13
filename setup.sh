@@ -1,6 +1,6 @@
 #!/bin/sh
 
-sudo apt install build-essential cmake python3-dev
+sudo apt install build-essential cmake python3-dev silversearcher-ag
 
 git submodule update --init --recursive
 
