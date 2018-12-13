@@ -58,7 +58,7 @@ values."
             shell-default-height 30
             shell-default-position 'bottom)
      ycmd
-     (syntax-checking :variables syntax-checking-enable-by-default nil)
+     (syntax-checking :variables syntax-checking-enable-by-default t)
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
