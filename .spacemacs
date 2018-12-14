@@ -385,5 +385,8 @@ you should place your code here."
 
   ;; Make w key in vim mode move to end of the word (not stopped by _)
   (with-eval-after-load 'evil
-    (defalias #'forward-evil-word #'forward-evil-symbol)))
+    (defalias #'forward-evil-word #'forward-evil-symbol))
 
+  ;; Other settings
+  (setq find-file-visit-truename t)
+  )
