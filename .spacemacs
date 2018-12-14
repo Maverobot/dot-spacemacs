@@ -53,7 +53,12 @@ values."
             )
      emacs-lisp
      markdown
-     (org :variables org-want-todo-bindings t)
+     (org :variables
+          org-want-todo-bindings t
+          org-hide-leading-stars nil
+          org-hide-emphasis-markers t
+          org-hide-macro-markers t
+          org-level-color-stars-only t)
      search-engine
      (shell :variables
             shell-default-height 30
