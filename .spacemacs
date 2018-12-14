@@ -36,6 +36,7 @@ values."
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
+     shell-scripts
      yaml
      python
      helm
@@ -52,13 +53,18 @@ values."
             )
      emacs-lisp
      markdown
-     (org :variables org-want-todo-bindings t)
+     (org :variables
+          org-want-todo-bindings t
+          org-hide-leading-stars nil
+          org-hide-emphasis-markers t
+          org-hide-macro-markers t
+          org-level-color-stars-only t)
      search-engine
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom)
      ycmd
-     (syntax-checking :variables syntax-checking-enable-by-default nil)
+     (syntax-checking :variables syntax-checking-enable-by-default t)
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
