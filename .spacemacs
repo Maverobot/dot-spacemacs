@@ -388,6 +388,9 @@ you should place your code here."
   (with-eval-after-load 'evil
     (defalias #'forward-evil-word #'forward-evil-symbol))
 
+  ;; Only kill frame when using SPC+q+q
+  (spacemacs/set-leader-keys "qq" 'spacemacs/frame-killer)
+
   ;; Other settings
   (setq find-file-visit-truename t)
   )
