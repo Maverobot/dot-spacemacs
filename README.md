@@ -33,3 +33,6 @@ For cmake projects it is necessary to compile the projects with flag:
 ```
 -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 ``` 
+
+## Default paths
+Anaconda3: `~/.anaconda3`.
