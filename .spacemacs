@@ -326,6 +326,8 @@ before packages are loaded. If you are unsure, you should try in setting them in
                          planet
    ;; other themes
                         ))
+
+  (setenv "WORKON_HOME" "~/.anaconda3/envs")
 )
 
 (defun dotspacemacs/user-config ()
