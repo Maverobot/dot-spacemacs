@@ -68,6 +68,7 @@ values."
      ycmd
      (syntax-checking :variables syntax-checking-enable-by-default t)
      version-control
+     cmake
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -337,6 +338,13 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+  ;; Default toggle setting
+  (spacemacs/toggle-indent-guide-globally-on)
+
+  ;; cmake
+  (setq-default dotspacemacs-configuration-layers
+                '((cmake :variables cmake-enable-cmake-ide-support t)))
+
   ;; Set google as default search engine
   (spacemacs/set-leader-keys "ag" 'engine/search-google)
   (setq browse-url-browser-function 'browse-url-generic
