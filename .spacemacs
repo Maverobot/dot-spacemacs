@@ -69,12 +69,13 @@ values."
      ycmd
      (syntax-checking :variables syntax-checking-enable-by-default t)
      version-control
+     (cmake :variables cmake-enable-cmake-ide-support t)
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages '(helm-ros cmake-mode)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -338,6 +339,9 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+  ;; Default toggle setting
+  (spacemacs/toggle-indent-guide-globally-on)
+
   ;; Set google as default search engine
   (spacemacs/set-leader-keys "ag" 'engine/search-google)
   (setq browse-url-browser-function 'browse-url-generic
@@ -395,6 +399,23 @@ you should place your code here."
 
   ;; Only kill frame when using SPC+q+q
   (spacemacs/set-leader-keys "qq" 'spacemacs/frame-killer)
+
+  ;; ROS shortcut
+  (spacemacs/declare-prefix "y" "ROS")
+  (spacemacs/set-leader-keys "yy" 'helm-ros)
+
+  (spacemacs/declare-prefix "yt" "ROS topics")
+  (spacemacs/set-leader-keys "ytt" 'helm-ros-topics)
+  (spacemacs/set-leader-keys "ytz" 'helm-ros-rostopic-hz)
+  (spacemacs/set-leader-keys "yti" 'helm-ros-rostopic-info)
+
+  (spacemacs/declare-prefix "yn" "ROS nodes")
+  (spacemacs/set-leader-keys "yni" 'helm-ros-rosnode-info)
+  (spacemacs/set-leader-keys "ynn" 'helm-ros-rosnode-list)
+  (spacemacs/set-leader-keys "ynd" 'helm-ros-kill-node)
+  (spacemacs/set-leader-keys "ynr" 'helm-ros-run-node)
+
+  (spacemacs/set-leader-keys "ym" 'helm-ros-set-master-uri)
 
   ;; Other settings
   (setq find-file-visit-truename t)
