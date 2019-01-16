@@ -36,7 +36,6 @@ values."
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
-     cmake
      haskell
      systemd
      shell-scripts
@@ -69,7 +68,7 @@ values."
      ycmd
      (syntax-checking :variables syntax-checking-enable-by-default t)
      version-control
-     (cmake :variables cmake-enable-cmake-ide-support t)
+     (cmake :variables cmake-enable-cmake-ide-support nil)
      semantic
      )
    ;; List of additional packages that will be installed without being
