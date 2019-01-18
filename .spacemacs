@@ -36,7 +36,6 @@ values."
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
-     cmake
      haskell
      systemd
      shell-scripts
@@ -69,13 +68,13 @@ values."
      ycmd
      (syntax-checking :variables syntax-checking-enable-by-default t)
      version-control
-     (cmake :variables cmake-enable-cmake-ide-support t)
+     (cmake :variables cmake-enable-cmake-ide-support nil)
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(helm-ros cmake-mode)
+   dotspacemacs-additional-packages '(helm-ros cmake-mode xclip)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -416,6 +415,9 @@ you should place your code here."
   (spacemacs/set-leader-keys "ynr" 'helm-ros-run-node)
 
   (spacemacs/set-leader-keys "ym" 'helm-ros-set-master-uri)
+
+  ;; Turn on xclip mode
+  (xclip-mode t)
 
   ;; Other settings
   (setq find-file-visit-truename t)
