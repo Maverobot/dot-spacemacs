@@ -417,6 +417,7 @@ you should place your code here."
 
   (spacemacs/set-leader-keys "ym" 'helm-ros-set-master-uri)
 
+  ;; Fix the color of magit in terminal
   (custom-set-faces
    ;; other faces
    '(magit-diff-added ((((type tty)) (:foreground "green"))))
