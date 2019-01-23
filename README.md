@@ -1,14 +1,27 @@
 # dot-spacemacs
 This is the repository of a personal spacemacs config file.
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
+**Table of Contents**
+
+- [dot-spacemacs](#dot-spacemacs)
+    - [Requirements](#requirements)
+        - [Emacs26](#emacs26)
+        - [Spacemacs](#spacemacs)
+    - [Installation](#installation)
+        - [YCMD](#ycmd)
+    - [Default paths](#default-paths)
+
+<!-- markdown-toc end -->
+
 ## Requirements
-#### Emacs26
+### Emacs26
 To install emacs26:
 ```
 sudo add-apt-repository ppa:kelleyk/emacs
 sudo apt-get update
 sudo apt install emacs26
 ```
-#### Spacemacs
+### Spacemacs
 ```
 git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
 cd ~/.emacs.d
@@ -27,7 +40,7 @@ cd ~/.spacemacs.d
 ./setup.sh
 ```
 
-#### YCMD
+### YCMD
 For cmake projects it is necessary to compile the projects with flag:
 ```
 -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
