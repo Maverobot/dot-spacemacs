@@ -75,7 +75,7 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(helm-ros cmake-mode xclip)
+   dotspacemacs-additional-packages '(helm-ros cmake-mode xclip flymd org-make-toc)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -381,10 +381,6 @@ you should place your code here."
 
   ;; Bind clang-format-region to C-M-tab in all modes:
   (global-set-key [C-M-tab] 'clang-format-region)
-  ;; Bind clang-format-buffer to tab on the c++-mode only:
-  (add-hook 'c++-mode-hook 'clang-format-bindings)
-  (defun clang-format-bindings ()
-    (define-key c++-mode-map (kbd "C-=") 'clang-format-buffer))
 
   ;; Kill all buffers
   (defun nuke-all-buffers ()
@@ -417,6 +413,7 @@ you should place your code here."
 
   (spacemacs/set-leader-keys "ym" 'helm-ros-set-master-uri)
 
+  ;; Fix the color of magit in terminal
   (custom-set-faces
    ;; other faces
    '(magit-diff-added ((((type tty)) (:foreground "green"))))
