@@ -37,7 +37,9 @@ values."
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      haskell
-     (go :variables go-tab-width 4)
+     (go :variables
+         go-tab-width 4
+         gofmt-command "goimports")
      systemd
      shell-scripts
      yaml
