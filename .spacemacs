@@ -39,6 +39,7 @@ values."
      haskell
      (go :variables
          go-tab-width 4
+         go-format-before-save t
          gofmt-command "goimports")
      systemd
      shell-scripts
