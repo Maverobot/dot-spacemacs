@@ -434,4 +434,8 @@ you should place your code here."
 
   ;; Other settings
   (setq find-file-visit-truename t)
+
+  ;; C-a for increasing number, C-x for descreasing number
+  (evil-define-key 'normal global-map (kbd "C-a") 'evil-numbers/inc-at-pt)
+  (evil-define-key 'normal global-map (kbd "C-x") 'evil-numbers/dec-at-pt)
   )
