@@ -366,7 +366,6 @@ you should place your code here."
   (setq ycmd-idle-change-delay 2.0)
   (setq company-ycmd-request-sync-timeout 0)
   (spacemacs/set-leader-keys "ef" 'ycmd-fixit)
-  (setq-default flycheck-disabled-checkers '(ycmd))
 
   ;; Project grep
   (spacemacs/set-leader-keys "ps" 'projectile-grep)
