@@ -71,7 +71,9 @@ values."
             shell-default-height 30
             shell-default-position 'bottom)
      ycmd
-     (syntax-checking :variables syntax-checking-enable-by-default t)
+     (syntax-checking :variables
+                      syntax-checking-enable-by-default t
+                      )
      version-control
      (cmake :variables cmake-enable-cmake-ide-support nil)
      semantic
@@ -80,7 +82,12 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(helm-ros cmake-mode xclip flymd org-make-toc)
+   dotspacemacs-additional-packages '(helm-ros
+                                      cmake-mode
+                                      xclip
+                                      flymd
+                                      flycheck-clang-analyzer
+                                      org-make-toc)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -359,6 +366,7 @@ you should place your code here."
   (setq ycmd-idle-change-delay 2.0)
   (setq company-ycmd-request-sync-timeout 0)
   (spacemacs/set-leader-keys "ef" 'ycmd-fixit)
+  (setq-default flycheck-disabled-checkers '(ycmd))
 
   ;; Project grep
   (spacemacs/set-leader-keys "ps" 'projectile-grep)
@@ -431,6 +439,12 @@ you should place your code here."
 
   ;; Turn on xclip mode
   (xclip-mode t)
+
+  (use-package flycheck-clang-analyzer
+    :ensure t
+    :after flycheck
+    :config (flycheck-clang-analyzer-setup)
+    )
 
   ;; Other settings
   (setq find-file-visit-truename t)
