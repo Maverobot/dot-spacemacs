@@ -451,15 +451,19 @@ you should place your code here."
 
   ;; Open launch/yaml file in new buffer
   (defun jump-in-launch-file ()
-    "Hello World and you can call it via M-x hello."
     (interactive)
     (setq current-line (thing-at-point 'line t))
-    (string-match "\\$.*find.*\\.\\(launch\\|yaml\\)" current-line)
-    (setq raw-ros-path (match-string 0 current-line))
-    (setq ros-path (replace-in-string "find" "rospack find" raw-ros-path))
-    (setq absolute-path (shell-command-to-string (concat "/bin/echo -n " ros-path)))
-    (find-file absolute-path)
+    (setq found-match (string-match "\\$.*find.*\\.\\(launch\\|yaml\\)" current-line))
+    (if found-match
+        (progn
+          (setq raw-ros-path (match-string 0 current-line))
+          (setq ros-path (replace-in-string "find" "rospack find" raw-ros-path))
+          (setq absolute-path (shell-command-to-string (concat "/bin/echo -n " ros-path)))
+          (find-file absolute-path)
+          )
+    )
   )
+
   (defun replace-in-string (pattern replacement original-text)
     (replace-regexp-in-string (regexp-quote pattern) replacement original-text nil 'literal))
 
