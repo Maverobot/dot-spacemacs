@@ -466,7 +466,7 @@ you should place your code here."
   (when (fboundp 'nxml-mode)
     (defun my-launch-file-config ()
       "For use in `nxml-mode-hook'."
-      (spacemacs/set-leader-keys "gg" 'open-launch-file)
+      (spacemacs/set-leader-keys-for-major-mode 'nxml-mode "gg" 'open-launch-file)
       )
     (add-hook 'nxml-mode-hook 'my-launch-file-config)
   )
