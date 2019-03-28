@@ -448,6 +448,29 @@ you should place your code here."
   ;; Other settings
   (setq find-file-visit-truename t)
 
+
+  ;; Open launch file in new buffer
+  (defun open-launch-file ()
+    "Hello World and you can call it via M-x hello."
+    (interactive)
+    (setq current-line (thing-at-point 'line t))
+    (string-match "\\$.*find.*\\.launch" current-line)
+    (setq raw-ros-path (match-string 0 current-line))
+    (setq ros-path (replace-in-string "find" "rospack find" raw-ros-path))
+    (setq absolute-path (shell-command-to-string (concat "/bin/echo -n " ros-path)))
+    (find-file absolute-path)
+  )
+  (defun replace-in-string (pattern replacement original-text)
+    (replace-regexp-in-string (regexp-quote pattern) replacement original-text nil 'literal))
+
+  (when (fboundp 'nxml-mode)
+    (defun my-launch-file-config ()
+      "For use in `nxml-mode-hook'."
+      (spacemacs/set-leader-keys "gg" 'open-launch-file)
+      )
+    (add-hook 'nxml-mode-hook 'my-launch-file-config)
+  )
+
   ;; C-a for increasing number, C-x for descreasing number
   (evil-define-key 'normal global-map (kbd "C-a") 'evil-numbers/inc-at-pt)
   (evil-define-key 'normal global-map (kbd "C-x") 'evil-numbers/dec-at-pt)
