@@ -449,12 +449,12 @@ you should place your code here."
   (setq find-file-visit-truename t)
 
 
-  ;; Open launch file in new buffer
-  (defun open-launch-file ()
+  ;; Open launch/yaml file in new buffer
+  (defun jump-in-launch-file ()
     "Hello World and you can call it via M-x hello."
     (interactive)
     (setq current-line (thing-at-point 'line t))
-    (string-match "\\$.*find.*\\.launch" current-line)
+    (string-match "\\$.*find.*\\.\\(launch\\|yaml\\)" current-line)
     (setq raw-ros-path (match-string 0 current-line))
     (setq ros-path (replace-in-string "find" "rospack find" raw-ros-path))
     (setq absolute-path (shell-command-to-string (concat "/bin/echo -n " ros-path)))
@@ -466,7 +466,7 @@ you should place your code here."
   (when (fboundp 'nxml-mode)
     (defun my-launch-file-config ()
       "For use in `nxml-mode-hook'."
-      (spacemacs/set-leader-keys-for-major-mode 'nxml-mode "gg" 'open-launch-file)
+      (spacemacs/set-leader-keys-for-major-mode 'nxml-mode "gg" 'jump-in-launch-file)
       )
     (add-hook 'nxml-mode-hook 'my-launch-file-config)
   )
