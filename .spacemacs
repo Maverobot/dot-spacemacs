@@ -445,35 +445,11 @@ you should place your code here."
     :config (flycheck-clang-analyzer-setup)
     )
 
+  ;; Personal roslaunch config
+  (load-file "~/.spacemacs.d/private/roslaunch.el")
+
   ;; Other settings
   (setq find-file-visit-truename t)
-
-
-  ;; Open launch/yaml file in new buffer
-  (defun jump-in-launch-file ()
-    (interactive)
-    (setq current-line (thing-at-point 'line t))
-    (setq found-match (string-match "\\$.*find.*\\.\\(launch\\|yaml\\)" current-line))
-    (if found-match
-        (progn
-          (setq raw-ros-path (match-string 0 current-line))
-          (setq ros-path (replace-in-string "find" "rospack find" raw-ros-path))
-          (setq absolute-path (shell-command-to-string (concat "/bin/echo -n " ros-path)))
-          (find-file absolute-path)
-          )
-    )
-  )
-
-  (defun replace-in-string (pattern replacement original-text)
-    (replace-regexp-in-string (regexp-quote pattern) replacement original-text nil 'literal))
-
-  (when (fboundp 'nxml-mode)
-    (defun my-launch-file-config ()
-      "For use in `nxml-mode-hook'."
-      (spacemacs/set-leader-keys-for-major-mode 'nxml-mode "gg" 'jump-in-launch-file)
-      )
-    (add-hook 'nxml-mode-hook 'my-launch-file-config)
-  )
 
   ;; C-a for increasing number, C-x for descreasing number
   (evil-define-key 'normal global-map (kbd "C-a") 'evil-numbers/inc-at-pt)
