@@ -2,7 +2,7 @@
   (defun jump-in-launch-file ()
     (interactive)
     (setq current-line (thing-at-point 'line t))
-    (setq found-match (string-match "\\$.*find.*\\.\\(launch\\|yaml\\)" current-line))
+    (setq found-match (string-match "\\$(find [^ ]*)[^ ]*\\.\\(launch\\|yaml\\|xacro\\)" current-line))
     (if found-match
         (progn
           (setq raw-ros-path (match-string 0 current-line))
