@@ -34,6 +34,7 @@
 (when (fboundp 'nxml-mode)
   (defun my-launch-file-config ()
     "For use in `nxml-mode-hook'."
+    (spacemacs/declare-prefix-for-mode 'nxml-mode "mg" "goto")
     (spacemacs/set-leader-keys-for-major-mode 'nxml-mode "gg" 'jump-to-file)
     (spacemacs/set-leader-keys-for-major-mode 'nxml-mode "gp" 'jump-to-pkg-dir)
   )
