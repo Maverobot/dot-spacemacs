@@ -76,7 +76,6 @@ values."
                       )
      version-control
      (cmake :variables cmake-enable-cmake-ide-support nil)
-     semantic
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
