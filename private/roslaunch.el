@@ -1,5 +1,7 @@
 ;; Open launch/yaml file in new buffer
 
+(require 'helm)
+
 (setq re-ros-path "\\$(find [^ ]*)[^ ]*\\.\\(launch\\|yaml\\|xacro\\)")
 (setq re-pkg "pkg=\"\\([^\"]*\\)\"")
 
@@ -26,7 +28,7 @@
         (setq pkg-name (match-string 1 current-line))
         (setq absolute-path
               (replace-regexp-in-string "\n$" "" (shell-command-to-string (format "rospack find %s" pkg-name))))
-        (find-file (concat absolute-path "/")))))
+        (helm-find-files-1 (concat absolute-path "/")))))
 
 (defun replace-in-string (pattern replacement original-text)
   (replace-regexp-in-string (regexp-quote pattern) replacement original-text nil 'literal))
