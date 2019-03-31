@@ -19,8 +19,7 @@
             (message (match-string 0 absolute-path))
           (find-file absolute-path)))))
 
-(defun jump-to-pkg-dir ()
-  (interactive)
+(defun jump-to-pkg (search)
   (setq current-line (thing-at-point 'line t))
   (setq found-match (string-match re-pkg current-line))
   (if found-match
@@ -28,7 +27,17 @@
         (setq pkg-name (match-string 1 current-line))
         (setq absolute-path
               (replace-regexp-in-string "\n$" "" (shell-command-to-string (format "rospack find %s" pkg-name))))
-        (helm-find-files-1 (concat absolute-path "/")))))
+        (if search
+            (helm-browse-project-find-files (concat absolute-path "/"))
+          (helm-find-files-1 (concat absolute-path "/"))))))
+
+(defun jump-to-pkg-browse-dir ()
+  (interactive)
+  (jump-to-pkg nil))
+
+(defun jump-to-pkg-find-files ()
+  (interactive)
+  (jump-to-pkg t))
 
 (defun replace-in-string (pattern replacement original-text)
   (replace-regexp-in-string (regexp-quote pattern) replacement original-text nil 'literal))
@@ -37,8 +46,9 @@
   (defun my-launch-file-config ()
     "For use in `nxml-mode-hook'."
     (spacemacs/declare-prefix-for-mode 'nxml-mode "mg" "goto")
+    (spacemacs/declare-prefix-for-mode 'nxml-mode "mgp" "ros-package")
     (spacemacs/set-leader-keys-for-major-mode 'nxml-mode "gg" 'jump-to-file)
-    (spacemacs/set-leader-keys-for-major-mode 'nxml-mode "gp" 'jump-to-pkg-dir)
-  )
-  (add-hook 'nxml-mode-hook 'my-launch-file-config)
-)
+    (spacemacs/set-leader-keys-for-major-mode 'nxml-mode "gpp" 'jump-to-pkg-browse-dir)
+    (spacemacs/set-leader-keys-for-major-mode 'nxml-mode "gpf" 'jump-to-pkg-find-files)
+    )
+  (add-hook 'nxml-mode-hook 'my-launch-file-config))
