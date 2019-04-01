@@ -4,6 +4,8 @@ sudo apt install xclip build-essential cmake python3-dev silversearcher-ag
 
 sudo snap install --channel=edge shellcheck
 
+pip install --user yapf
+
 # Go stuffs
 sudo snap install go --classic
 go get -u -v github.com/nsf/gocode

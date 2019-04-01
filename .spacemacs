@@ -44,7 +44,8 @@ values."
      systemd
      shell-scripts
      yaml
-     python
+     (python :variables
+             python-enable-yapf-format-on-save t)
      helm
      git
      (auto-completion :variables
