@@ -9,27 +9,25 @@
   (interactive)
   (setq current-line (thing-at-point 'line t))
   (setq found-match (string-match re-ros-path current-line))
-  (if found-match
-      (progn
-        (setq raw-ros-path (match-string 0 current-line))
-        (setq ros-path (replace-in-string "find" "rospack find" raw-ros-path))
-        (setq absolute-path (shell-command-to-string (concat "/bin/echo -n " ros-path)))
-        (setq no-package (string-match "\\[rospack\\] Error: package .* not found" absolute-path))
-        (if no-package
-            (message (match-string 0 absolute-path))
-          (find-file absolute-path)))))
+  (when found-match
+    (setq raw-ros-path (match-string 0 current-line))
+    (setq ros-path (replace-in-string "find" "rospack find" raw-ros-path))
+    (setq absolute-path (shell-command-to-string (concat "/bin/echo -n " ros-path)))
+    (setq no-package (string-match "\\[rospack\\] Error: package .* not found" absolute-path))
+    (if no-package
+        (message (match-string 0 absolute-path))
+      (find-file absolute-path))))
 
 (defun jump-to-pkg (search)
   (setq current-line (thing-at-point 'line t))
   (setq found-match (string-match re-pkg current-line))
-  (if found-match
-      (progn
-        (setq pkg-name (match-string 1 current-line))
-        (setq absolute-path
-              (replace-regexp-in-string "\n$" "" (shell-command-to-string (format "rospack find %s" pkg-name))))
-        (if search
-            (helm-browse-project-find-files (concat absolute-path "/"))
-          (helm-find-files-1 (concat absolute-path "/"))))))
+  (when found-match
+    (setq pkg-name (match-string 1 current-line))
+    (setq absolute-path
+          (replace-regexp-in-string "\n$" "" (shell-command-to-string (format "rospack find %s" pkg-name))))
+    (if search
+        (helm-browse-project-find-files (concat absolute-path "/"))
+      (helm-find-files-1 (concat absolute-path "/")))))
 
 (defun jump-to-pkg-browse-dir ()
   (interactive)
