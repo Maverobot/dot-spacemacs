@@ -455,4 +455,8 @@ you should place your code here."
   ;; C-a for increasing number, C-x for descreasing number
   (evil-define-key 'normal global-map (kbd "C-a") 'evil-numbers/inc-at-pt)
   (evil-define-key 'normal global-map (kbd "C-x") 'evil-numbers/dec-at-pt)
+
+  ;; Zoom in / out
+  (define-key (current-global-map) (kbd "C-+") 'spacemacs/zoom-frm-in)
+  (define-key (current-global-map) (kbd "C--") 'spacemacs/zoom-frm-out)
   )
