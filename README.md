@@ -1,5 +1,5 @@
 # dot-spacemacs
-This is the repository of a personal spacemacs config file.
+This is the repository of a personal spacemacs config file. It contains a fully functioning c/c++ development environment with autocompletion via ycmd and syntax checking.
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
@@ -44,7 +44,7 @@ cd ~/.spacemacs.d
 For cmake projects it is necessary to compile the projects with flag:
 ```
 -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-``` 
+```
 
 ## Default paths
 Anaconda3: `~/.anaconda3`.
