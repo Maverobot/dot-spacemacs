@@ -30,7 +30,7 @@ values."
    dotspacemacs-configuration-layer-path '()
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(
+   '(html
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
@@ -66,7 +66,9 @@ values."
           org-hide-leading-stars nil
           org-hide-emphasis-markers t
           org-hide-macro-markers t
-          org-level-color-stars-only t)
+          org-level-color-stars-only t
+          org-enable-github-support t
+          org-enable-reveal-js-support t)
      search-engine
      (shell :variables
             shell-default-height 30
@@ -360,6 +362,9 @@ you should place your code here."
   (setq browse-url-browser-function 'browse-url-generic
         engine/browser-function 'browse-url-generic
         browse-url-generic-program "firefox")
+
+  ;; reveal.js
+  (setq org-reveal-root (file-truename "~/.spacemacs.d/reveal.js"))
 
   ;; ycmd
   (setq ycmd-server-command (list "python3" (file-truename "~/.spacemacs.d/ycmd/ycmd")))
