@@ -48,6 +48,5 @@
     (spacemacs/declare-prefix-for-mode 'nxml-mode "mgp" "ros-package")
     (spacemacs/set-leader-keys-for-major-mode 'nxml-mode "gg" 'jump-to-file)
     (spacemacs/set-leader-keys-for-major-mode 'nxml-mode "gpp" 'jump-to-pkg-browse-dir)
-    (spacemacs/set-leader-keys-for-major-mode 'nxml-mode "gpf" 'jump-to-pkg-find-files)
-    )
+    (spacemacs/set-leader-keys-for-major-mode 'nxml-mode "gpf" 'jump-to-pkg-find-files))
   (add-hook 'nxml-mode-hook 'my-launch-file-config))
