@@ -4,9 +4,34 @@
 
 (setq re-ros-path "\\$(find [^ ]*)[^ ]*\\.\\(launch\\|yaml\\|xacro\\)")
 (setq re-pkg "pkg=\"\\([^\"]*\\)\"")
+(setq re-py "type=\"\\([^\"]*\\.py\\)\"")
 
-(defun jump-to-file ()
-  (interactive)
+(defun get-match-from-current-line (re)
+  (let* ((current-line (thing-at-point 'line t))
+         (found-match (string-match re current-line)))
+    (if found-match
+        (match-string 1 current-line))))
+
+(defun remove-new-line (str)
+  (replace-in-string "\n" "" str))
+
+(defun get-pkg-path (pkg-name)
+  (let* ((pkg-path (shell-command-to-string (concat "rospack find " pkg-name)))
+         (no-package (string-match-p "\\[rospack\\] Error: package .* not found" pkg-path)))
+    (when (not no-package) (remove-new-line pkg-path))))
+
+(defun get-pkg-file-path (pkg-name file-name)
+  (let* ((pkg-path (get-pkg-path pkg-name))
+         (file-path-list (directory-files-recursively pkg-path file-name)))
+    (car file-path-list)))
+
+(defun jump-to-py ()
+  (let ((pkg-name (get-match-from-current-line re-pkg))
+        (py-file-name (get-match-from-current-line re-py)))
+    (if (and pkg-name py-file-name)
+        (find-file (get-pkg-file-path pkg-name py-file-name)))))
+
+(defun jump-to-path ()
   (let* ((current-line (thing-at-point 'line t))
          (found-match (string-match re-ros-path current-line)))
     (when found-match
@@ -19,16 +44,17 @@
           (find-file absolute-path))))))
 
 (defun jump-to-pkg (search)
-  (let* ((current-line (thing-at-point 'line t))
-         (found-match (string-match re-pkg current-line)))
-    (when found-match
-      (let* (
-             (pkg-name (match-string 1 current-line))
-             (absolute-path
-              (replace-regexp-in-string "\n$" "" (shell-command-to-string (format "rospack find %s" pkg-name)))))
-        (if search
-            (helm-browse-project-find-files (concat absolute-path "/"))
-          (helm-find-files-1 (concat absolute-path "/")))))))
+  (let* (
+         (pkg-name (get-match-from-current-line re-pkg))
+         (absolute-path
+          (replace-regexp-in-string "\n$" "" (shell-command-to-string (format "rospack find %s" pkg-name)))))
+    (if search
+        (helm-browse-project-find-files (concat absolute-path "/"))
+      (helm-find-files-1 (concat absolute-path "/")))))
+
+(defun jump-to-file ()
+  (interactive)
+  (when (not (jump-to-py)) (jump-to-path)))
 
 (defun jump-to-pkg-browse-dir ()
   (interactive)
