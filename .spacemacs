@@ -464,4 +464,7 @@ you should place your code here."
   ;; Zoom in / out
   (define-key (current-global-map) (kbd "C-+") 'spacemacs/zoom-frm-in)
   (define-key (current-global-map) (kbd "C--") 'spacemacs/zoom-frm-out)
+
+  ;; Use windows key as meta key to avoid conflicts with i3wm
+  (setq x-super-keysym 'meta)
   )
