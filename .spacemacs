@@ -467,4 +467,5 @@ you should place your code here."
 
   ;; Use windows key as meta key to avoid conflicts with i3wm
   (setq x-super-keysym 'meta)
+  (spacemacs/set-leader-keys-for-major-mode 'org-mode "=" 'editorconfig-format-buffer)
   )
