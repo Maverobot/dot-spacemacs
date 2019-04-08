@@ -456,6 +456,8 @@ you should place your code here."
 
   ;; Other settings
   (setq find-file-visit-truename t)
+  (setq helm-swoop-use-fuzzy-match t)
+  (setq helm-swoop-use-line-number-face t)
 
   ;; C-a for increasing number, C-x for descreasing number
   (evil-define-key 'normal global-map (kbd "C-a") 'evil-numbers/inc-at-pt)
