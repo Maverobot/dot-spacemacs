@@ -10,3 +10,7 @@
 	path = private/roslaunch-jump
 	url = https://github.com/Maverobot/roslaunch-jump.git
 	branch = master
+[submodule "snippets"]
+	path = snippets
+	url = https://github.com/gollth/snippets.git
+	branch = master
