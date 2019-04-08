@@ -75,4 +75,5 @@
     (spacemacs/set-leader-keys-for-major-mode 'nxml-mode "gg" 'jump-to-file)
     (spacemacs/set-leader-keys-for-major-mode 'nxml-mode "gpp" 'jump-to-pkg-browse-dir)
     (spacemacs/set-leader-keys-for-major-mode 'nxml-mode "gpf" 'jump-to-pkg-find-files))
+    (spacemacs/set-leader-keys-for-major-mode 'nxml-mode "=" 'editorconfig-format-buffer)
   (add-hook 'nxml-mode-hook 'my-launch-file-config))
