@@ -5,3 +5,7 @@
 	path = reveal.js
 	url = https://github.com/hakimel/reveal.js.git
 	branch = master
+[submodule "private/roslaunch-jump"]
+	path = private/roslaunch-jump
+	url = https://github.com/Maverobot/roslaunch-jump.git
+	branch = master
