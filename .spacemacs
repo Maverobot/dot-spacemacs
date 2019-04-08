@@ -452,7 +452,7 @@ you should place your code here."
     )
 
   ;; Personal roslaunch config
-  (load-file "~/.spacemacs.d/private/roslaunch.el")
+  (load-file "~/.spacemacs.d/private/roslaunch-jump/roslaunch-jump.el")
 
   ;; Other settings
   (setq find-file-visit-truename t)
