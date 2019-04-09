@@ -401,6 +401,13 @@ you should place your code here."
   ;; Python interpreter
   (setq python-shell-interpreter "/usr/bin/python3")
 
+  ;; Semantic helm
+  (spacemacs/set-leader-keys-for-major-mode 'c-mode "?" 'helm-semantic-or-imenu)
+  (spacemacs/set-leader-keys-for-major-mode 'c++-mode "?" 'helm-semantic-or-imenu)
+  (spacemacs/set-leader-keys-for-major-mode 'emacs-lisp-mode "?" 'helm-semantic-or-imenu)
+  (spacemacs/set-leader-keys-for-major-mode 'go-mode "?" 'helm-semantic-or-imenu)
+  (spacemacs/set-leader-keys-for-major-mode 'python-mode "?" 'helm-semantic-or-imenu)
+
   ;; Autocompletion configuration
   (use-package company
     :ensure t
