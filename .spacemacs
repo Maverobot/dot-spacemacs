@@ -426,6 +426,9 @@ you should place your code here."
   (defun company-bindings ()
     (define-key company-mode-map [tab] 'company-complete))
 
+  ;; Workaround for https://github.com/company-mode/company-mode/issues/383
+  (evil-declare-change-repeat 'company-complete)
+
   ;; Bind clang-format-region to C-M-tab in all modes:
   (global-set-key [C-M-tab] 'clang-format-region)
 
