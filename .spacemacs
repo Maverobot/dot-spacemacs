@@ -89,6 +89,7 @@ values."
                                       cmake-mode
                                       xclip
                                       flymd
+                                      exec-path-from-shell
                                       flycheck-clang-analyzer
                                       org-make-toc)
    ;; A list of packages that cannot be updated.
@@ -337,16 +338,36 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
+
   (setq-default
    dotspacemacs-themes '(
                          darkokai
                          zenburn
-                         planet
-   ;; other themes
-                        ))
+                         planet)
+
+   ;; Ignore any ROS environment variables since they might change depending
+   ;; on which catkin workspace is used. When a new catkin workspace is chosen
+   ;; call `spacemacs/update-ros-envs' to update theses envs accordingly
+   spacemacs-ignored-environment-variables '("ROS_IP"
+                                             "PYTHONPATH"
+                                             "CMAKE_PREFIX_PATH"
+                                             "ROS_MASTER_URI"
+                                             "ROS_PACKAGE_PATH"
+                                             "ROSLISP_PACKAGE_DIRECTORIES"
+                                             "PKG_CONFIG_PATH"
+                                             "LD_LIBRARY_PATH"))
+
 
   (setenv "WORKON_HOME" "~/.anaconda3/envs")
 )
+
+(defun spacemacs/update-ros-envs ()
+  "Update all environment variables in `spacemacs-ignored-environment-variables'
+from their values currently sourced in the shell environment (e.g. .bashrc)"
+  (interactive)
+  (setq exec-path-from-shell-check-startup-files nil)
+  (exec-path-from-shell-copy-envs spacemacs-ignored-environment-variables)
+  (message "ROS environment copied successfully from shell"))
 
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
@@ -416,6 +437,7 @@ you should place your code here."
   (spacemacs/set-leader-keys "qq" 'spacemacs/frame-killer)
 
   ;; ROS shortcut
+  (spacemacs/set-leader-keys "ye" 'spacemacs/update-ros-envs)
   (spacemacs/declare-prefix "y" "ROS")
   (spacemacs/set-leader-keys "yy" 'helm-ros)
 
