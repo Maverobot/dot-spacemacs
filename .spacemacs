@@ -385,6 +385,10 @@ you should place your code here."
         engine/browser-function 'browse-url-generic
         browse-url-generic-program "firefox")
 
+  ;; Org-mode
+  (setq org-agenda-files (list "~/org/work.org"
+                               "~/org/home.org"))
+
   ;; reveal.js
   (setq org-reveal-root (file-truename "~/.spacemacs.d/reveal.js"))
 
