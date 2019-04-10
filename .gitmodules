@@ -12,5 +12,5 @@
 	branch = master
 [submodule "snippets"]
 	path = snippets
-	url = https://github.com/gollth/snippets.git
+	url = https://github.com/Maverobot/snippets.git
 	branch = master
