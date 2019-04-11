@@ -432,9 +432,6 @@ you should place your code here."
   (defun company-bindings ()
     (define-key company-mode-map [tab] 'company-complete))
 
-  ;; Workaround for https://github.com/company-mode/company-mode/issues/383
-  (evil-declare-change-repeat 'company-complete)
-
   ;; Bind clang-format-region to C-M-tab in all modes:
   (global-set-key [C-M-tab] 'clang-format-region)
 
@@ -509,4 +506,13 @@ you should place your code here."
   ;; Use windows key as meta key to avoid conflicts with i3wm
   (setq x-super-keysym 'meta)
   (spacemacs/set-leader-keys-for-major-mode 'org-mode "=" 'editorconfig-format-buffer)
-  )
+
+  ;; Workaround for https://github.com/company-mode/company-mode/issues/383
+  (evil-declare-change-repeat 'company-complete)
+
+  ;; Workaround for https://github.com/syl20bnr/spacemacs/issues/10410
+  (defun kill-minibuffer ()
+    (interactive)
+    (when (windowp (active-minibuffer-window))
+      (evil-ex-search-exit)))
+  (add-hook 'mouse-leave-buffer-hook #'kill-minibuffer))
