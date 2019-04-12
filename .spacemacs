@@ -402,7 +402,7 @@ you should place your code here."
   (spacemacs/set-leader-keys "ef" 'ycmd-fixit)
 
   ;; Project grep
-  (spacemacs/set-leader-keys "ps" 'projectile-grep)
+  (spacemacs/set-leader-keys "ps" 'helm-projectile-grep)
 
   ;; Python interpreter
   (setq python-shell-interpreter "/usr/bin/python3")
