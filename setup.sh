@@ -1,6 +1,6 @@
 #!/bin/sh
 
-sudo apt install xclip build-essential cmake python3-dev silversearcher-ag
+sudo apt install xclip build-essential cmake python3-dev python3-pip silversearcher-ag
 
 sudo snap install --channel=edge shellcheck
 
