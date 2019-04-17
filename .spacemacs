@@ -82,7 +82,7 @@ values."
                       syntax-checking-enable-by-default t
                       )
      version-control
-     (cmake :variables cmake-enable-cmake-ide-support nil)
+     (cmake :variables cmake-enable-cmake-ide-support t)
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -401,6 +401,11 @@ you should place your code here."
   (setq ycmd-idle-change-delay 2.0)
   (setq company-ycmd-request-sync-timeout 0)
   (spacemacs/set-leader-keys "ef" 'ycmd-fixit)
+
+  ;; C++ build dir setting
+  (put 'cmake-ide-dir 'safe-local-variable 'stringp)
+  (put 'cmake-ide-make-command 'safe-local-variable 'stringp)
+  (put 'cmake-ide-cmake-args 'safe-local-variable 'stringp)
 
   ;; Project grep
   (spacemacs/set-leader-keys "ps" 'helm-projectile-grep)
