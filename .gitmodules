@@ -14,3 +14,6 @@
 	path = snippets
 	url = https://github.com/Maverobot/snippets.git
 	branch = master
+[submodule "private/catkin-make"]
+	path = private/catkin-make
+	url = https://github.com/Maverobot/catkin-make.git
