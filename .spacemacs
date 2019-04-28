@@ -38,7 +38,6 @@ values."
      ;; ----------------------------------------------------------------
      (ranger :variables
               ranger-show-preview t)
-     ipython-notebook
      neotree
      haskell
      (go :variables
