@@ -358,9 +358,6 @@ before packages are loaded. If you are unsure, you should try in setting them in
                                              "ROSLISP_PACKAGE_DIRECTORIES"
                                              "PKG_CONFIG_PATH"
                                              "LD_LIBRARY_PATH"))
-
-
-  (setenv "WORKON_HOME" "~/.anaconda3/envs")
 )
 
 (defun spacemacs/update-ros-envs ()

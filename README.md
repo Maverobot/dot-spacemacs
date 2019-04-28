@@ -9,7 +9,6 @@ This is the repository of a personal spacemacs config file. It contains a fully 
         - [Spacemacs](#spacemacs)
     - [Installation](#installation)
         - [YCMD](#ycmd)
-    - [Default paths](#default-paths)
 
 <!-- markdown-toc end -->
 
@@ -45,6 +44,3 @@ For cmake projects it is necessary to compile the projects with flag:
 ```
 -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 ```
-
-## Default paths
-Anaconda3: `~/.anaconda3`.
