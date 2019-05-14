@@ -403,8 +403,8 @@ you should place your code here."
   (put 'cmake-ide-make-command 'safe-local-variable 'stringp)
   (put 'cmake-ide-cmake-args 'safe-local-variable 'stringp)
 
-  ;; Project grep
-  (spacemacs/set-leader-keys "ps" 'helm-projectile-grep)
+  ;; Project ag
+  (spacemacs/set-leader-keys "ps" 'helm-projectile-ag)
 
   ;; Python interpreter
   (setq python-shell-interpreter "/usr/bin/python3")
