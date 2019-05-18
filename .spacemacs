@@ -424,9 +424,6 @@ you should place your code here."
   (defun company-bindings ()
     (define-key company-mode-map [tab] 'company-complete))
 
-  ;; Bind clang-format-region to C-M-tab in all modes:
-  (global-set-key [C-M-tab] 'clang-format-region)
-
   ;; Kill all buffers
   (defun nuke-all-buffers ()
     (interactive)
