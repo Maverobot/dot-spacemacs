@@ -17,3 +17,8 @@
 [submodule "private/catkin-make"]
 	path = private/catkin-make
 	url = https://github.com/Maverobot/catkin-make.git
+	branch = master
+[submodule "private/company-roslaunch"]
+	path = private/company-roslaunch
+	url = https://github.com/Maverobot/company-roslaunch.git
+	branch = master
