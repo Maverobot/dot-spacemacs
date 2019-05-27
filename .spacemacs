@@ -498,6 +498,9 @@ you should place your code here."
   ;; Use windows key as meta key to avoid conflicts with i3wm
   (setq x-super-keysym 'meta)
 
+  ;; Semantic mode
+  (semantic-mode t)
+
   ;; Org mode
   (spacemacs/set-leader-keys-for-major-mode 'org-mode "=" 'editorconfig-format-buffer)
   (define-key org-mode-map (kbd "C-<tab>") 'org-table-previous-field)
