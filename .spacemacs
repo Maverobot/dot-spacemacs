@@ -503,6 +503,7 @@ you should place your code here."
 
   ;; Org mode
   (spacemacs/set-leader-keys-for-major-mode 'org-mode "=" 'editorconfig-format-buffer)
+  (require 'org)
   (define-key org-mode-map (kbd "C-<tab>") 'org-table-previous-field)
 
   ;; Workaround for https://github.com/company-mode/company-mode/issues/383
