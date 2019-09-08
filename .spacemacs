@@ -394,6 +394,7 @@ you should place your code here."
   ;; ycmd
   (setq ycmd-server-command (list "python3" (file-truename "~/.spacemacs.d/ycmd/ycmd")))
   (setq ycmd-force-semantic-completion t)
+  (setq ycmd-startup-timeout 5)
   (setq ycmd-idle-change-delay 2.0)
   (setq company-ycmd-request-sync-timeout 0)
   (spacemacs/set-leader-keys "ef" 'ycmd-fixit)
