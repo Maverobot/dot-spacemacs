@@ -507,6 +507,13 @@ you should place your code here."
   (require 'org)
   (define-key org-mode-map (kbd "C-<tab>") 'org-table-previous-field)
 
+  ;; Enable format-all minor mode
+  (add-hook 'c-mode-hook #'format-all-mode)
+  (add-hook 'c++-mode-hook #'format-all-mode)
+  (add-hook 'python-mode-hook #'format-all-mode)
+  (add-hook 'cmake-mode-hook #'format-all-mode)
+  (add-hook 'go-mode-hook #'format-all-mode)
+
   ;; Workaround for https://github.com/company-mode/company-mode/issues/383
   (evil-declare-change-repeat 'company-complete)
 
