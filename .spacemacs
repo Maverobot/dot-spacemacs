@@ -89,6 +89,7 @@ values."
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(helm-ros
                                       cmake-mode
+                                      format-all
                                       xclip
                                       flymd
                                       exec-path-from-shell
