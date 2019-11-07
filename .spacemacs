@@ -37,7 +37,7 @@ values."
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      (ranger :variables
-              ranger-show-preview t)
+             ranger-show-preview t)
      neotree
      haskell
      (go :variables
@@ -358,8 +358,7 @@ before packages are loaded. If you are unsure, you should try in setting them in
                                              "ROS_PACKAGE_PATH"
                                              "ROSLISP_PACKAGE_DIRECTORIES"
                                              "PKG_CONFIG_PATH"
-                                             "LD_LIBRARY_PATH"))
-)
+                                             "LD_LIBRARY_PATH")))
 
 (defun spacemacs/update-ros-envs ()
   "Update all environment variables in `spacemacs-ignored-environment-variables'
