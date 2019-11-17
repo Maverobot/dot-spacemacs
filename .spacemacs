@@ -375,6 +375,11 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+
+  ;; Transparency settings
+  (spacemacs/set-leader-keys "tt" 'spacemacs/toggle-transparency)
+  (add-hook 'after-make-frame-functions 'spacemacs/enable-transparency)
+
   ;; Default toggle setting
   (spacemacs/toggle-indent-guide-globally-on)
 
