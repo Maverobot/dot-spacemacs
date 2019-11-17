@@ -499,6 +499,11 @@ you should place your code here."
   ;; Use windows key as meta key to avoid conflicts with i3wm
   (setq x-super-keysym 'meta)
 
+  ;; Ranger keybindings
+  (define-key ranger-mode-map (kbd "M-h") 'ranger-prev-tab)
+  (define-key ranger-mode-map (kbd "M-l") 'ranger-next-tab)
+  (define-key ranger-mode-map (kbd "M-n") 'ranger-new-tab)
+
   ;; Semantic mode
   (semantic-mode t)
 
