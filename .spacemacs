@@ -342,6 +342,8 @@ executes.
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
 
+  (setq shell-file-name "/bin/bash")
+
   (setq-default
    dotspacemacs-themes '(
                          darkokai
