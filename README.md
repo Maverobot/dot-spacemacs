@@ -24,7 +24,8 @@ sudo apt install emacs26
 ```
 git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
 cd ~/.emacs.d
-git checkout develop
+git checkout 1299f262c
+# later version of spacemacs merged ycmd layer into c/c++ layer, which currently does not work out of box with my config.
 ```
 ## Installation
 To use this config file:
