@@ -519,11 +519,8 @@ you should place your code here."
   (define-key org-mode-map (kbd "C-<tab>") 'org-table-previous-field)
 
   ;; Enable format-all minor mode
-  (add-hook 'c-mode-hook #'format-all-mode)
-  (add-hook 'c++-mode-hook #'format-all-mode)
-  (add-hook 'python-mode-hook #'format-all-mode)
+  (add-hook 'python-mode-hook #'yapf-mode)
   (add-hook 'cmake-mode-hook #'format-all-mode)
-  (add-hook 'go-mode-hook #'format-all-mode)
 
   (doom-modeline-init)
 
