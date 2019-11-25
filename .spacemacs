@@ -178,7 +178,7 @@ values."
                                :weight normal
                                :width normal
                                :powerline-scale 1.3)
-   dotspacemacs-mode-line-theme '(spacemacs :separator wave :separator-scale 1.5)
+   dotspacemacs-mode-line-theme 'doom-modeline
    ;; The leader key
    dotspacemacs-leader-key "SPC"
    ;; The key used for Emacs commands (M-x) (after pressing on the leader key).
@@ -524,6 +524,8 @@ you should place your code here."
   (add-hook 'python-mode-hook #'format-all-mode)
   (add-hook 'cmake-mode-hook #'format-all-mode)
   (add-hook 'go-mode-hook #'format-all-mode)
+
+  (doom-modeline-init)
 
   ;; Workaround for https://github.com/company-mode/company-mode/issues/383
   (evil-declare-change-repeat 'company-complete)
