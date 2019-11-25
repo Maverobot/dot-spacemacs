@@ -89,6 +89,7 @@ values."
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(helm-ros
                                       cmake-mode
+                                      doom-themes
                                       format-all
                                       xclip
                                       flymd
@@ -345,10 +346,7 @@ before packages are loaded. If you are unsure, you should try in setting them in
   (setq shell-file-name "/bin/bash")
 
   (setq-default
-   dotspacemacs-themes '(
-                         darkokai
-                         zenburn
-                         planet)
+   dotspacemacs-themes '(doom-one)
 
    ;; Ignore any ROS environment variables since they might change depending
    ;; on which catkin workspace is used. When a new catkin workspace is chosen
