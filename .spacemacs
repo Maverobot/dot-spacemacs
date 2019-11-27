@@ -345,22 +345,22 @@ before packages are loaded. If you are unsure, you should try in setting them in
 
   (setq shell-file-name "/bin/bash")
 
-  (setq-default
-   dotspacemacs-themes '(doom-one)
+  (doom-modeline-init)
 
-   (doom-modeline-init)
+  (setq-default dotspacemacs-themes '(doom-one)
 
-   ;; Ignore any ROS environment variables since they might change depending
-   ;; on which catkin workspace is used. When a new catkin workspace is chosen
-   ;; call `spacemacs/update-ros-envs' to update theses envs accordingly
-   spacemacs-ignored-environment-variables '("ROS_IP"
-                                             "PYTHONPATH"
-                                             "CMAKE_PREFIX_PATH"
-                                             "ROS_MASTER_URI"
-                                             "ROS_PACKAGE_PATH"
-                                             "ROSLISP_PACKAGE_DIRECTORIES"
-                                             "PKG_CONFIG_PATH"
-                                             "LD_LIBRARY_PATH")))
+
+                ;; Ignore any ROS environment variables since they might change depending
+                ;; on which catkin workspace is used. When a new catkin workspace is chosen
+                ;; call `spacemacs/update-ros-envs' to update theses envs accordingly
+                spacemacs-ignored-environment-variables '("ROS_IP"
+                                                          "PYTHONPATH"
+                                                          "CMAKE_PREFIX_PATH"
+                                                          "ROS_MASTER_URI"
+                                                          "ROS_PACKAGE_PATH"
+                                                          "ROSLISP_PACKAGE_DIRECTORIES"
+                                                          "PKG_CONFIG_PATH"
+                                                          "LD_LIBRARY_PATH")))
 
 (defun spacemacs/update-ros-envs ()
   "Update all environment variables in `spacemacs-ignored-environment-variables'
