@@ -348,6 +348,8 @@ before packages are loaded. If you are unsure, you should try in setting them in
   (setq-default
    dotspacemacs-themes '(doom-one)
 
+   (doom-modeline-init)
+
    ;; Ignore any ROS environment variables since they might change depending
    ;; on which catkin workspace is used. When a new catkin workspace is chosen
    ;; call `spacemacs/update-ros-envs' to update theses envs accordingly
@@ -521,8 +523,6 @@ you should place your code here."
   ;; Enable format-all minor mode
   (add-hook 'python-mode-hook #'yapf-mode)
   (add-hook 'cmake-mode-hook #'format-all-mode)
-
-  (doom-modeline-init)
 
   ;; Workaround for https://github.com/company-mode/company-mode/issues/383
   (evil-declare-change-repeat 'company-complete)
