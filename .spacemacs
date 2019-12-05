@@ -48,6 +48,7 @@ values."
      shell-scripts
      yaml
      (python :variables
+             python-sort-imports-on-save t
              python-enable-yapf-format-on-save t)
      helm
      git
