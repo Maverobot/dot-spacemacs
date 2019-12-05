@@ -516,6 +516,9 @@ you should place your code here."
   ;; Semantic mode
   (semantic-mode t)
 
+  ;; Do not show eyebrowse icons in modeline
+  (spaceline-toggle-all-the-icons-eyebrowse-workspace-off)
+
   ;; Org mode
   (spacemacs/set-leader-keys-for-major-mode 'org-mode "=" 'editorconfig-format-buffer)
   (require 'org)
