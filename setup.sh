@@ -19,6 +19,6 @@ gometalinter --install --update
 git submodule update --init --recursive
 
 if [ -d "ycmd" ]; then
-    cd ycmd || return
-    python3 build.py --clang-completer
+	cd ycmd || return
+	python3 build.py --clang-completer
 fi
