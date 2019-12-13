@@ -6,6 +6,8 @@ sudo snap install --channel=edge shellcheck
 
 pip install --user yapf
 
+sudo snap install shfmt
+
 # Go stuffs
 sudo snap install go --classic
 go get -u -v github.com/nsf/gocode
