@@ -527,6 +527,7 @@ you should place your code here."
   ;; Enable format-all minor mode
   (add-hook 'python-mode-hook #'yapf-mode)
   (add-hook 'cmake-mode-hook #'format-all-mode)
+  (add-hook 'sh-mode-hook #'format-all-mode)
 
   ;; Workaround for https://github.com/company-mode/company-mode/issues/383
   (evil-declare-change-repeat 'company-complete)
