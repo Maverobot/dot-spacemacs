@@ -528,6 +528,7 @@ you should place your code here."
   (add-hook 'python-mode-hook #'yapf-mode)
   (add-hook 'cmake-mode-hook #'format-all-mode)
   (add-hook 'sh-mode-hook #'format-all-mode)
+  (add-hook 'fish-mode-hook #'format-all-mode)
 
   ;; Workaround for https://github.com/company-mode/company-mode/issues/383
   (evil-declare-change-repeat 'company-complete)
