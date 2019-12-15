@@ -179,7 +179,7 @@ values."
                                :weight normal
                                :width normal
                                :powerline-scale 1.3)
-   dotspacemacs-mode-line-theme '(vim-powerline :separator wave :separator-scale 1.5)
+   dotspacemacs-mode-line-theme '(doom :separator wave :separator-scale 1.5)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
    ;; The key used for Emacs commands (M-x) (after pressing on the leader key).
@@ -346,7 +346,6 @@ before packages are loaded. If you are unsure, you should try in setting them in
 
   (setq shell-file-name "/bin/bash")
 
-  (doom-modeline-init)
 
   (setq-default dotspacemacs-themes '(doom-one)
 
