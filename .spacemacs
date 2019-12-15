@@ -509,6 +509,17 @@ you should place your code here."
   (require 'org)
   (define-key org-mode-map (kbd "C-<tab>") 'org-table-previous-field)
 
+  ;; Enable doom-modeline-icons in gui and disable them in terminal
+  (defun enable-doom-modeline-icons()
+    (setq doom-modeline-icon (display-graphic-p)))
+  (defun enable-doom-modeline-icons-weird (_frame)
+    ;; TODO: Don't know why this "not" is needed...
+    (setq doom-modeline-icon (not (display-graphic-p))))
+  (add-hook 'focus-in-hook
+            #'enable-doom-modeline-icons)
+  (add-hook 'after-make-frame-functions
+            #'enable-doom-modeline-icons-weird)
+
   ;; Enable format-all minor mode
   (add-hook 'python-mode-hook #'yapf-mode)
   (add-hook 'cmake-mode-hook #'format-all-mode)
