@@ -520,6 +520,18 @@ you should place your code here."
   (add-hook 'after-make-frame-functions
             #'enable-doom-modeline-icons-weird)
 
+  ;; Install all-the-icons if not present
+  (defun aorst/font-installed-p (font-name)
+    "Check if font with FONT-NAME is available."
+    (if (find-font (font-spec :name font-name))
+        t
+      nil))
+  (use-package all-the-icons
+    :config
+    (when (and (not (aorst/font-installed-p "all-the-icons"))
+               (window-system))
+      (all-the-icons-install-fonts t)))
+
   ;; Enable format-all minor mode
   (add-hook 'python-mode-hook #'yapf-mode)
   (add-hook 'cmake-mode-hook #'format-all-mode)
