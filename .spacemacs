@@ -93,7 +93,6 @@ values."
                                       doom-themes
                                       format-all
                                       xclip
-                                      flymd
                                       exec-path-from-shell
                                       flycheck-clang-analyzer
                                       org-make-toc)
