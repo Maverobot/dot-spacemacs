@@ -525,6 +525,14 @@ you should place your code here."
   (add-hook 'sh-mode-hook #'format-all-mode)
   (add-hook 'fish-mode-hook #'format-all-mode)
 
+  ;; Configure glow viewer
+  (defun start-glow-viewer ()
+    (interactive)
+    (start-process "glow-markdown-viewer" nil
+                   "/usr/bin/x-terminal-emulator"
+                   (file-truename "~/.spacemacs.d/scripts/glow_mk_viewer.sh")
+                   (buffer-file-name nil)))
+
   ;; Workaround for https://github.com/company-mode/company-mode/issues/383
   (evil-declare-change-repeat 'company-complete)
 
