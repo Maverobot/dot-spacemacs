@@ -93,6 +93,7 @@ values."
                                       doom-themes
                                       format-all
                                       xclip
+                                      arduino-mode
                                       exec-path-from-shell
                                       flycheck-clang-analyzer
                                       org-make-toc)
@@ -524,6 +525,9 @@ you should place your code here."
   (add-hook 'cmake-mode-hook #'format-all-mode)
   (add-hook 'sh-mode-hook #'format-all-mode)
   (add-hook 'fish-mode-hook #'format-all-mode)
+
+  ;; Disable ycmd in arduino-mode, since it does not work.
+  (add-hook 'arduino-mode-hook (lambda () (ycmd-mode -1)))
 
   ;; Configure glow viewer
   (defun start-glow-viewer ()
