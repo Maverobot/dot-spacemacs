@@ -77,10 +77,6 @@ values."
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom)
-     ycmd
-     (syntax-checking :variables
-                      syntax-checking-enable-by-default t
-                      )
      version-control
      (cmake :variables cmake-enable-cmake-ide-support nil)
      )
@@ -398,14 +394,6 @@ you should place your code here."
   ;; reveal.js
   (setq org-reveal-root (file-truename "~/.spacemacs.d/reveal.js"))
 
-  ;; ycmd
-  (setq ycmd-server-command (list "python3" (file-truename "~/.spacemacs.d/ycmd/ycmd")))
-  (setq ycmd-force-semantic-completion t)
-  (setq ycmd-startup-timeout 5)
-  (setq ycmd-idle-change-delay 2.0)
-  (setq company-ycmd-request-sync-timeout 0)
-  (spacemacs/set-leader-keys "ef" 'ycmd-fixit)
-
   ;; C++ build dir setting
   (put 'cmake-ide-dir 'safe-local-variable 'stringp)
   (put 'cmake-ide-make-command 'safe-local-variable 'stringp)
@@ -525,9 +513,6 @@ you should place your code here."
   (add-hook 'cmake-mode-hook #'format-all-mode)
   (add-hook 'sh-mode-hook #'format-all-mode)
   (add-hook 'fish-mode-hook #'format-all-mode)
-
-  ;; Disable ycmd in arduino-mode, since it does not work.
-  (add-hook 'arduino-mode-hook (lambda () (ycmd-mode -1)))
 
   ;; Configure glow viewer
   (defun start-glow-viewer ()
