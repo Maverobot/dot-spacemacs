@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/usr/bin/env bash
+set -e
 
 sudo apt install xclip build-essential cmake python3-dev python3-pip silversearcher-ag
 
@@ -20,7 +21,4 @@ gometalinter --install --update
 
 git submodule update --init --recursive
 
-if [ -d "ycmd" ]; then
-	cd ycmd || return
-	python3 build.py --clang-completer
-fi
+./build_ccls.sh
