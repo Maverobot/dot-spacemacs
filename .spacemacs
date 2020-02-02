@@ -58,7 +58,9 @@ values."
                       auto-completion-complete-with-key-sequence nil
                       auto-completion-complete-with-key-sequence-delay 0.1
                       auto-completion-private-snippets-directory "~/.spacemacs.d/snippets")
-     lsp
+     (lsp :variables
+          lsp-enable-symbol-highlighting nil
+          lsp-ui-doc-enable nil)
      (c-c++ :variables
             c-c++-backend 'lsp-ccls
             c-c++-adopt-subprojects t
@@ -66,6 +68,7 @@ values."
             c-c++-enable-clang-support t
             c-c++-enable-clang-format-on-save t
             c-c++-default-mode-for-headers 'c++-mode
+            ccls-sem-highlight-method 'font-lock
             ccls-executable (file-truename "~/.spacemacs.d/ccls/Release/ccls"))
      emacs-lisp
      markdown
