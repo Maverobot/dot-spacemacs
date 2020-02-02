@@ -365,11 +365,7 @@ before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
 
   (setq shell-file-name "/bin/bash")
-
-
   (setq-default dotspacemacs-themes '(doom-one)
-
-
                 ;; Ignore any ROS environment variables since they might change depending
                 ;; on which catkin workspace is used. When a new catkin workspace is chosen
                 ;; call `spacemacs/update-ros-envs' to update theses envs accordingly
