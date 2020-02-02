@@ -1,5 +1,5 @@
 # dot-spacemacs
-This is the repository of a personal spacemacs config file. It contains a fully functioning c/c++ development environment with autocompletion via ycmd and syntax checking.
+This is the repository of a personal spacemacs config file. It contains a fully functioning c/c++ development environment with autocompletion via ccls and syntax checking.
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
@@ -9,7 +9,7 @@ This is the repository of a personal spacemacs config file. It contains a fully 
         - [Spacemacs](#spacemacs)
     - [Installation](#installation)
     - [Tips and tricks](#tips-and-tricks)
-        - [YCMD (a code-completion & comprehension server)](#ycmd-a-code-completion--comprehension-server)
+        - [CCLS](#ccls)
         - [Markdown live preview with glow](#markdown-live-preview-with-glow)
 
 <!-- markdown-toc end -->
@@ -26,8 +26,7 @@ sudo apt install emacs26
 ```
 git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
 cd ~/.emacs.d
-git checkout 1299f262c
-# later version of spacemacs merged ycmd layer into c/c++ layer, which currently does not work out of box with my config.
+git checkout develop
 ```
 ## Installation
 To use this config file:
@@ -37,13 +36,23 @@ git clone https://github.com/Maverobot/dot-spacemacs.git ~/.spacemacs.d
 # Backup your ~/.spacemacs file if it already exits.
 ln -s ~/.spacemacs.d/.spacemacs ~/.spacemacs -f
 
-# Setup ycmd
+# Setup everything including ccls
 cd ~/.spacemacs.d
 ./setup.sh
+
+# Setup only ccls for c/c++ IDE
+cd ~/.spacemacs.d
+./build_ccls.sh
 ```
 
 ## Tips and tricks
-### YCMD (a code-completion & comprehension server)
+### CCLS
+
+> C/C++/ObjC language server supporting cross references, hierarchies, completion and semantic highlighting
+
++ [emacs-ccls](https://github.com/MaskRay/emacs-ccls)
++ [ccls](https://github.com/MaskRay/ccls)
+
 For c++ autocompletion to work with cmake projects, it is necessary to compile the projects with flag `-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`. For example,
 
 ```sh
@@ -51,9 +60,9 @@ For c++ autocompletion to work with cmake projects, it is necessary to compile t
 mkdir build && cd build
 # Create compile_commands.json with the flag
 cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+# Create a soft link at project root (only needed once)
+ln -s ./build/compile_commands.json compile_commands.json
 ```
-
-When `YCMD` does not work, e.g. wrong flycheck errors, you can restart the autocompletion server with elisp function `ycmd-open`.
 
 ### Markdown live preview with glow
 To use it, simply in the markdown buffer run elisp function `start_glow_viewer`, which is defined in `.spacemacs`.
