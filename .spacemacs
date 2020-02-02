@@ -529,6 +529,10 @@ you should place your code here."
                    (file-truename "~/.spacemacs.d/scripts/glow_mk_viewer.sh")
                    (buffer-file-name nil)))
 
+  ;; Workaround for https://github.com/syl20bnr/spacemacs/issues/13100
+  (setq helm-completion-style 'emacs)
+  (setq completion-styles '(helm-flex))
+
   ;; Workaround for https://github.com/company-mode/company-mode/issues/383
   (evil-declare-change-repeat 'company-complete)
 
