@@ -62,6 +62,8 @@ values."
           lsp-enable-symbol-highlighting nil
           lsp-enable-on-type-formatting nil
           lsp-enable-indentation nil
+          lsp-enable-file-watchers t
+          lsp-file-watch-threshold nil
           lsp-auto-guess-root t
           lsp-before-save-edits nil
           lsp-ui-doc-enable nil
