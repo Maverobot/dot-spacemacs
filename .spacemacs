@@ -60,7 +60,17 @@ values."
                       auto-completion-private-snippets-directory "~/.spacemacs.d/snippets")
      (lsp :variables
           lsp-enable-symbol-highlighting nil
-          lsp-ui-doc-enable nil)
+          lsp-enable-on-type-formatting nil
+          lsp-enable-indentation nil
+          lsp-before-save-edits nil
+          lsp-ui-doc-enable nil
+          lsp-ui-doc-header t
+          lsp-ui-doc-include-signature t
+          lsp-ui-doc-border (face-foreground 'default)
+          lsp-ui-sideline-enable nil
+          lsp-ui-sideline-ignore-duplicate t
+          lsp-ui-sideline-show-code-actions t
+          )
      (c-c++ :variables
             c-c++-backend 'lsp-ccls
             c-c++-adopt-subprojects t
