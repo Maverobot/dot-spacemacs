@@ -79,6 +79,9 @@ values."
             c-c++-enable-clang-format-on-save t
             c-c++-default-mode-for-headers 'c++-mode
             ccls-sem-highlight-method 'font-lock
+            ccls-initialization-options
+            (list :cache '(:directory "build/.ccls-cache")
+                  :compilationDatabaseDirectory "build")
             ccls-executable (file-truename "~/.spacemacs.d/ccls/Release/ccls"))
      emacs-lisp
      markdown
