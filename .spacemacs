@@ -476,6 +476,7 @@ you should place your code here."
     :config (flycheck-clang-analyzer-setup)
     )
 
+  ;; TODO: make the following repos emacs package which can be imported as additional package
   ;; Personal roslaunch config
   (load-file "~/.spacemacs.d/private/roslaunch-jump/roslaunch-jump.el")
   (load-file "~/.spacemacs.d/private/company-roslaunch/company-roslaunch.el")
