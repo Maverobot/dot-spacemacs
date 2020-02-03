@@ -80,12 +80,7 @@ values."
             c-c++-lsp-enable-semantic-highlight t
             c-c++-enable-clang-support t
             c-c++-enable-clang-format-on-save t
-            c-c++-default-mode-for-headers 'c++-mode
-            ccls-sem-highlight-method 'font-lock
-            ccls-initialization-options
-            (list :cache '(:directory "build/.ccls-cache")
-                  :compilationDatabaseDirectory "build")
-            ccls-executable (file-truename "~/.spacemacs.d/ccls/Release/ccls"))
+            c-c++-default-mode-for-headers 'c++-mode)
      emacs-lisp
      markdown
      (org :variables
@@ -533,6 +528,15 @@ you should place your code here."
   (add-hook 'cmake-mode-hook #'format-all-mode)
   (add-hook 'sh-mode-hook #'format-all-mode)
   (add-hook 'fish-mode-hook #'format-all-mode)
+
+  ;; ccls
+  (require 'ccls)
+  (setq ccls-root-files (add-to-list 'ccls-root-files "build/compile_commands.json" t))
+  (setq ccls-sem-highlight-method 'font-lock)
+  (setq ccls-initialization-options
+        (list :cache '(:directory "build/.ccls-cache")
+              :compilationDatabaseDirectory "build"))
+  (setq ccls-executable (file-truename "~/.spacemacs.d/ccls/Release/ccls"))
 
   ;; Configure glow viewer
   (defun start-glow-viewer ()
