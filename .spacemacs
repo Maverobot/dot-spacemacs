@@ -63,6 +63,7 @@ values."
           lsp-enable-on-type-formatting nil
           lsp-enable-indentation nil
           lsp-enable-file-watchers t
+          lsp-prefer-flymake nil
           lsp-file-watch-threshold nil
           lsp-auto-guess-root t
           lsp-before-save-edits nil
