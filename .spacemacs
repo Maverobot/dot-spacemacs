@@ -508,8 +508,8 @@ you should place your code here."
   (semantic-mode t)
 
   ;; Org mode
-  (spacemacs/set-leader-keys-for-major-mode 'org-mode "=" 'editorconfig-format-buffer)
   (require 'org)
+  (spacemacs/set-leader-keys-for-major-mode 'org-mode "=" 'editorconfig-format-buffer)
   (define-key org-mode-map (kbd "C-<tab>") 'org-table-previous-field)
 
   ;; Enable doom-modeline-icons in gui and disable them in terminal
