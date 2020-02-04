@@ -80,6 +80,7 @@ values."
             c-c++-enable-clang-support t
             c-c++-enable-clang-format-on-save t
             c-c++-default-mode-for-headers 'c++-mode)
+     syntax-checking
      emacs-lisp
      markdown
      (org :variables
@@ -473,6 +474,10 @@ you should place your code here."
     :after flycheck
     :config (flycheck-clang-analyzer-setup)
     )
+  (with-eval-after-load 'flycheck
+    (setq flycheck-check-syntax-automatically '(save
+                                                idle-buffer-switch
+                                                mode-enabled)))
 
   ;; TODO: make the following repos emacs package which can be imported as additional package
   ;; Personal roslaunch config
