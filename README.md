@@ -1,5 +1,4 @@
 # dot-spacemacs
-This is the repository of a personal spacemacs config file. It contains a fully functioning c/c++ development environment with autocompletion via ccls and syntax checking.
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
@@ -13,6 +12,8 @@ This is the repository of a personal spacemacs config file. It contains a fully 
         - [Markdown live preview with glow](#markdown-live-preview-with-glow)
 
 <!-- markdown-toc end -->
+
+This is the repository of a personal spacemacs config file. It contains a fully functioning c/c++ development environment with [ccls](https://github.com/MaskRay/ccls), which is a C/C++/ObjC language server supporting cross references, hierarchies, completion and semantic highlighting.
 
 ## Requirements
 ### Emacs26
@@ -47,21 +48,13 @@ cd ~/.spacemacs.d
 
 ## Tips and tricks
 ### CCLS
-
-> C/C++/ObjC language server supporting cross references, hierarchies, completion and semantic highlighting
-
-+ [emacs-ccls](https://github.com/MaskRay/emacs-ccls)
-+ [ccls](https://github.com/MaskRay/ccls)
-
-For c++ autocompletion to work with cmake projects, it is necessary to compile the projects with flag `-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`. For example,
+For language server to work, it is necessary to compile the projects with flag `-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`. Take cmake project for example,
 
 ```sh
 # Go into build folder in cmake project
 mkdir build && cd build
 # Create compile_commands.json with the flag
 cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
-# Create a soft link at project root (only needed once)
-ln -s ./build/compile_commands.json compile_commands.json
 ```
 
 ### Markdown live preview with glow
