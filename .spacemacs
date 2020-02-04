@@ -109,8 +109,7 @@ values."
                                       arduino-mode
                                       exec-path-from-shell
                                       flycheck-clang-analyzer
-                                      org-make-toc
-                                      (ccls :location (recipe :fetcher github :repo "Maverobot/emacs-ccls")))
+                                      org-make-toc)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
