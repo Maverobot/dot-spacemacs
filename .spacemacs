@@ -71,6 +71,7 @@ values."
           lsp-ui-doc-header t
           lsp-ui-doc-include-signature t
           lsp-ui-doc-border (face-foreground 'default)
+          lsp-ui-doc-delay 0
           lsp-ui-sideline-enable nil
           lsp-ui-sideline-ignore-duplicate t
           lsp-ui-sideline-show-code-actions t)
