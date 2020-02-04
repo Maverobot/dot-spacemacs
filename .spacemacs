@@ -109,7 +109,6 @@ values."
                                       xclip
                                       arduino-mode
                                       exec-path-from-shell
-                                      flycheck-clang-analyzer
                                       org-make-toc)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
@@ -469,11 +468,6 @@ you should place your code here."
   ;; Turn on xclip mode
   (xclip-mode t)
 
-  (use-package flycheck-clang-analyzer
-    :ensure t
-    :after flycheck
-    :config (flycheck-clang-analyzer-setup)
-    )
   (with-eval-after-load 'flycheck
     (setq flycheck-check-syntax-automatically '(save
                                                 idle-buffer-switch
