@@ -22,3 +22,6 @@
 	path = private/company-roslaunch
 	url = https://github.com/Maverobot/company-roslaunch.git
 	branch = master
+[submodule "ccls"]
+	path = ccls
+	url = https://github.com/MaskRay/ccls

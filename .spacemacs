@@ -58,11 +58,28 @@ values."
                       auto-completion-complete-with-key-sequence nil
                       auto-completion-complete-with-key-sequence-delay 0.1
                       auto-completion-private-snippets-directory "~/.spacemacs.d/snippets")
+     (lsp :variables
+          lsp-enable-symbol-highlighting nil
+          lsp-enable-on-type-formatting nil
+          lsp-enable-indentation nil
+          lsp-enable-file-watchers t
+          lsp-file-watch-threshold nil
+          lsp-auto-guess-root t
+          lsp-before-save-edits nil
+          lsp-ui-doc-enable nil
+          lsp-ui-doc-header t
+          lsp-ui-doc-include-signature t
+          lsp-ui-doc-border (face-foreground 'default)
+          lsp-ui-sideline-enable nil
+          lsp-ui-sideline-ignore-duplicate t
+          lsp-ui-sideline-show-code-actions t)
      (c-c++ :variables
+            c-c++-backend 'lsp-ccls
+            c-c++-adopt-subprojects t
+            c-c++-lsp-enable-semantic-highlight t
             c-c++-enable-clang-support t
             c-c++-enable-clang-format-on-save t
-            c-c++-default-mode-for-headers 'c++-mode
-            )
+            c-c++-default-mode-for-headers 'c++-mode)
      emacs-lisp
      markdown
      (org :variables
@@ -77,10 +94,6 @@ values."
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom)
-     ycmd
-     (syntax-checking :variables
-                      syntax-checking-enable-by-default t
-                      )
      version-control
      (cmake :variables cmake-enable-cmake-ide-support nil)
      )
@@ -345,11 +358,7 @@ before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
 
   (setq shell-file-name "/bin/bash")
-
-
   (setq-default dotspacemacs-themes '(doom-one)
-
-
                 ;; Ignore any ROS environment variables since they might change depending
                 ;; on which catkin workspace is used. When a new catkin workspace is chosen
                 ;; call `spacemacs/update-ros-envs' to update theses envs accordingly
@@ -397,14 +406,6 @@ you should place your code here."
 
   ;; reveal.js
   (setq org-reveal-root (file-truename "~/.spacemacs.d/reveal.js"))
-
-  ;; ycmd
-  (setq ycmd-server-command (list "python3" (file-truename "~/.spacemacs.d/ycmd/ycmd")))
-  (setq ycmd-force-semantic-completion t)
-  (setq ycmd-startup-timeout 5)
-  (setq ycmd-idle-change-delay 2.0)
-  (setq company-ycmd-request-sync-timeout 0)
-  (spacemacs/set-leader-keys "ef" 'ycmd-fixit)
 
   ;; C++ build dir setting
   (put 'cmake-ide-dir 'safe-local-variable 'stringp)
@@ -473,6 +474,7 @@ you should place your code here."
     :config (flycheck-clang-analyzer-setup)
     )
 
+  ;; TODO: make the following repos emacs package which can be imported as additional package
   ;; Personal roslaunch config
   (load-file "~/.spacemacs.d/private/roslaunch-jump/roslaunch-jump.el")
   (load-file "~/.spacemacs.d/private/company-roslaunch/company-roslaunch.el")
@@ -487,6 +489,7 @@ you should place your code here."
   ;; C-a for increasing number, C-x for descreasing number
   (evil-define-key 'normal global-map (kbd "C-a") 'evil-numbers/inc-at-pt)
   (evil-define-key 'normal global-map (kbd "C-x") 'evil-numbers/dec-at-pt)
+  (evil-define-key 'normal global-map (kbd "-") 'evil-previous-line-first-non-blank)
 
   ;; Zoom in / out
   (define-key (current-global-map) (kbd "C-+") 'spacemacs/zoom-frm-in)
@@ -526,8 +529,16 @@ you should place your code here."
   (add-hook 'sh-mode-hook #'format-all-mode)
   (add-hook 'fish-mode-hook #'format-all-mode)
 
-  ;; Disable ycmd in arduino-mode, since it does not work.
-  (add-hook 'arduino-mode-hook (lambda () (ycmd-mode -1)))
+  ;; ccls
+  (require 'ccls)
+  (setq ccls-root-files (add-to-list 'ccls-root-files "build/compile_commands.json" t))
+  (setq ccls-sem-highlight-method 'font-lock)
+  (setq ccls-initialization-options
+        (list :cache '(:directory "build/.ccls-cache")
+              :compilationDatabaseDirectory "build"))
+  (setq ccls-executable (file-truename "~/.spacemacs.d/ccls/Release/ccls"))
+  (evil-define-key 'normal global-map (kbd ",k") (lambda () (interactive) (ccls-navigate "L")))
+  (evil-define-key 'normal global-map (kbd ",j") (lambda () (interactive) (ccls-navigate "R")))
 
   ;; Configure glow viewer
   (defun start-glow-viewer ()
@@ -536,6 +547,10 @@ you should place your code here."
                    "/usr/bin/x-terminal-emulator"
                    (file-truename "~/.spacemacs.d/scripts/glow_mk_viewer.sh")
                    (buffer-file-name nil)))
+
+  ;; Workaround for https://github.com/syl20bnr/spacemacs/issues/13100
+  (setq helm-completion-style 'emacs)
+  (setq completion-styles '(helm-flex))
 
   ;; Workaround for https://github.com/company-mode/company-mode/issues/383
   (evil-declare-change-repeat 'company-complete)
