@@ -38,6 +38,7 @@ values."
      ;; ----------------------------------------------------------------
      (ranger :variables
              ranger-show-preview t)
+     groovy
      neotree
      haskell
      (go :variables
