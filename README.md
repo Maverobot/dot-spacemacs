@@ -6,6 +6,8 @@
     - [Requirements](#requirements)
         - [Emacs26](#emacs26)
         - [Spacemacs](#spacemacs)
+        - [gcc-7](#gcc-7)
+        - [Fonts](#fonts)
     - [Installation](#installation)
     - [Tips and tricks](#tips-and-tricks)
         - [CCLS](#ccls)
@@ -30,8 +32,8 @@ cd ~/.emacs.d
 git checkout develop
 ```
 
-### GCC-7
-GCC-7 is need to compile `ccls`. Run the following in the terminal:
+### gcc-7
+gcc-7 is need to compile `ccls`. Run the following in the terminal:
 
 Install the gcc-7 packages:
 
@@ -47,6 +49,9 @@ Set it up so the symbolic links `gcc`, `g++` point to the newer version:
     sudo update-alternatives --config gcc
     gcc --version
     g++ --version
+
+### Fonts
+In `emacs`, run `M-x all-the-icons-install-fonts`.
 
 
 ## Installation
