@@ -29,6 +29,26 @@ git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
 cd ~/.emacs.d
 git checkout develop
 ```
+
+### GCC-7
+GCC-7 is need to compile `ccls`. Run the following in the terminal:
+
+Install the gcc-7 packages:
+
+    sudo apt-get install -y software-properties-common
+    sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+    sudo apt update
+    sudo apt install g++-7 -y
+
+Set it up so the symbolic links `gcc`, `g++` point to the newer version:
+
+    sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 \
+                             --slave /usr/bin/g++ g++ /usr/bin/g++-7
+    sudo update-alternatives --config gcc
+    gcc --version
+    g++ --version
+
+
 ## Installation
 To use this config file:
 ```
