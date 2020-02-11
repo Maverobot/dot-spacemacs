@@ -526,7 +526,6 @@ you should place your code here."
 
   ;; Enable format-all minor mode
   (add-hook 'python-mode-hook #'yapf-mode)
-  (add-hook 'cmake-mode-hook #'format-all-mode)
   (add-hook 'sh-mode-hook #'format-all-mode)
   (add-hook 'fish-mode-hook #'format-all-mode)
 
