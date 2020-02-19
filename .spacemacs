@@ -534,8 +534,6 @@ you should place your code here."
         (list :cache (list :directory (concat (file-name-as-directory spacemacs-cache-directory) ".ccls-cache") )
               :compilationDatabaseDirectory "build"))
   (setq ccls-executable (file-truename "~/.spacemacs.d/ccls/Release/ccls"))
-  (evil-define-key 'normal global-map (kbd ",k") (lambda () (interactive) (ccls-navigate "L")))
-  (evil-define-key 'normal global-map (kbd ",j") (lambda () (interactive) (ccls-navigate "R")))
 
   ;; Configure glow viewer
   (defun start-glow-viewer ()
