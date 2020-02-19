@@ -429,11 +429,8 @@ you should place your code here."
     (define-key company-active-map (kbd "C-j") 'company-select-next)
     (define-key company-active-map (kbd "C-k") 'company-select-previous))
   (with-eval-after-load 'company
-    (add-hook 'company-mode-hook 'company-bindings)
     (add-hook 'c++-mode-hook 'company-mode)
     (add-hook 'c-mode-hook 'company-mode))
-  (defun company-bindings ()
-    (define-key company-mode-map [tab] 'company-complete))
 
   ;; Kill all buffers
   (defun nuke-all-buffers ()
