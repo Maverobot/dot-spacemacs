@@ -553,8 +553,8 @@ you should place your code here."
         scroll-conservatively 100000)
 
   ;; Workaround for https://github.com/syl20bnr/spacemacs/issues/13100
-  (setq helm-completion-style 'emacs)
-  (setq completion-styles '(helm-flex))
+  (setq completion-styles `(basic partial-completion emacs22 initials
+                                  ,(if (version<= emacs-version "27.0") 'helm-flex 'flex)))
 
   ;; Workaround for https://github.com/company-mode/company-mode/issues/383
   (evil-declare-change-repeat 'company-complete)
