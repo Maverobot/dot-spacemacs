@@ -552,6 +552,15 @@ you should place your code here."
         scroll-margin 0
         scroll-conservatively 100000)
 
+  (with-eval-after-load 'org
+    (require 'ob-python)
+    (require 'ob-C)
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((C . t)
+       (python . t)
+       (shell . t))))
+
   ;; Workaround for https://github.com/syl20bnr/spacemacs/issues/13100
   (setq completion-styles `(basic partial-completion emacs22 initials
                                   ,(if (version<= emacs-version "27.0") 'helm-flex 'flex)))
