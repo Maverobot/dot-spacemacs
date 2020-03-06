@@ -47,6 +47,7 @@ values."
      neotree
      haskell
      (go :variables
+         go-backend 'lsp
          go-tab-width 4
          go-format-before-save t
          gofmt-command "goimports")
