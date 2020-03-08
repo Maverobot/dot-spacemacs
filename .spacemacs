@@ -105,6 +105,9 @@ values."
             shell-default-position 'bottom)
      version-control
      (cmake :variables cmake-enable-cmake-ide-support nil)
+     (spell-checking :variables
+                     spell-checking-enable-by-default nil
+                     spell-checking-enable-auto-dictionary t)
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
