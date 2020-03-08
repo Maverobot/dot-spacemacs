@@ -31,34 +31,32 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
-     pdf
+     ;; Programming languages
      octave
-     html
-     (rust :variables
-           rust-format-on-save t)
-     ;; ----------------------------------------------------------------
-     ;; Example of useful layers you may want to use right away.
-     ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
-     ;; <M-m f e R> (Emacs style) to install them.
-     ;; ----------------------------------------------------------------
-     (ranger :variables
-             ranger-show-preview t)
      groovy
-     neotree
      haskell
+     emacs-lisp
+     shell-scripts
      (go :variables
          go-backend 'lsp
          go-tab-width 4
          go-format-before-save t
          gofmt-command "goimports")
-     systemd
-     shell-scripts
-     yaml
+     (rust :variables
+           rust-format-on-save t)
      (python :variables
              python-sort-imports-on-save t
              python-enable-yapf-format-on-save t)
-     helm
-     git
+     (c-c++ :variables
+            c-c++-backend 'lsp-ccls
+            c-c++-adopt-subprojects t
+            c-c++-lsp-enable-semantic-highlight t
+            c-c++-enable-clang-format-on-save t
+            c-c++-default-mode-for-headers 'c++-mode)
+     (cmake :variables cmake-enable-cmake-ide-support nil)
+
+     ;; Autocompletion and language server
+     syntax-checking
      (auto-completion :variables
                       auto-completion-return-key-behavior 'complete
                       auto-completion-tab-key-behavior 'complete
@@ -82,15 +80,12 @@ values."
           lsp-ui-sideline-enable nil
           lsp-ui-sideline-ignore-duplicate t
           lsp-ui-sideline-show-code-actions t)
-     (c-c++ :variables
-            c-c++-backend 'lsp-ccls
-            c-c++-adopt-subprojects t
-            c-c++-lsp-enable-semantic-highlight t
-            c-c++-enable-clang-format-on-save t
-            c-c++-default-mode-for-headers 'c++-mode)
-     syntax-checking
-     emacs-lisp
+
+     ;; File types
      markdown
+     yaml
+     pdf
+     html
      (org :variables
           org-want-todo-bindings t
           org-hide-leading-stars nil
@@ -99,12 +94,19 @@ values."
           org-level-color-stars-only t
           org-enable-github-support t
           org-enable-reveal-js-support t)
+
+     ;; Utils
+     helm
+     git
+     neotree
+     systemd
+     version-control
      search-engine
+     (ranger :variables
+             ranger-show-preview t)
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom)
-     version-control
-     (cmake :variables cmake-enable-cmake-ide-support nil)
      (spell-checking :variables
                      spell-checking-enable-by-default nil
                      spell-checking-enable-auto-dictionary t)
