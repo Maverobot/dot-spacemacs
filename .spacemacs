@@ -512,6 +512,7 @@ you should place your code here."
   (define-key ranger-mode-map (kbd "M-h") 'ranger-prev-tab)
   (define-key ranger-mode-map (kbd "M-l") 'ranger-next-tab)
   (define-key ranger-mode-map (kbd "M-n") 'ranger-new-tab)
+  (spacemacs/set-leader-keys "ar" 'ranger)
 
   ;; Semantic mode
   (semantic-mode t)
