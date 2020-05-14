@@ -96,6 +96,7 @@ values."
           org-enable-reveal-js-support t)
 
      ;; Utils
+     dap
      helm
      git
      neotree
@@ -120,6 +121,7 @@ values."
                                       doom-themes
                                       format-all
                                       xclip
+                                      posframe
                                       arduino-mode
                                       exec-path-from-shell
                                       org-make-toc)
@@ -546,6 +548,12 @@ you should place your code here."
         (list :cache (list :directory (concat (file-name-as-directory spacemacs-cache-directory) ".ccls-cache") )
               :compilationDatabaseDirectory "build"))
   (setq ccls-executable (file-truename "~/.spacemacs.d/ccls/Release/ccls"))
+
+  ;; debug
+  (add-hook 'dap-stopped-hook
+            (lambda (arg) (call-interactively #'dap-hydra)))
+  (add-hook 'dap-stopped-hook
+            (lambda (arg) (call-interactively #'dap-hydra)))
 
   ;; Configure glow viewer
   (defun start-glow-viewer ()
