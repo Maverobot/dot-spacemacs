@@ -550,6 +550,7 @@ you should place your code here."
   (add-hook 'python-mode-hook #'yapf-mode)
   (add-hook 'sh-mode-hook #'format-all-mode)
   (add-hook 'fish-mode-hook #'format-all-mode)
+  (add-hook 'cmake-mode-hook #'format-all-mode)
 
   ;; ccls
   (require 'ccls)
