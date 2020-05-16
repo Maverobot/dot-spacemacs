@@ -31,6 +31,12 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     ;; Web
+     (html :variables web-fmt-tool 'prettier)
+     (javascript :variables
+                 javascript-backend 'lsp
+                 javascript-fmt-tool 'prettier
+                 javascript-fmt-on-save t)
      ;; Programming languages
      octave
      groovy
@@ -371,6 +377,9 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
+
+  (setq-default js2-basic-offset 2
+                js-indent-level 2)
 
   (setq shell-file-name "/bin/bash")
   (setq-default dotspacemacs-themes '(doom-one)
