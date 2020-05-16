@@ -424,7 +424,7 @@ you should place your code here."
   (spacemacs/set-leader-keys "ag" 'engine/search-google)
   (setq browse-url-browser-function 'browse-url-generic
         engine/browser-function 'browse-url-generic
-        browse-url-generic-program "firefox")
+        browse-url-generic-program "xdg-open")
 
   ;; Org-mode
   (setq org-agenda-files (list "~/org/work.org"
