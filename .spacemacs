@@ -51,6 +51,8 @@ values."
      (rust :variables
            rust-format-on-save t)
      (python :variables
+             python-backend 'lsp
+             python-lsp-server 'pyls
              python-sort-imports-on-save t
              python-enable-yapf-format-on-save t)
      (c-c++ :variables
