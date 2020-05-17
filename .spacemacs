@@ -37,6 +37,7 @@ values."
                  javascript-backend 'lsp
                  javascript-fmt-tool 'prettier
                  javascript-fmt-on-save t)
+     typescript
      ;; Programming languages
      octave
      groovy
