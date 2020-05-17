@@ -383,6 +383,9 @@ before packages are loaded. If you are unsure, you should try in setting them in
 
   (setq-default js2-basic-offset 2
                 js-indent-level 2)
+  (setq prettier-js-args '(
+                           "--single-quote"
+                           ))
 
   (setq shell-file-name "/bin/bash")
   (setq-default dotspacemacs-themes '(doom-one)
