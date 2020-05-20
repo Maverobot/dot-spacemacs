@@ -444,7 +444,8 @@ you should place your code here."
         browse-url-generic-program "xdg-open")
 
   ;; Org-mode
-  (setq org-agenda-files (list "~/org/work.org"
+  (setq org-agenda-files (list "~/org/notes.org"
+                               "~/org/work.org"
                                "~/org/home.org"))
 
   ;; reveal.js
