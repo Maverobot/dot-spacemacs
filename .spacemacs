@@ -104,6 +104,7 @@ values."
           org-hide-macro-markers t
           org-level-color-stars-only t
           org-enable-github-support t
+          org-enable-hugo-support t
           org-enable-reveal-js-support t)
 
      ;; Utils
