@@ -612,6 +612,12 @@ you should place your code here."
        (python . t)
        (shell . t))))
 
+  ;; Workaround to allow setting part of a word to be bold, italics, underline, and strikethrough
+  ;; The visualization in org-mode can be wrong, which needs a fix.
+  (setcar org-emphasis-regexp-components " \t('\"{[:alpha:]")
+  (setcar (nthcdr 1 org-emphasis-regexp-components) "[:alpha:]- \t.,:!?;'\")}\\")
+  (org-set-emph-re 'org-emphasis-regexp-components org-emphasis-regexp-components)
+
   ;; Workaround for https://github.com/syl20bnr/spacemacs/issues/13100
   (setq completion-styles `(basic partial-completion emacs22 initials
                                   ,(if (version<= emacs-version "27.0") 'helm-flex 'flex)))
