@@ -98,6 +98,7 @@ values."
      pdf
      html
      (org :variables
+          org-startup-indented t
           org-want-todo-bindings t
           org-hide-leading-stars nil
           org-hide-emphasis-markers t
