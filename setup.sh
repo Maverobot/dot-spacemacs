@@ -5,7 +5,7 @@ sudo apt install xclip build-essential cmake python3-dev python3-pip silversearc
 
 sudo snap install --channel=edge shellcheck
 
-pip install --user yapf
+pip3 install --user yapf
 
 sudo snap install shfmt
 
