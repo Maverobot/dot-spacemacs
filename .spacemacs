@@ -39,6 +39,7 @@ values."
                  javascript-fmt-on-save t)
      typescript
      ;; Programming languages
+     (docker :variables docker-dockerfile-backend 'lsp)
      octave
      groovy
      haskell
