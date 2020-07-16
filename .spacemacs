@@ -614,6 +614,22 @@ you should place your code here."
        (python . t)
        (shell . t))))
 
+  ;; Docker keybindings
+  (require 'docker-tramp)
+  (spacemacs/declare-prefix-for-mode 'dockerfile-mode "mi" "image")
+  (spacemacs/declare-prefix-for-mode 'dockerfile-mode "mc" "container")
+  (spacemacs/set-leader-keys-for-major-mode 'dockerfile-mode "il" 'docker-images)
+  (spacemacs/set-leader-keys-for-major-mode 'dockerfile-mode "id" 'docker-rmi)
+  (spacemacs/set-leader-keys-for-major-mode 'dockerfile-mode "if" 'docker-pull)
+  (spacemacs/set-leader-keys-for-major-mode 'dockerfile-mode "ip" 'docker-push)
+  (spacemacs/set-leader-keys-for-major-mode 'dockerfile-mode "cl" 'docker-containers)
+  (spacemacs/set-leader-keys-for-major-mode 'dockerfile-mode "cc" 'docker-unpause)
+  (spacemacs/set-leader-keys-for-major-mode 'dockerfile-mode "cd" 'docker-rm)
+  (spacemacs/set-leader-keys-for-major-mode 'dockerfile-mode "cb" 'docker-stop)
+  (spacemacs/set-leader-keys-for-major-mode 'dockerfile-mode "cp" 'docker-pause)
+  (spacemacs/set-leader-keys-for-major-mode 'dockerfile-mode "cr" 'docker-restart)
+  (spacemacs/set-leader-keys-for-major-mode 'dockerfile-mode "cs" 'docker-start)
+
   ;; Workaround to allow setting part of a word to be bold, italics, underline, and strikethrough
   ;; The visualization in org-mode can be wrong, which needs a fix.
   (setcar org-emphasis-regexp-components " \t('\"{[:alpha:]")
