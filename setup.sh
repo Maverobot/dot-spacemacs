@@ -23,4 +23,7 @@ gometalinter --install --update
 
 git submodule update --init --recursive
 
+# Install fonts
+curl -L https://github.com/hbin/top-programming-fonts/raw/master/install.sh | bash
+
 ./build_ccls.sh
