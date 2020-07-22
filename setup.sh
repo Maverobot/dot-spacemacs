@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
-sudo apt install xclip build-essential cmake python3-dev python3-pip silversearcher-ag libz-dev libtinfo-dev
+sudo apt install xclip build-essential cmake python3-dev python3-pip silversearcher-ag libz-dev libtinfo-dev notmuch
 
 sudo snap install --channel=edge shellcheck
 
-pip3 install --user yapf
+pip3 install --user yapf rfc6555 offlineimap
 
 sudo snap install shfmt
 
