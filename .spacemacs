@@ -105,6 +105,7 @@ values."
           org-hide-emphasis-markers t
           org-hide-macro-markers t
           org-level-color-stars-only t
+          org-enable-org-journal-support t
           org-enable-github-support t
           org-enable-hugo-support t
           org-enable-reveal-js-support t)
@@ -451,9 +452,24 @@ you should place your code here."
         browse-url-generic-program "xdg-open")
 
   ;; Org-mode
-  (setq org-agenda-files (list "~/org/notes.org"
-                               "~/org/work.org"
+  (setq org-agenda-files (list "~/org/work.org"
                                "~/org/home.org"))
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "|" "DONE(d)")
+          (sequence "REPORT(r)" "BUG(b)" "KNOWNCAUSE(k)" "|" "FIXED(f)")
+          (sequence "|" "CANCELED(c)")))
+  (setq org-capture-templates
+        '(("h" "Home" entry (file+headline "~/org/home.org" "Tasks")
+           "* TODO %?\n  %U\n  %i\n  %a")
+          ("w" "Work" entry (file+headline "~/org/work.org" "Tasks")
+           "* TODO %?\n  %U\n  %i\n  %a")))
+  (setq org-journal-dir "~/org/journal/")
+  (setq org-journal-file-type 'monthly)
+  (require 'org-agenda)
+  (spacemacs/set-leader-keys-for-major-mode 'org-mode "=" 'editorconfig-format-buffer)
+  (define-key org-mode-map (kbd "C-<tab>") 'org-table-previous-field)
+  (define-key org-agenda-mode-map "m" 'org-agenda-month-view)
+  (define-key org-agenda-mode-map "y" 'org-agenda-year-view)
 
   ;; reveal.js
   (setq org-reveal-root (file-truename "~/.spacemacs.d/reveal.js"))
@@ -554,11 +570,6 @@ you should place your code here."
 
   ;; Semantic mode
   (semantic-mode t)
-
-  ;; Org mode
-  (require 'org)
-  (spacemacs/set-leader-keys-for-major-mode 'org-mode "=" 'editorconfig-format-buffer)
-  (define-key org-mode-map (kbd "C-<tab>") 'org-table-previous-field)
 
   ;; Enable doom-modeline-icons in gui and disable them in terminal
   (defun enable-doom-modeline-icons()
