@@ -74,6 +74,7 @@ values."
                       auto-completion-complete-with-key-sequence-delay 0.1
                       auto-completion-enable-snippets-in-popup t
                       auto-completion-enable-help-tooltip t
+                      auto-completion-enable-sort-by-usage t
                       auto-completion-private-snippets-directory "~/.spacemacs.d/snippets")
      (lsp :variables
           lsp-enable-symbol-highlighting nil
@@ -222,7 +223,7 @@ values."
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
    dotspacemacs-default-font '("Monaco"
-                               :size 13
+                               :size 15
                                :weight normal
                                :width normal
                                :powerline-scale 1.3)
@@ -384,298 +385,29 @@ values."
    ))
 
 (defun dotspacemacs/user-init ()
-  "Initialization function for user code.
-It is called immediately after `dotspacemacs/init', before layer configuration
-executes.
- This function is mostly useful for variables that need to be set
-before packages are loaded. If you are unsure, you should try in setting them in
-`dotspacemacs/user-config' first."
-
-  (defun setup-indent (n)
-    ;; web development
-    (setq coffee-tab-width n) ; coffeescript
-    (setq javascript-indent-level n) ; javascript-mode
-    (setq js-indent-level n) ; js-mode
-    (setq js2-basic-offset n) ; js2-mode, in latest js2-mode, it's alias of js-indent-level
-    (setq web-mode-markup-indent-offset n) ; web-mode, html tag in html file
-    (setq web-mode-css-indent-offset n) ; web-mode, css in html file
-    (setq web-mode-code-indent-offset n) ; web-mode, js code in html file
-    (setq css-indent-offset n) ; css-mode
-    )
-  (setup-indent 2)
-
-  (setq prettier-js-args '(
-                           "--single-quote"
-                           ))
-
-  (setq shell-file-name "/bin/bash")
-  (setq-default dotspacemacs-themes '(doom-one)
-                ;; Ignore any ROS environment variables since they might change depending
-                ;; on which catkin workspace is used. When a new catkin workspace is chosen
-                ;; call `spacemacs/update-ros-envs' to update theses envs accordingly
-                spacemacs-ignored-environment-variables '("ROS_IP"
-                                                          "PYTHONPATH"
-                                                          "CMAKE_PREFIX_PATH"
-                                                          "ROS_MASTER_URI"
-                                                          "ROS_PACKAGE_PATH"
-                                                          "ROSLISP_PACKAGE_DIRECTORIES"
-                                                          "PKG_CONFIG_PATH"
-                                                          "LD_LIBRARY_PATH")))
-
-(defun spacemacs/update-ros-envs ()
-  "Update all environment variables in `spacemacs-ignored-environment-variables'
-from their values currently sourced in the shell environment (e.g. .bashrc)"
-  (interactive)
-  (setq exec-path-from-shell-check-startup-files nil)
-  (exec-path-from-shell-copy-envs spacemacs-ignored-environment-variables)
-  (message "ROS environment copied successfully from shell"))
+  "Initialization for user code:
+This function is called immediately after `dotspacemacs/init', before layer
+configuration.
+It is mostly for variables that should be set before packages are loaded.
+If you are unsure, try setting them in `dotspacemacs/user-config' first."
+  ;; tangle without actually loading org
+  (let ((src (concat dotspacemacs-directory "spacemacs.org"))
+        (ui (concat dotspacemacs-directory "user-init.el"))
+        (uc (concat dotspacemacs-directory "user-config.el")))
+    (when (or (file-newer-than-file-p src ui)
+              (file-newer-than-file-p src uc))
+      (call-process
+       (concat invocation-directory invocation-name)
+       nil nil t
+       "-q" "--batch" "--eval" "(require 'ob-tangle)"
+       "--eval" (format "(org-babel-tangle-file \"%s\")" src)))
+    (load-file ui)))
 
 (defun dotspacemacs/user-config ()
-  "Configuration function for user code.
-This function is called at the very end of Spacemacs initialization after
-layers configuration.
-This is the place where most of your configurations should be done. Unless it is
-explicitly specified that a variable should be set before a package is loaded,
-you should place your code here."
-
-  ;; Transparency settings
-  (spacemacs/set-leader-keys "tt" 'spacemacs/toggle-transparency)
-  (add-hook 'after-make-frame-functions 'spacemacs/enable-transparency)
-
-  ;; Default toggle setting
-  (spacemacs/toggle-indent-guide-globally-on)
-
-  ;; Set google as default search engine
-  (spacemacs/set-leader-keys "ag" 'engine/search-google)
-  (setq browse-url-browser-function 'browse-url-generic
-        engine/browser-function 'browse-url-generic
-        browse-url-generic-program "xdg-open")
-
-  ;; Org-mode
-  (setq org-agenda-files (list "~/org/work.org"
-                               "~/org/home.org"))
-  (setq org-todo-keywords
-        '((sequence "TODO(t)" "|" "DONE(d)")
-          (sequence "REPORT(r)" "BUG(b)" "KNOWNCAUSE(k)" "|" "FIXED(f)")
-          (sequence "|" "CANCELED(c)")))
-  (setq org-capture-templates
-        '(("h" "Home" entry (file+headline "~/org/home.org" "Tasks")
-           "* TODO %?\n  %U\n  %i\n  %a")
-          ("w" "Work" entry (file+headline "~/org/work.org" "Tasks")
-           "* TODO %?\n  %U\n  %i\n  %a")))
-  (setq org-journal-dir "~/org/journal/")
-  (setq org-journal-file-type 'monthly)
-  (require 'org-agenda)
-  (spacemacs/set-leader-keys-for-major-mode 'org-mode "=" 'editorconfig-format-buffer)
-  (define-key org-mode-map (kbd "C-<tab>") 'org-table-previous-field)
-  (define-key org-agenda-mode-map "m" 'org-agenda-month-view)
-  (define-key org-agenda-mode-map "y" 'org-agenda-year-view)
-
-  ;; reveal.js
-  (setq org-reveal-root (file-truename "~/.spacemacs.d/reveal.js"))
-
-  ;; C++ build dir setting
-  (put 'cmake-ide-dir 'safe-local-variable 'stringp)
-  (put 'cmake-ide-make-command 'safe-local-variable 'stringp)
-  (put 'cmake-ide-cmake-args 'safe-local-variable 'stringp)
-
-  ;; Python interpreter
-  (setq python-shell-interpreter "/usr/bin/python3")
-
-  ;; Autocompletion configuration
-  (use-package company
-    :ensure t
-    :config
-    (setq company-idle-delay 0)
-    (setq company-minimum-prefix-length 2))
-  (with-eval-after-load 'company
-    (define-key company-active-map (kbd "M-n") nil)
-    (define-key company-active-map (kbd "M-p") nil)
-    (define-key company-active-map (kbd "C-j") 'company-select-next)
-    (define-key company-active-map (kbd "C-k") 'company-select-previous))
-  (with-eval-after-load 'company
-    (add-hook 'c++-mode-hook 'company-mode)
-    (add-hook 'c-mode-hook 'company-mode))
-
-  ;; Kill all buffers
-  (defun nuke-all-buffers ()
-    (interactive)
-    (mapcar 'kill-buffer (buffer-list))
-    (delete-other-windows))
-  (global-set-key (kbd "C-x K") 'nuke-all-buffers)
-
-  ;; Make w key in vim mode move to end of the word (not stopped by _)
-  (with-eval-after-load 'evil
-    (defalias #'forward-evil-word #'forward-evil-symbol))
-
-  ;; Only kill frame when using SPC+q+q
-  (spacemacs/set-leader-keys "qq" 'spacemacs/frame-killer)
-
-  ;; ROS shortcut
-  (spacemacs/set-leader-keys "ye" 'spacemacs/update-ros-envs)
-  (spacemacs/declare-prefix "y" "ROS")
-  (spacemacs/set-leader-keys "yy" 'helm-ros)
-
-  (spacemacs/declare-prefix "yt" "ROS topics")
-  (spacemacs/set-leader-keys "ytt" 'helm-ros-topics)
-  (spacemacs/set-leader-keys "ytz" 'helm-ros-rostopic-hz)
-  (spacemacs/set-leader-keys "yti" 'helm-ros-rostopic-info)
-
-  (spacemacs/declare-prefix "yn" "ROS nodes")
-  (spacemacs/set-leader-keys "yni" 'helm-ros-rosnode-info)
-  (spacemacs/set-leader-keys "ynn" 'helm-ros-rosnode-list)
-  (spacemacs/set-leader-keys "ynd" 'helm-ros-kill-node)
-  (spacemacs/set-leader-keys "ynr" 'helm-ros-run-node)
-
-  (spacemacs/set-leader-keys "ym" 'helm-ros-set-master-uri)
-
-  ;; Turn on xclip mode
-  (xclip-mode t)
-
-  (with-eval-after-load 'flycheck
-    (setq flycheck-check-syntax-automatically '(save
-                                                idle-buffer-switch
-                                                mode-enabled)))
-
-  ;; TODO: make the following repos emacs package which can be imported as additional package
-  ;; Personal roslaunch config
-  (load-file "~/.spacemacs.d/private/roslaunch-jump/roslaunch-jump.el")
-  (load-file "~/.spacemacs.d/private/company-roslaunch/company-roslaunch.el")
-  (load-file "~/.spacemacs.d/private/catkin-make/catkin-make.el")
-  (catkin-make-keybinding-setup)
-
-  ;; Other settings
-  (setq find-file-visit-truename t)
-  (setq helm-swoop-use-fuzzy-match t)
-  (setq helm-swoop-use-line-number-face t)
-
-  ;; C-a for increasing number, C-x for descreasing number
-  (evil-define-key 'normal global-map (kbd "C-a") 'evil-numbers/inc-at-pt)
-  (evil-define-key 'normal global-map (kbd "C-x") 'evil-numbers/dec-at-pt)
-  (evil-define-key 'normal global-map (kbd "-") 'evil-previous-line-first-non-blank)
-
-  ;; Zoom in / out
-  (define-key (current-global-map) (kbd "C-+") 'spacemacs/zoom-frm-in)
-  (define-key (current-global-map) (kbd "C--") 'spacemacs/zoom-frm-out)
-
-  ;; Use windows key as meta key to avoid conflicts with i3wm
-  (setq x-super-keysym 'meta)
-
-  ;; Ranger keybindings
-  (require 'ranger)
-  (define-key ranger-mode-map (kbd "M-h") 'ranger-prev-tab)
-  (define-key ranger-mode-map (kbd "M-l") 'ranger-next-tab)
-  (define-key ranger-mode-map (kbd "M-n") 'ranger-new-tab)
-  (spacemacs/set-leader-keys "ar" 'ranger)
-
-  ;; Semantic mode
-  (semantic-mode t)
-
-  ;; Enable doom-modeline-icons in gui and disable them in terminal
-  (defun enable-doom-modeline-icons()
-    (setq doom-modeline-icon (display-graphic-p)))
-  (defun enable-doom-modeline-icons-weird (_frame)
-    ;; TODO: Don't know why this "not" is needed...
-    (setq doom-modeline-icon (not (display-graphic-p))))
-  (add-hook 'focus-in-hook
-            #'enable-doom-modeline-icons)
-  (add-hook 'after-make-frame-functions
-            #'enable-doom-modeline-icons-weird)
-
-  ;; Enable format-all minor mode
-  (add-hook 'python-mode-hook #'yapf-mode)
-  (add-hook 'sh-mode-hook #'format-all-mode)
-  (add-hook 'fish-mode-hook #'format-all-mode)
-  (add-hook 'cmake-mode-hook #'format-all-mode)
-
-  ;; ccls
-  (require 'ccls)
-  (setq ccls-root-files (add-to-list 'ccls-root-files "build/compile_commands.json" t))
-  (setq ccls-sem-highlight-method 'font-lock)
-  (setq ccls-initialization-options
-        (list :cache (list :directory (concat (file-name-as-directory spacemacs-cache-directory) ".ccls-cache") )
-              :compilationDatabaseDirectory "build"))
-  (setq ccls-executable (file-truename "~/.spacemacs.d/ccls/Release/ccls"))
-
-  ;; debug
-  (add-hook 'dap-stopped-hook
-            (lambda (arg) (call-interactively #'dap-hydra)))
-  (add-hook 'dap-stopped-hook
-            (lambda (arg) (call-interactively #'dap-hydra)))
-
-  ;; Configure glow viewer
-  (defun start-glow-viewer ()
-    (interactive)
-    (start-process "glow-markdown-viewer" nil
-                   "/usr/bin/x-terminal-emulator"
-                   (file-truename "~/.spacemacs.d/scripts/glow_mk_viewer.sh")
-                   (buffer-file-name nil)))
-
-  ;; Mouse & Smooth Scroll
-  ;; Scroll one line at a time (less "jumpy" than defaults)
-  (when (display-graphic-p)
-    (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))
-          mouse-wheel-progressive-speed nil))
-  (setq scroll-step 1
-        scroll-margin 0
-        scroll-conservatively 100000)
-
-  (with-eval-after-load 'org
-    (require 'ob-python)
-    (require 'ob-C)
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '((C . t)
-       (python . t)
-       (shell . t))))
-
-  ;; Linux kernel development
-  (defun c-lineup-arglist-tabs-only (ignored)
-    "Line up argument lists by tabs, not spaces"
-    (let* ((anchor (c-langelem-pos c-syntactic-element))
-           (column (c-langelem-2nd-pos c-syntactic-element))
-           (offset (- (1+ column) anchor))
-           (steps (floor offset c-basic-offset)))
-      (* (max steps 1)
-         c-basic-offset)))
-
-  (add-hook 'c-mode-common-hook
-            (lambda ()
-              ;; Add kernel style
-              (c-add-style
-               "linux-tabs-only"
-               '("linux" (c-offsets-alist
-                          (arglist-cont-nonempty
-                           c-lineup-gcc-asm-reg
-                           c-lineup-arglist-tabs-only))))))
-  (add-hook 'c-mode-hook
-            (lambda ()
-              (let ((filename (buffer-file-name)))
-                ;; Enable kernel mode for the appropriate files
-                (when (and filename
-                           ;; TODO: avoid the harded coded path
-                           (string-match (expand-file-name "~/Dev/kernels")
-                                         filename))
-                  (setq indent-tabs-mode t)
-                  (setq show-trailing-whitespace t)
-                  (c-set-style "linux-tabs-only")))))
-
-  ;; Workaround to allow setting part of a word to be bold, italics, underline, and strikethrough
-  ;; The visualization in org-mode can be wrong, which needs a fix.
-  (setcar org-emphasis-regexp-components " \t('\"{[:alpha:]")
-  (setcar (nthcdr 1 org-emphasis-regexp-components) "[:alpha:]- \t.,:!?;'\")}\\")
-  (org-set-emph-re 'org-emphasis-regexp-components org-emphasis-regexp-components)
-
-  ;; Workaround for https://github.com/syl20bnr/spacemacs/issues/13100
-  (setq completion-styles `(basic partial-completion emacs22 initials
-                                  ,(if (version<= emacs-version "27.0") 'helm-flex 'flex)))
-
-  ;; Workaround for https://github.com/company-mode/company-mode/issues/383
-  (evil-declare-change-repeat 'company-complete)
-
-  ;; Workaround for https://github.com/syl20bnr/spacemacs/issues/10410
-  (defun kill-minibuffer ()
-    (interactive)
-    (when (windowp (active-minibuffer-window))
-      (evil-ex-search-exit)))
-  (add-hook 'mouse-leave-buffer-hook #'kill-minibuffer))
+  "Configuration for user code:
+This function is called at the very end of Spacemacs startup, after layer
+configuration.
+Put your configuration code here, except for variables that should be set
+before packages are loaded."
+  (let ((uc (concat dotspacemacs-directory "user-config.el")))
+    (load-file uc)))
