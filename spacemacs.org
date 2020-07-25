@@ -7,9 +7,17 @@
 * Introduction
 This is a org file where its code snippets will be read by ~spacemacs~ for ~user-init~ and ~user-config~. It is inspired by [[https://github.com/ralesi/spacemacs.org][spacemacs.org]].
 * user-init
-To add configuration options before Spacemacs loads, insert the following kind
-of src block in your spacemacs.org file
-** Indentation settting for web development
+All code snippets under this section will be added to ~dotspacemacs//user-init~
+function, which is
+#+begin_quote
+Initialization function for user code.
+
+It is called immediately after
+~dotspacemacs/init~, before layer configuration executes. This function is mostly
+useful for variables that need to be set before packages are loaded. If you are
+unsure, you should try in setting them in `dotspacemacs/user-config' first.
+#+end_quote
+** Indentation for web development
 #+BEGIN_SRC emacs-lisp :tangle user-init.el
   (defun setup-web-dev-indent (n)
     ;; web development
@@ -25,7 +33,7 @@ of src block in your spacemacs.org file
   (setq prettier-js-args '("--single-quote"))
   (setup-web-dev-indent 2)
 #+END_SRC
-** ROS config
+** ROS
 #+BEGIN_SRC emacs-lisp :tangle user-init.el
   (defun spacemacs/update-ros-envs ()
     "Update all environment variables in `spacemacs-ignored-environment-variables'
@@ -49,15 +57,19 @@ of src block in your spacemacs.org file
                                                           "LD_LIBRARY_PATH"))
 #+END_SRC
 ** Shell
-Set shell to be bash explicitly because my default shell ~fish~ does not work along with spacemacs.
+Set shell to be ~bash~ explicitly because my default shell ~fish~ does not work along with spacemacs.
 #+BEGIN_SRC emacs-lisp :tangle user-init.el
-  (setq shell-file-name "/bin/bash")
-#+END_SRC
-** Theme
-#+BEGIN_SRC emacs-lisp :tangle user-init.el
-  (setq-default dotspacemacs-themes '(doom-one))
+  (setq-default shell-file-name "/bin/bash")
 #+END_SRC
 * user-config
+All code snippets under this section will be added to ~dotspacemacs//user-config~
+function, which is
+#+begin_quote
+Configuration function for user code.
+
+This function is called at the very end of Spacemacs initialization after
+layers configuration. You are free to put any user code.
+#+end_quote
 ** IDE config
 *** ccls
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
