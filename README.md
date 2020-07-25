@@ -17,6 +17,8 @@
 
 This is the repository of a personal spacemacs config file. It contains a fully functioning c/c++ development environment with [ccls](https://github.com/MaskRay/ccls), which is a C/C++/ObjC language server supporting cross references, hierarchies, completion and semantic highlighting.
 
+The content of the configuration can be found in the [spacemacs.org](spacemacs.org "Spacemacs configuration in org file") file.
+
 ## Requirements
 ### Emacs26
 To install emacs26:
