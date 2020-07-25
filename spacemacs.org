@@ -4,9 +4,8 @@
 #+STARTUP: indent
 #+OPTIONS: toc:4 h:4
 #+PROPERTY: header-args:emacs-lisp :comments link
-
 * Introduction
-This is a org file where its code snippets will be read by ~spacemacs~ for ~user-init~ and ~user-config~.
+This is a org file where its code snippets will be read by ~spacemacs~ for ~user-init~ and ~user-config~. It is inspired by [[https://github.com/ralesi/spacemacs.org][spacemacs.org]].
 * user-init
 To add configuration options before Spacemacs loads, insert the following kind
 of src block in your spacemacs.org file
