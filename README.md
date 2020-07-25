@@ -61,8 +61,8 @@ To use this config file:
 ```
 git clone https://github.com/Maverobot/dot-spacemacs.git ~/.spacemacs.d
 
-# Backup your ~/.spacemacs file if it already exits.
-ln -s ~/.spacemacs.d/.spacemacs ~/.spacemacs -f
+# Backup your ~/.spacemacs file somewhere. The spacemacs will now use ~/.spacemacs.d/init.el automatically.
+mv ~/.spacemacs ~/.spacemacs.bk
 
 # Setup everything including ccls
 cd ~/.spacemacs.d
