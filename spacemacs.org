@@ -143,17 +143,20 @@ layers configuration. You are free to put any user code.
 #+END_SRC
 **** roslaunch-jump
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (load-file "~/.spacemacs.d/private/roslaunch-jump/roslaunch-jump.el")
+  (use-package roslaunch-jump
+    :load-path "~/.spacemacs.d/private/roslaunch-jump")
 #+END_SRC
 **** company-roslaunch
 Autocompletion config for launch files.
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (load-file "~/.spacemacs.d/private/company-roslaunch/company-roslaunch.el")
+  (use-package company-roslaunch
+    :load-path "~/.spacemacs.d/private/company-roslaunch")
 #+END_SRC
 **** catkin-make
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (load-file "~/.spacemacs.d/private/catkin-make/catkin-make.el")
-  (catkin-make-keybinding-setup)
+  (use-package catkin-make
+    :load-path "~/.spacemacs.d/private/catkin-make"
+    :config (catkin-make-keybinding-setup))
 #+END_SRC
 *** semantic-mode
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
