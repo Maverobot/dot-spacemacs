@@ -120,6 +120,10 @@ layers configuration. You are free to put any user code.
   (setq prettier-js-args '("--single-quote"))
   (setup-web-dev-indent 2)
 #+END_SRC
+*** Indentation for groovy(Jenkinsfile)
+#+BEGIN_SRC emacs-lisp :tangle user-init.el
+  (setq groovy-indent-offset 2)
+#+END_SRC
 *** ROS
 **** helm-ros
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
