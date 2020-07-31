@@ -285,8 +285,8 @@ E.g. when visiting a soft/hard link.
 ** org-mode
 *** org-agenda
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (setq org-agenda-files (list "~/org/work.org"
-                               "~/org/home.org"))
+  (setq org-agenda-files (list "~/org/work/tasks.org"
+                               "~/org/home/tasks.org"))
   (require 'org-agenda)
   (define-key org-agenda-mode-map "m" 'org-agenda-month-view)
   (define-key org-agenda-mode-map "y" 'org-agenda-year-view)
@@ -304,7 +304,7 @@ E.g. when visiting a soft/hard link.
 #+END_SRC
 *** org-journal
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (setq org-journal-dir "~/org/journal/")
+  (setq org-journal-dir "~/org/home/journal/")
   (setq org-journal-file-type 'monthly)
 #+END_SRC
 *** org-reveal
@@ -322,9 +322,9 @@ E.g. when visiting a soft/hard link.
           (sequence "REPORT(r)" "BUG(b)" "KNOWNCAUSE(k)" "|" "FIXED(f)")
           (sequence "|" "CANCELED(c)")))
   (setq org-capture-templates
-        '(("h" "Home" entry (file+headline "~/org/home.org" "Tasks")
+        '(("h" "Home" entry (file+headline "~/org/home/tasks.org" "Tasks")
            "* TODO %?\n  %U\n  %i\n  %a")
-          ("w" "Work" entry (file+headline "~/org/work.org" "Tasks")
+          ("w" "Work" entry (file+headline "~/org/work/tasks.org" "Tasks")
            "* TODO %?\n  %U\n  %i\n  %a")))
 #+END_SRC
 ** Utility
