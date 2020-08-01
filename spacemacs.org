@@ -394,12 +394,12 @@ E.g. when visiting a soft/hard link.
 #+END_SRC
 
 *** Setting part of a word to be bold, italics, underline, and strikethrough.
-
 The visualization in org-mode can be wrong, which needs a fix.
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (setcar org-emphasis-regexp-components " \t('\"{[:alpha:]")
-  (setcar (nthcdr 1 org-emphasis-regexp-components) "[:alpha:]- \t.,:!?;'\")}\\")
-  (org-set-emph-re 'org-emphasis-regexp-components org-emphasis-regexp-components)
+  ;; This commented out because it messed up with org highlight
+  ;; (setcar org-emphasis-regexp-components " \t('\"{[:alpha:]")
+  ;; (setcar (nthcdr 1 org-emphasis-regexp-components) "[:alpha:]- \t.,:!?;'\")}\\")
+  ;; (org-set-emph-re 'org-emphasis-regexp-components org-emphasis-regexp-components)
 #+END_SRC
 
 *** Enable doom-modeline-icons in gui and disable them in terminal
