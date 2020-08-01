@@ -308,6 +308,7 @@ E.g. when visiting a soft/hard link.
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (setq org-journal-dir "~/org/home/journal/")
   (setq org-journal-file-type 'monthly)
+  (setq org-journal-file-format "%Y%m%d.org")
 #+END_SRC
 *** org-reveal
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
