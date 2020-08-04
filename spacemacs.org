@@ -124,6 +124,10 @@ layers configuration. You are free to put any user code.
 #+BEGIN_SRC emacs-lisp :tangle user-init.el
   (setq groovy-indent-offset 2)
 #+END_SRC
+*** nvm
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+(nvm-use "v10.19.0")
+#+END_SRC
 *** ROS
 **** helm-ros
 #+BEGIN_SRC emacs-lisp :tangle user-config.el

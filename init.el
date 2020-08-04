@@ -144,6 +144,7 @@ values."
                                       posframe
                                       arduino-mode
                                       exec-path-from-shell
+                                      nvm
                                       org-make-toc)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
