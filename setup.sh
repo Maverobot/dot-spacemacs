@@ -30,6 +30,11 @@ curl -L https://github.com/hbin/top-programming-fonts/raw/master/install.sh | ba
 # Install ripgrep
 curl -LOs https://github.com/BurntSushi/ripgrep/releases/download/11.0.2/ripgrep_11.0.2_amd64.deb
 sudo dpkg -i ripgrep_11.0.2_amd64.deb
+
+# Install fd
+curl -LOs https://github.com/sharkdp/fd/releases/download/v8.1.1/fd_8.1.1_amd64.deb
+sudo dpkg -i fd_8.1.1_amd64.deb
+
 # Install nvm
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 . "${HOME}/.bashrc" && nvm install v10.19.0
