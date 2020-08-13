@@ -57,13 +57,13 @@ layers configuration. You are free to put any user code.
 ** IDE config
 *** ccls
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (require 'ccls)
-  (setq ccls-root-files (add-to-list 'ccls-root-files "build/compile_commands.json" t))
-  (setq ccls-sem-highlight-method 'font-lock)
-  (setq ccls-initialization-options
-        (list :cache (list :directory (concat (file-name-as-directory spacemacs-cache-directory) ".ccls-cache") )
-              :compilationDatabaseDirectory "build"))
-  (setq ccls-executable (file-truename "~/.spacemacs.d/ccls/Release/ccls"))
+  (with-eval-after-load 'ccls
+    (setq ccls-root-files (add-to-list 'ccls-root-files "build/compile_commands.json" t))
+    (setq ccls-sem-highlight-method 'font-lock)
+    (setq ccls-initialization-options
+          (list :cache (list :directory (concat (file-name-as-directory spacemacs-cache-directory) ".ccls-cache") )
+                :compilationDatabaseDirectory "build"))
+    (setq ccls-executable (file-truename "~/.spacemacs.d/ccls/Release/ccls")))
 #+END_SRC
 *** cmake-ide
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
@@ -262,7 +262,8 @@ The reason for this is that I mainly use emacs as a daemon and I don't want to c
 #+END_SRC
 *** Turn on xclip-mode
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (xclip-mode t)
+  (use-package xclip
+    :config (xclip-mode t))
 #+END_SRC
 *** Use windows key as meta key
 It is meant to avoid conflicts with i3wm, where I use ~alt~ as the meta key.
@@ -277,48 +278,52 @@ E.g. when visiting a soft/hard link.
 ** org-mode
 *** org-agenda
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (setq org-agenda-files (list "~/org/work/tasks.org"
-                               "~/org/home/tasks.org"))
-  (require 'org-agenda)
-  (define-key org-agenda-mode-map "m" 'org-agenda-month-view)
-  (define-key org-agenda-mode-map "y" 'org-agenda-year-view)
+  (with-eval-after-load 'org-agenda
+    (setq org-agenda-files (list "~/org/work/tasks.org"
+                                 "~/org/home/tasks.org"))
+    (define-key org-agenda-mode-map "m" 'org-agenda-month-view)
+    (define-key org-agenda-mode-map "y" 'org-agenda-year-view))
 #+END_SRC
 *** org-babel
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (with-eval-after-load 'org
-    (require 'ob-python)
-    (require 'ob-C)
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '((C . t)
-       (python . t)
-       (shell . t))))
+    (with-eval-after-load 'org-python
+      (with-eval-after-load 'org-C
+        (org-babel-do-load-languages
+         'org-babel-load-languages
+         '((C . t)
+           (python . t)
+           (shell . t))))))
 #+END_SRC
 *** org-journal
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (setq org-journal-dir "~/org/home/journal/")
-  (setq org-journal-file-type 'monthly)
-  (setq org-journal-file-format "%Y%m%d.org")
+  (with-eval-after-load 'org-journal
+    (setq org-journal-dir "~/org/home/journal/")
+    (setq org-journal-file-type 'monthly)
+    (setq org-journal-file-format "%Y%m%d.org"))
 #+END_SRC
 *** org-reveal
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (setq org-reveal-root (file-truename "~/.spacemacs.d/reveal.js"))
+  (with-eval-after-load 'org-reveal
+    (setq org-reveal-root (file-truename "~/.spacemacs.d/reveal.js")))
 #+END_SRC
 *** org-table
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (define-key org-mode-map (kbd "C-<tab>") 'org-table-previous-field)
+  (with-eval-after-load 'org-mode
+    (define-key org-mode-map (kbd "C-<tab>") 'org-table-previous-field))
 #+END_SRC
 *** org-todo
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (setq org-todo-keywords
-        '((sequence "TODO(t)" "|" "DONE(d)")
-          (sequence "REPORT(r)" "BUG(b)" "KNOWNCAUSE(k)" "|" "FIXED(f)")
-          (sequence "|" "CANCELED(c)")))
-  (setq org-capture-templates
-        '(("h" "Home" entry (file+headline "~/org/home/tasks.org" "Tasks")
-           "* TODO %?\n  %U\n  %i\n  %a")
-          ("w" "Work" entry (file+headline "~/org/work/tasks.org" "Tasks")
-           "* TODO %?\n  %U\n  %i\n  %a")))
+  (with-eval-after-load 'org
+    (setq org-todo-keywords
+          '((sequence "TODO(t)" "|" "DONE(d)")
+            (sequence "REPORT(r)" "BUG(b)" "KNOWNCAUSE(k)" "|" "FIXED(f)")
+            (sequence "|" "CANCELED(c)")))
+    (setq org-capture-templates
+          '(("h" "Home" entry (file+headline "~/org/home/tasks.org" "Tasks")
+             "* TODO %?\n  %U\n  %i\n  %a")
+            ("w" "Work" entry (file+headline "~/org/work/tasks.org" "Tasks")
+             "* TODO %?\n  %U\n  %i\n  %a"))))
   (spacemacs/set-leader-keys "aoh" (lambda () (interactive) (find-file "~/org/home/tasks.org")))
 #+END_SRC
 ** Utility
@@ -357,10 +362,10 @@ E.g. when visiting a soft/hard link.
 #+END_SRC
 *** ranger
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (require 'ranger)
-  (define-key ranger-mode-map (kbd "M-h") 'ranger-prev-tab)
-  (define-key ranger-mode-map (kbd "M-l") 'ranger-next-tab)
-  (define-key ranger-mode-map (kbd "M-n") 'ranger-new-tab)
+  (with-eval-after-load 'ranger
+    (define-key ranger-mode-map (kbd "M-h") 'ranger-prev-tab)
+    (define-key ranger-mode-map (kbd "M-l") 'ranger-next-tab)
+    (define-key ranger-mode-map (kbd "M-n") 'ranger-new-tab))
   (spacemacs/set-leader-keys "ar" 'ranger)
 #+END_SRC
 ** Workarounds
