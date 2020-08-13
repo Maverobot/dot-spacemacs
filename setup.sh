@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-sudo apt install xclip build-essential cmake python3-dev python3-pip silversearcher-ag libz-dev libtinfo-dev notmuch
+sudo apt install xclip build-essential cmake python3-dev python3-pip libz-dev libtinfo-dev notmuch
 
 sudo snap install --channel=edge shellcheck
 
@@ -25,6 +25,10 @@ git submodule update --init --recursive
 
 # Install fonts
 curl -L https://github.com/hbin/top-programming-fonts/raw/master/install.sh | bash
+
+# Install ripgrep
+curl -LOs https://github.com/BurntSushi/ripgrep/releases/download/11.0.2/ripgrep_11.0.2_amd64.deb
+sudo dpkg -i ripgrep_11.0.2_amd64.deb
 # Install nvm
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 . "${HOME}/.bashrc" && nvm install v10.19.0

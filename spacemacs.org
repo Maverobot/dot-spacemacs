@@ -195,6 +195,12 @@ Autocompletion config for launch files.
 #+END_SRC
 
 ** Miscellaneous
+*** ripgrep
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (custom-set-variables
+   '(helm-ag-base-command "rg --no-heading")
+   `(helm-ag-success-exit-status '(0 2)))
+#+END_SRC
 *** ~C-a~ for increasing number, ~C-x~ for descreasing number
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (evil-define-key 'normal global-map (kbd "C-a") 'evil-numbers/inc-at-pt)
