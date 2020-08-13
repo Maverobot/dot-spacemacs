@@ -5,7 +5,8 @@ sudo apt install xclip build-essential cmake python3-dev python3-pip libz-dev li
 
 sudo snap install --channel=edge shellcheck
 
-pip3 install --user yapf rfc6555 offlineimap
+pip3 install --user rfc6555 # Dependency of offlineimap
+pip3 install --user yapf offlineimap
 
 sudo snap install shfmt
 
