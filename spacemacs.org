@@ -375,6 +375,11 @@ E.g. when visiting a soft/hard link.
   (spacemacs/set-leader-keys "ar" 'ranger)
 #+END_SRC
 ** Workarounds
+*** Workaround to suppress a yas related [[https://github.com/syl20bnr/spacemacs/issues/12648][warning]]
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (defvaralias 'helm-c-yas-space-match-any-greedy 'helm-yas-space-match-any-greedy
+    "Temporary alias for Emacs27")
+#+END_SRC
 *** Workaround for the [[https://github.com/syl20bnr/spacemacs/issues/13100][bug]] where fuzzy matching is not used in recent files
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (setq completion-styles `(basic partial-completion emacs22 initials
