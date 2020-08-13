@@ -96,7 +96,9 @@ values."
           lsp-ui-sideline-show-code-actions t)
 
      ;; File types
-     markdown
+     (markdown :variables
+               markdown-command "marked"
+               markdown-live-preview-engine 'vmd)
      yaml
      pdf
      html

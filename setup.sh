@@ -25,5 +25,12 @@ git submodule update --init --recursive
 
 # Install fonts
 curl -L https://github.com/hbin/top-programming-fonts/raw/master/install.sh | bash
+# Install nvm
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
+. "${HOME}/.bashrc" && nvm install v10.19.0
+nvm use v10.19.0
+
+# marked
+npm install -g marked
 
 ./build_ccls.sh
