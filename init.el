@@ -67,6 +67,7 @@ values."
 
      ;; Autocompletion and language server
      syntax-checking
+     semantic
      (auto-completion :variables
                       auto-completion-return-key-behavior 'complete
                       auto-completion-tab-key-behavior 'complete

@@ -168,11 +168,6 @@ Autocompletion config for launch files.
     :load-path "~/.spacemacs.d/private/catkin-make"
     :config (catkin-make-keybinding-setup))
 #+END_SRC
-*** semantic-mode
-#+BEGIN_SRC emacs-lisp :tangle user-config.el
-  ;; Semantic mode
-  (semantic-mode t)
-#+END_SRC
 *** Style for linux kernel development
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   ;; Linux kernel development
