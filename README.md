@@ -20,12 +20,10 @@ This is the repository of a personal spacemacs config file. It contains a fully 
 The content of the configuration can be found in the [spacemacs.org](spacemacs.org "Spacemacs configuration in org file") file.
 
 ## Requirements
-### Emacs26
-To install emacs26:
+### Emacs27
+To install emacs27:
 ```
-sudo add-apt-repository ppa:kelleyk/emacs
-sudo apt-get update
-sudo apt install emacs26
+sudo snap install emacs --candidate --classic
 ```
 ### Spacemacs
 ```
