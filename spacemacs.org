@@ -74,20 +74,11 @@ layers configuration. You are free to put any user code.
 #+END_SRC
 *** company
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  ;; Autocompletion configuration
-  (use-package company
-    :ensure t
-    :config
-    (setq company-idle-delay 0)
-    (setq company-minimum-prefix-length 2))
   (with-eval-after-load 'company
     (define-key company-active-map (kbd "M-n") nil)
     (define-key company-active-map (kbd "M-p") nil)
     (define-key company-active-map (kbd "C-j") 'company-select-next)
     (define-key company-active-map (kbd "C-k") 'company-select-previous))
-  (with-eval-after-load 'company
-    (add-hook 'c++-mode-hook 'company-mode)
-    (add-hook 'c-mode-hook 'company-mode))
 #+END_SRC
 
 *** dap
