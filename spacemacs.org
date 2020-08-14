@@ -144,6 +144,7 @@ layers configuration. You are free to put any user code.
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   ;; TODO: load package lazily
   (use-package roslaunch-jump
+    :defer 1
     :load-path "~/.spacemacs.d/private/roslaunch-jump")
 #+END_SRC
 **** company-roslaunch
