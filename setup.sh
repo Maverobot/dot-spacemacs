@@ -7,6 +7,7 @@ sudo snap install --channel=edge shellcheck
 
 pip3 install --user rfc6555 # Dependency of offlineimap
 pip3 install --user yapf offlineimap
+pip3 install --user cmake-language-server cmake-format
 
 sudo snap install shfmt
 

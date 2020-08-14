@@ -63,7 +63,9 @@ values."
             c-c++-lsp-enable-semantic-highlight t
             c-c++-enable-clang-format-on-save t
             c-c++-default-mode-for-headers 'c++-mode)
-     (cmake :variables cmake-enable-cmake-ide-support nil)
+     (cmake :variables
+            cmake-enable-cmake-ide-support t
+            cmake-backend 'lsp)
 
      ;; Autocompletion and language server
      syntax-checking
