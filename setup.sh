@@ -44,4 +44,7 @@ nvm use v10.19.0
 # marked
 npm install -g marked
 
+# tldr
+npm install -g tldr
+
 ./build_ccls.sh
