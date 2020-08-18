@@ -333,6 +333,10 @@ E.g. when visiting a soft/hard link.
              "* TODO %?\n  %U\n  %i\n  %a"))))
   (spacemacs/set-leader-keys "aoh" (lambda () (interactive) (find-file "~/org/home/tasks.org")))
 #+END_SRC
+*** org-hugo
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (spacemacs/set-leader-keys-for-major-mode 'org-mode "Th" 'org-hugo-auto-export-mode)
+#+END_SRC
 ** Utility
 *** format-all
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
