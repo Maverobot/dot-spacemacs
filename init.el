@@ -36,6 +36,7 @@ values."
      (javascript :variables
                  javascript-backend 'lsp
                  javascript-fmt-tool 'prettier
+                 javascript-import-tool 'import-js
                  javascript-fmt-on-save t)
      typescript
      ;; Programming languages
