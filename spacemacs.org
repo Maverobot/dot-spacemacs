@@ -305,9 +305,19 @@ E.g. when visiting a soft/hard link.
 *** org-journal
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (with-eval-after-load 'org-journal
-    (setq org-journal-dir "~/org/home/journal/")
     (setq org-journal-file-type 'monthly)
     (setq org-journal-file-format "%Y%m%d.org"))
+
+  (spacemacs/set-leader-keys
+    "aojj" (lambda () (interactive)
+             (let ((org-journal-dir "~/org/home/journal/"))
+               (org-journal-new-entry nil))))
+  (spacemacs/set-leader-keys
+    "aojw" (lambda () (interactive)
+             (let ((org-journal-dir "~/org/work/journal/"))
+               (org-journal-new-entry nil))))
+  (spacemacs/declare-prefix "aojj" "journal-home")
+  (spacemacs/declare-prefix "aojw" "journal-work")
 #+END_SRC
 *** org-reveal
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
