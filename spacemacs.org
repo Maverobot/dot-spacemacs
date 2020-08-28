@@ -331,7 +331,11 @@ E.g. when visiting a soft/hard link.
              "* TODO %?\n  %U\n  %i\n  %a")
             ("w" "Work" entry (file+headline "~/org/work/tasks.org" "Tasks")
              "* TODO %?\n  %U\n  %i\n  %a"))))
-  (spacemacs/set-leader-keys "aoh" (lambda () (interactive) (find-file "~/org/home/tasks.org")))
+  (spacemacs/set-leader-keys
+    "aoh" (lambda () (interactive) (find-file "~/org/home/tasks.org"))
+    "aow" (lambda () (interactive) (find-file "~/org/work/tasks.org")))
+  (spacemacs/declare-prefix "aoh" "Home tasks")
+  (spacemacs/declare-prefix "aow" "Work tasks")
 #+END_SRC
 *** org-hugo
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
