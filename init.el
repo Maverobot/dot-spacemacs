@@ -38,7 +38,12 @@ values."
                  javascript-fmt-tool 'prettier
                  javascript-import-tool 'import-js
                  javascript-fmt-on-save t)
-     typescript
+     (typescript :variables
+                 typescript-backend 'lsp
+                 typescript-fmt-tool 'prettier
+                 typescript-import-tool 'import-js
+                 typescript-fmt-on-save t
+                 typescript-linter 'eslint)
      ;; Programming languages
      (docker :variables docker-dockerfile-backend 'lsp)
      octave
