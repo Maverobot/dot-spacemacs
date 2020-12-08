@@ -37,13 +37,17 @@ values."
                  javascript-backend 'lsp
                  javascript-fmt-tool 'prettier
                  javascript-import-tool 'import-js
-                 javascript-fmt-on-save t)
+                 javascript-fmt-on-save t
+                 ;; due to possible conflicts with flycheck (e.g. semicolon)
+                 js2-mode-show-strict-warnings nil
+                 prettier-js-args nil)
      (typescript :variables
                  typescript-backend 'lsp
                  typescript-fmt-tool 'prettier
                  typescript-import-tool 'import-js
                  typescript-fmt-on-save t
-                 typescript-linter 'eslint)
+                 typescript-linter 'eslint
+                 prettier-js-args nil)
      ;; Programming languages
      (docker :variables docker-dockerfile-backend 'lsp)
      octave
