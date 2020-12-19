@@ -80,7 +80,13 @@ layers configuration. You are free to put any user code.
     (define-key company-active-map (kbd "C-j") 'company-select-next)
     (define-key company-active-map (kbd "C-k") 'company-select-previous))
 #+END_SRC
-
+*** popup
+Use evil keybindings for selecting items in popup menus.
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (with-eval-after-load 'popup
+    (define-key popup-menu-keymap (kbd "C-j") 'popup-next)
+    (define-key popup-menu-keymap (kbd "C-k") 'popup-previous))
+#+END_SRC
 *** dap
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (add-hook 'dap-stopped-hook

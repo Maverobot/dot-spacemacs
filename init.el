@@ -144,7 +144,8 @@ values."
             shell-default-position 'bottom)
      (spell-checking :variables
                      spell-checking-enable-by-default nil
-                     spell-checking-enable-auto-dictionary t)
+                     spell-checking-enable-auto-dictionary t
+                     enable-flyspell-auto-completion t)
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
