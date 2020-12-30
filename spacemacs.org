@@ -114,7 +114,6 @@ Use evil keybindings for selecting items in popup menus.
     (setq web-mode-code-indent-offset n) ; web-mode, js code in html file
     (setq css-indent-offset n) ; css-mode
     )
-  (setq prettier-js-args '("--single-quote"))
   (setup-web-dev-indent 2)
 #+END_SRC
 *** Indentation for groovy(Jenkinsfile)
