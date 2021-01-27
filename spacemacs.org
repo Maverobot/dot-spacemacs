@@ -356,6 +356,12 @@ E.g. when visiting a soft/hard link.
   (spacemacs/set-leader-keys-for-major-mode 'org-mode "Th" 'org-hugo-auto-export-mode)
 #+END_SRC
 ** Utility
+*** auto-indent
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  ;; I want to disable pasting with formatting on C/C++ buffers
+  (add-to-list 'spacemacs-indent-sensitive-modes 'c-mode)
+  (add-to-list 'spacemacs-indent-sensitive-modes 'c++-mode)
+#+END_SRC
 *** format-all
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (add-hook 'python-mode-hook #'yapf-mode)
