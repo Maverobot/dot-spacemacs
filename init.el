@@ -47,7 +47,9 @@ values."
      ;; Programming languages
      (docker :variables docker-dockerfile-backend 'lsp)
      octave
-     groovy
+     (groovy :variables
+             groovy-backend 'lsp
+             groovy-lsp-jar-path "~/.spacemacs.d/groovy-language-server-all.jar")
      haskell
      emacs-lisp
      shell-scripts

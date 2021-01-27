@@ -48,3 +48,9 @@ npm install -g marked
 npm install -g tldr
 
 ./build_ccls.sh
+
+# groovy-langurage-server
+rm /tmp/groovy-language-server -rf && cd /tmp
+git clone https://github.com/prominic/groovy-language-server.git
+cd groovy-language-server && ./gradlew build
+cp -v build/libs/groovy-language-server-all.jar ~/.spacemacs.d/
