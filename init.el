@@ -198,7 +198,7 @@ It should only modify the values of Spacemacs settings."
    ;; to compile Emacs 27 from source following the instructions in file
    ;; EXPERIMENTAL.org at to root of the git repository.
    ;; (default nil)
-   dotspacemacs-enable-emacs-pdumper nil
+   dotspacemacs-enable-emacs-pdumper t
 
    ;; Name of executable file pointing to emacs 27+. This executable must be
    ;; in your PATH.
@@ -211,7 +211,7 @@ It should only modify the values of Spacemacs settings."
    ;; when invoking Emacs 27.1 executable on the command line, for instance:
    ;;   ./emacs --dump-file=$HOME/.emacs.d/.cache/dumps/spacemacs-27.1.pdmp
    ;; (default (format "spacemacs-%s.pdmp" emacs-version))
-   dotspacemacs-emacs-dumper-dump-file (format "spacemacs-%s.pdmp" emacs-version)
+   dotspacemacs-emacs-dumper-dump-file "spacemacs.pdmp"
 
    ;; If non-nil ELPA repositories are contacted via HTTPS whenever it's
    ;; possible. Set it to nil if you have no way to use HTTPS in your
@@ -647,3 +647,19 @@ Put your configuration code here, except for variables that should be set
 before packages are loaded."
   (let ((uc (concat dotspacemacs-directory "user-config.el")))
     (load-file uc)))
+
+(defun dotspacemacs/user-load ()
+  "Library to load while dumping.
+This function is called while dumping Spacemacs configuration. You can
+`require' or `load' the libraries of your choice that will be included
+in the dump."
+
+  (dotspacemacs/user-init)
+  (dotspacemacs/user-config)
+
+  (spacemacs/dump-modes '(c-c++-modes))
+  (spacemacs/dump-modes '(python-mode))
+  (spacemacs/dump-modes '(cmake-mode))
+  (spacemacs/dump-modes '(lsp-mode))
+  (spacemacs/dump-modes '(org-mode))
+  )
