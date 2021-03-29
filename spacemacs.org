@@ -339,7 +339,7 @@ E.g. when visiting a soft/hard link.
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (with-eval-after-load 'org
     (setq org-todo-keywords
-          '((sequence "TODO(t)" "|" "DONE(d)")
+          '((sequence "TODO(t)" "IN_PROGRESS" "UNDER_REVEW" "|" "DONE(d)")
             (sequence "REPORT(r)" "BUG(b)" "KNOWNCAUSE(k)" "|" "FIXED(f)")
             (sequence "|" "CANCELED(c)")))
     (setq org-capture-templates
