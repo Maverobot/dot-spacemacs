@@ -358,6 +358,24 @@ E.g. when visiting a soft/hard link.
   (spacemacs/set-leader-keys-for-major-mode 'org-mode "Th" 'org-hugo-auto-export-mode)
 #+END_SRC
 ** Utility
+*** Toggle clang-format on save
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (defun c-c++-toggle-clang-format-on-save ()
+    (interactive)
+    (cond
+     (c-c++-enable-clang-format-on-save
+      (message "[c-c++] disable clang-format on save")
+      (setq c-c++-enable-clang-format-on-save nil))
+     ((not c-c++-enable-clang-format-on-save)
+      (message "[c-c++] enable clang-format on save")
+      (setq c-c++-enable-clang-format-on-save t))
+     ))
+
+  (spacemacs/set-leader-keys-for-major-mode 'c-mode "Tf" 'c-c++-toggle-clang-format-on-save)
+  (spacemacs/set-leader-keys-for-major-mode 'c++-mode "Tf" 'c-c++-toggle-clang-format-on-save)
+  (spacemacs/declare-prefix-for-mode 'c-mode "Tf" "toggle-clang-format-on-save")
+  (spacemacs/declare-prefix-for-mode 'c++-mode "Tf" "toggle-clang-format-on-save")
+#+END_SRC
 *** auto-indent
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   ;; I want to disable pasting with formatting on C/C++ buffers
