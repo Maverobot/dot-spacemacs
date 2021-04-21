@@ -267,7 +267,8 @@ The reason for this is that I mainly use emacs as a daemon and I don't want to c
 #+END_SRC
 *** Theme
 #+BEGIN_SRC emacs-lisp :tangle user-init.el
-  (setq-default dotspacemacs-themes '(doom-one))
+  (setq-default dotspacemacs-themes '(doom-one
+                                      doom-monokai-spectrum))
 #+END_SRC
 *** Transparency settings
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
