@@ -203,6 +203,12 @@ Autocompletion config for launch files.
 #+END_SRC
 
 ** Miscellaneous
+*** cursor
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  ; Display Emacs cursor in terminal as it would be in GUI
+  (global-term-cursor-mode)
+#+END_SRC
+
 *** ripgrep
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (custom-set-variables

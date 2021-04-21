@@ -166,7 +166,8 @@ values."
                                       arduino-mode
                                       exec-path-from-shell
                                       nvm
-                                      org-make-toc)
+                                      org-make-toc
+                                      (term-cursor :location (recipe :fetcher github :repo "h0d/term-cursor.el" )))
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
