@@ -29,9 +29,6 @@ The content of the configuration can be found in the [spacemacs.org](spacemacs.o
 
 * `gcc` >= 7.5 is needed to compile `ccls`. See [here][gcc-installation] for installation guide.
 
-* In `emacs`, run `M-x all-the-icons-install-fonts` to install all necessary fonts.
-
-
 ## Configuration
 
 * Clone the repo
