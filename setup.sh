@@ -26,7 +26,12 @@ sudo dpkg -i fd_8.1.1_amd64.deb
 
 # Install nvm
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
-. "${HOME}/.bashrc" && nvm install v10.19.0
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+nvm install v10.19.0
 nvm use v10.19.0
 
 # marked
