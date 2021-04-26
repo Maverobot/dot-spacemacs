@@ -1,0 +1,40 @@
+language: ruby
+os: linux
+dist: bionic
+
+addons:
+  snaps:
+    - name:  emacs
+      confinement: classic
+  apt:
+      # Compiler
+      - gcc
+      - g++
+      # Python
+      - libpq-dev
+      - python3-dev
+      - python3-pip
+      - python3-wheel
+      - python3-venv
+      - python3-setuptools
+
+before_install:
+  ########################
+  # pip dependencies     #
+  ########################
+  - sudo python3 -m pip install wheel
+
+  ########################
+  # Setup Spacemacs      #
+  ########################
+  - git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d -b develop --depth 1
+
+
+install:
+  - export PATH="$PATH:/snap/bin"
+  - cp . ~/.spacemacs.d -r
+  - cd ~/.spacemacs.d && ./setup.sh
+
+script: skip
+
+after_success: skip
