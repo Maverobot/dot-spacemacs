@@ -332,11 +332,6 @@ E.g. when visiting a soft/hard link.
   (spacemacs/declare-prefix "aojj" "journal-home")
   (spacemacs/declare-prefix "aojw" "journal-work")
 #+END_SRC
-*** org-reveal
-#+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (with-eval-after-load 'org-reveal
-    (setq org-reveal-root (file-truename "~/.spacemacs.d/reveal.js")))
-#+END_SRC
 *** org-table
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (with-eval-after-load 'org-mode

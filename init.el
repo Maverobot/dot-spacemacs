@@ -129,6 +129,7 @@ This function should only modify configuration layer settings."
           org-enable-github-support t
           org-enable-hugo-support t
           org-enable-reveal-js-support t
+          org-re-reveal-root (concat "file://" (file-truename "~/.spacemacs.d/reveal.js"))
           org-format-latex-options '(:foreground default :background default :scale 3.0
                                                  :html-foreground "Black" :html-background "Transparent" :html-scale 3.0
                                                  :matchers ("begin" "$1" "$" "$$" "\\(" "\\[")))
