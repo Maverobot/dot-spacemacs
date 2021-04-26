@@ -24,8 +24,12 @@ go get -u -v github.com/golangci/golangci-lint
 
 git submodule update --init --recursive
 
+# Install fonts for doom themes
+emacs -u (id -un) --batch --eval '(all-the-icons-install-fonts t)'
+
 # Install fonts
 curl -L https://github.com/hbin/top-programming-fonts/raw/master/install.sh | bash
+
 
 # Install ripgrep
 curl -LOs https://github.com/BurntSushi/ripgrep/releases/download/11.0.2/ripgrep_11.0.2_amd64.deb
