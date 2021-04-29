@@ -17,7 +17,7 @@ The content of the configuration can be found in the [spacemacs.org](spacemacs.o
 
 * Emacs
   ```sh
-  sudo snap install emacs --candidate --classic
+  sudo snap install emacs --classic
   ```
 
 * Spacemacs
