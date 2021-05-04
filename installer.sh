@@ -80,9 +80,26 @@ function compile_ccls {
     )
 }
 
+###############################################################################
+#                        Update Spacemacs and Get ready                       #
+###############################################################################
+function update_spacemacs {
+    /snap/bin/emacs --batch -l ~/.emacs.d/init.el --eval="(configuration-layer/update-packages t)"
+}
+
+###############################################################################
+#                                Install fonts                                #
+###############################################################################
+function install_fonts {
+    /snap/bin/emacs -u $(id -un) --batch --eval '(all-the-icons-install-fonts t)'
+}
+
+
 echo "Note: if ~/.emacs.d or ~/.spacemacs.d already exists, it will be moved to ~/.emacs.d.${BACKUP_SUFFIX} or ~/.spacemacs.d.${BACKUP_SUFFIX} respectively."
 
-install_spacemacs
 install_dependencies
-compile_groovy_language_server
+install_spacemacs
 compile_ccls
+update_spacemacs
+install_fonts
+compile_groovy_language_server
