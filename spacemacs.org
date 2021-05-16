@@ -300,7 +300,7 @@ E.g. when visiting a soft/hard link.
 *** org-agenda
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (with-eval-after-load 'org-agenda
-    (setq org-agenda-files (directory-files-recursively "~/org/" "\.org$"))
+    (setq org-agenda-files (directory-files-recursively "~/org/" "\.org$" nil nil t))
     (define-key org-agenda-mode-map "m" 'org-agenda-month-view)
     (define-key org-agenda-mode-map "y" 'org-agenda-year-view))
 #+END_SRC
