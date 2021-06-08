@@ -126,6 +126,10 @@ This function should only modify configuration layer settings."
           org-hide-macro-markers t
           org-level-color-stars-only t
           org-enable-org-journal-support t
+          org-enable-org-roam-support t
+          org-enable-roam-server t
+          org-enable-roam-protocol t
+          org-roam-directory (file-truename "~/org/home/roam")
           org-enable-github-support t
           org-enable-hugo-support t
           org-enable-reveal-js-support t
