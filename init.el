@@ -147,6 +147,7 @@ This function should only modify configuration layer settings."
      systemd
      version-control
      search-engine
+     command-log
      (notmuch :variables
               notmuch-spacemacs-layout-name "@Notmuch"
               notmuch-spacemacs-layout-binding "n"
