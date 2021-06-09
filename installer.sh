@@ -100,6 +100,6 @@ echo "Note: if ~/.emacs.d or ~/.spacemacs.d already exists, it will be moved to 
 install_dependencies
 install_spacemacs
 compile_ccls
+compile_groovy_language_server
 update_spacemacs
 install_fonts
-compile_groovy_language_server
