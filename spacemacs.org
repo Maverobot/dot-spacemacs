@@ -323,7 +323,7 @@ E.g. when visiting a soft/hard link.
 
   (spacemacs/set-leader-keys
     "aojj" (lambda () (interactive)
-             (let ((org-journal-dir "~/org/home/journal/"))
+             (let ((org-journal-dir "~/org/home/roam/journal/"))
                (org-journal-new-entry nil))))
   (spacemacs/set-leader-keys
     "aojw" (lambda () (interactive)
