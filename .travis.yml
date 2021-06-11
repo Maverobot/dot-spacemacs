@@ -17,3 +17,12 @@ install:
 script: skip
 
 after_success: skip
+
+deploy:
+  provider: pages
+  strategy: git
+  cleanup: false
+  token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+  keep_history: true
+  on:
+    branch: main
