@@ -93,7 +93,7 @@ function compile_ccls {
 #                        Update Spacemacs and Get ready                       #
 ###############################################################################
 function update_spacemacs {
-    /snap/bin/emacs --batch -l ~/.emacs.d/init.el --eval="(configuration-layer/update-packages t)"
+    /snap/bin/emacs -u $(id -un) --batch --eval '(configuration-layer/update-packages t)'
 }
 
 ###############################################################################
