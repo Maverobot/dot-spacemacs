@@ -93,7 +93,10 @@ function compile_ccls {
 #                        Update Spacemacs and Get ready                       #
 ###############################################################################
 function update_spacemacs {
-    /snap/bin/emacs --batch -l ~/.emacs.d/init.el --eval="(configuration-layer/update-packages t)"
+    # Installs missing packages and it can fail
+    /snap/bin/emacs -l ${SPACEMACS_DIR}/init.el --batch --eval 'nil' || echo "There occurred an error during the installation of missing packages"
+    # Updates the packges to their latest versions
+    /snap/bin/emacs -l ${SPACEMACS_DIR}/init.el --batch --eval '(configuration-layer/update-packages t)'
 }
 
 ###############################################################################
