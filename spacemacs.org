@@ -431,6 +431,10 @@ E.g. when visiting a soft/hard link.
   (spacemacs/set-leader-keys "ar" 'ranger)
 #+END_SRC
 ** Workarounds
+*** Workaround for unsigned packages
+#+BEGIN_SRC emacs-lisp :tangle user-init.el
+  (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+#+END_SRC
 *** Workaround to suppress a yas related [[https://github.com/syl20bnr/spacemacs/issues/12648][warning]]
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (defvaralias 'helm-c-yas-space-match-any-greedy 'helm-yas-space-match-any-greedy
