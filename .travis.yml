@@ -16,6 +16,7 @@ jobs:
 before_install: skip
 
 install:
+  - mkdir /home/travis/org/home/roam -p # placeholder folder for org-roam
   - curl -o- https://raw.githubusercontent.com/Maverobot/dot-spacemacs/${TRAVIS_BRANCH}/installer.sh | tee /dev/tty | bash
 
 script: skip
