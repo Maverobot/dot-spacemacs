@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
-BACKUP_SUFFIX="bk"
+readonly SPACEMACS_URL=https://github.com/syl20bnr/spacemacs
+readonly SPACEMACS_DIR=${HOME}/.emacs.d
+readonly BACKUP_SUFFIX="bk"
 
 ###############################################################################
 #                              Install Spacemacs                              #
@@ -9,10 +11,17 @@ BACKUP_SUFFIX="bk"
 function install_spacemacs {
     sudo snap install emacs --classic
 
-    [[ -d "~/.emacs.d" ]] && mv -v ~/.emacs.d ~/.emacs.d.bk
-    git clone https://github.com/syl20bnr/spacemacs -b develop ~/.emacs.d
+    if [ -d "${SPACEMACS_DIR}" ]; then
+        if [ "$(cd "${SPACEMACS_DIR}" && git config --get remote.origin.url)" = "${SPACEMACS_URL}" ]; then
+            cd ${SPACEMACS_DIR} && git stash && git checkout develop && git pull
+        else
+            mv -v ${SPACEMACS_DIR} ${SPACEMACS_DIR}.${BACKUP_SUFFIX} && git clone "${SPACEMACS_URL}" -b develop ${SPACEMACS_DIR}
+        fi
+    else
+        git clone "${SPACEMACS_URL}" -b develop ${SPACEMACS_DIR}
+    fi
 
-    [[ -d "~/.spacemacs.d" ]] && mv -v ~/.spacemacs.d ~/.spacemacs.d.bk
+    [[ -d "~/.spacemacs.d" ]] && mv -v ~/.spacemacs.d ~/.spacemacs.d.${BACKUP_SUFFIX}
     git clone https://github.com/Maverobot/dot-spacemacs.git --recurse-submodules ~/.spacemacs.d
 }
 
