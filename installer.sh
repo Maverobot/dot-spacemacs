@@ -94,6 +94,15 @@ function install_fonts {
     /snap/bin/emacs -u $(id -un) --batch --eval '(all-the-icons-install-fonts t)'
 }
 
+###############################################################################
+#                             Export Documentation                            #
+###############################################################################
+function export_documentation {
+    (
+        cd ~/.spacemacs.d && /snap/bin/emacs spacemacs.org --batch -f org-html-export-to-html && mv -v spacemacs.html docs/index.html
+    )
+}
+
 
 echo "Note: if ~/.emacs.d or ~/.spacemacs.d already exists, it will be moved to ~/.emacs.d.${BACKUP_SUFFIX} or ~/.spacemacs.d.${BACKUP_SUFFIX} respectively."
 
@@ -103,3 +112,4 @@ compile_ccls
 compile_groovy_language_server
 update_spacemacs
 install_fonts
+export_documentation
