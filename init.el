@@ -54,8 +54,7 @@ This function should only modify configuration layer settings."
      (docker :variables docker-dockerfile-backend 'lsp)
      octave
      (groovy :variables
-             groovy-backend 'lsp
-             groovy-lsp-jar-path "~/.spacemacs.d/groovy-language-server-all.jar")
+             groovy-backend 'lsp)
      haskell
      emacs-lisp
      shell-scripts

@@ -117,9 +117,13 @@ Use evil keybindings for selecting items in popup menus.
     )
   (setup-web-dev-indent 2)
 #+END_SRC
-*** Indentation for groovy(Jenkinsfile)
+*** groovy (Jenkinsfile)
 #+BEGIN_SRC emacs-lisp :tangle user-init.el
   (setq groovy-indent-offset 2)
+  (setq default-groovy-lsp-jar-path "~/.spacemacs.d/groovy-language-server-all.jar")
+  (if (file-exists-p default-groovy-lsp-jar-path)
+      (setq groovy-lsp-jar-path default-groovy-lsp-jar-path)
+    (message (concat default-groovy-lsp-jar-path " does not exist")))
 #+END_SRC
 *** nvm
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
