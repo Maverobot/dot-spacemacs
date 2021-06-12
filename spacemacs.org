@@ -46,6 +46,11 @@ Set shell to be ~bash~ explicitly because my default shell ~fish~ does not work 
 #+BEGIN_SRC emacs-lisp :tangle user-init.el
   (setq-default shell-file-name "/bin/bash")
 #+END_SRC
+** Workarounds
+*** Workaround for unsigned packages
+#+BEGIN_SRC emacs-lisp :tangle user-init.el
+  (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+#+END_SRC
 * user-config
 All code snippets under this section will be added to ~dotspacemacs//user-config~
 function, which is
@@ -103,7 +108,7 @@ Use evil keybindings for selecting items in popup menus.
                                                 mode-enabled)))
 #+END_SRC
 *** Indentation for web development
-#+BEGIN_SRC emacs-lisp :tangle user-init.el
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
   (defun setup-web-dev-indent (n)
     ;; web development
     (setq coffee-tab-width n) ; coffeescript
@@ -118,7 +123,7 @@ Use evil keybindings for selecting items in popup menus.
   (setup-web-dev-indent 2)
 #+END_SRC
 *** groovy (Jenkinsfile)
-#+BEGIN_SRC emacs-lisp :tangle user-init.el
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
   (setq groovy-indent-offset 2)
   (setq default-groovy-lsp-jar-path "~/.spacemacs.d/groovy-language-server-all.jar")
   (if (file-exists-p default-groovy-lsp-jar-path)
@@ -277,7 +282,7 @@ The reason for this is that I mainly use emacs as a daemon and I don't want to c
         scroll-conservatively 100000)
 #+END_SRC
 *** Theme
-#+BEGIN_SRC emacs-lisp :tangle user-init.el
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
   (setq-default dotspacemacs-themes '(doom-one
                                       doom-monokai-spectrum))
 #+END_SRC
@@ -431,10 +436,6 @@ E.g. when visiting a soft/hard link.
   (spacemacs/set-leader-keys "ar" 'ranger)
 #+END_SRC
 ** Workarounds
-*** Workaround for unsigned packages
-#+BEGIN_SRC emacs-lisp :tangle user-init.el
-  (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
-#+END_SRC
 *** Workaround to suppress a yas related [[https://github.com/syl20bnr/spacemacs/issues/12648][warning]]
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (defvaralias 'helm-c-yas-space-match-any-greedy 'helm-yas-space-match-any-greedy
