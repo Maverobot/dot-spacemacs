@@ -1,4 +1,4 @@
-[![Build Status][travis-badge]][travis-link]
+[![Build Status][github-actions-badge]][github-actions-link]
 # dot-spacemacs
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
@@ -98,8 +98,8 @@ sudo snap install go --classic
 go get github.com/charmbracelet/glow
 ```
 
-[travis-badge]: https://travis-ci.com/Maverobot/dot-spacemacs.svg?branch=master
-[travis-link]: https://travis-ci.com/Maverobot/dot-spacemacs
+[github-actions-badge]: https://github.com/maverobot/dot-spacemacs/actions/workflows/main.yml/badge.svg?branch=master
+[github-actions-link]: https://github.com/Maverobot/dot-spacemacs/actions
 [installer.sh]: https://raw.githubusercontent.com/Maverobot/dot-spacemacs/master/installer.sh
 [gcc-installation]: https://github.com/Maverobot/dot-spacemacs/blob/master/docs/gcc_installation.md
 [start-glow-viewer]: https://github.com/Maverobot/dot-spacemacs/blob/master/spacemacs.org#glow-the-markdown-viewer

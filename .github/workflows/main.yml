@@ -1,0 +1,53 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  bionic:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-18.04
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+
+      - name: Cache the spacemacs repository folder
+        uses: actions/cache@v2
+        with:
+          key: saved-emacs-d
+          path: ~/.emacs.d
+
+      - name: Create a placeholder folder for org-roam
+        run: mkdir ~/org/home/roam -p
+
+      - name: Install everything needed for the spacemacs config
+        run: curl -o- https://raw.githubusercontent.com/Maverobot/dot-spacemacs/${GITHUB_REF##*/}/installer.sh | tee /dev/tty | bash
+
+      - name: Copy the generated index.html to the checked out repo path
+        run: |
+          mkdir ~/work/dot-spacemacs/dot-spacemacs/public
+          cp ~/.spacemacs.d/docs/index.html ~/work/dot-spacemacs/dot-spacemacs/public
+
+      - name: GitHub Pages
+        if: success()
+        uses: crazy-max/ghaction-github-pages@v2.5.0
+        with:
+          target_branch: gh-pages
+          build_dir: public
+          jekyll: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
