@@ -116,7 +116,9 @@ function export_documentation {
 }
 
 
-echo "Note: if ~/.emacs.d or ~/.spacemacs.d already exists, it will be moved to ~/.emacs.d.${BACKUP_SUFFIX} or ~/.spacemacs.d.${BACKUP_SUFFIX} respectively."
+echo "Note:"
+echo "  - If ${SPACEMACS_DIR} already exists, it will be moved to ${SPACEMACS_DIR}.${BACKUP_SUFFIX}."
+echo "  - If ~/.spacemacs.d already exists, it will be moved to ~/.spacemacs.d.${BACKUP_SUFFIX}."
 
 install_dependencies
 install_spacemacs
