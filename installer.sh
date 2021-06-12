@@ -111,7 +111,9 @@ function install_fonts {
 ###############################################################################
 function export_documentation {
     (
-        cd ~/.spacemacs.d && /snap/bin/emacs spacemacs.org --batch -f org-html-export-to-html && mv -v spacemacs.html docs/index.html
+        cd ~/.spacemacs.d
+        /snap/bin/emacs --batch -l ~/.emacs.d/init.el spacemacs.org --eval "(setq org-html-htmlize-output-type 'css)" -f org-html-export-to-html
+        mv -v spacemacs.html docs/index.html
     )
 }
 
