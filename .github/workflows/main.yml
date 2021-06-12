@@ -22,8 +22,8 @@ jobs:
       - name: Cache the spacemacs repository folder
         uses: actions/cache@v2
         with:
-          key: saved-emacs-d
           path: ~/.emacs.d
+          key: saved-emacs-d-${{ matrix.os }}
 
       - name: Create a placeholder folder for org-roam
         run: mkdir ~/org/home/roam -p
