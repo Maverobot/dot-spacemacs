@@ -3,6 +3,7 @@ set -e
 
 readonly SPACEMACS_URL=https://github.com/syl20bnr/spacemacs
 readonly SPACEMACS_DIR=${HOME}/.emacs.d
+readonly DOTSPACEMACS_DIR=${HOME}/.spacemacs.d
 readonly BACKUP_SUFFIX="bk"
 
 ###############################################################################
@@ -21,8 +22,8 @@ function install_spacemacs {
         git clone "${SPACEMACS_URL}" -b develop ${SPACEMACS_DIR}
     fi
 
-    [[ -d "~/.spacemacs.d" ]] && mv -v ~/.spacemacs.d ~/.spacemacs.d.${BACKUP_SUFFIX}
-    git clone https://github.com/Maverobot/dot-spacemacs.git --recurse-submodules ~/.spacemacs.d
+    [[ -d "${DOTSPACEMACS_DIR}" ]] && mv -v ${DOTSPACEMACS_DIR} ${DOTSPACEMACS_DIR}.${BACKUP_SUFFIX}
+    git clone https://github.com/Maverobot/dot-spacemacs.git --recurse-submodules ${DOTSPACEMACS_DIR}
 }
 
 ###############################################################################
@@ -76,7 +77,7 @@ function compile_groovy_language_server {
         rm /tmp/groovy-language-server -rf && cd /tmp
         git clone https://github.com/prominic/groovy-language-server.git
         cd groovy-language-server && ./gradlew build
-        cp -v build/libs/groovy-language-server-all.jar ~/.spacemacs.d/
+        cp -v build/libs/groovy-language-server-all.jar ${DOTSPACEMACS_DIR}/
     )
 }
 
@@ -85,7 +86,7 @@ function compile_groovy_language_server {
 ###############################################################################
 function compile_ccls {
     (
-        cd ~/.spacemacs.d && ./build_ccls.sh
+        cd ${DOTSPACEMACS_DIR} && ./build_ccls.sh
     )
 }
 
@@ -111,7 +112,7 @@ function install_fonts {
 ###############################################################################
 function export_documentation {
     (
-        cd ~/.spacemacs.d
+        cd ${DOTSPACEMACS_DIR}
         /snap/bin/emacs --batch -l ~/.emacs.d/init.el spacemacs.org --eval "(setq org-html-htmlize-output-type 'css)" -f org-html-export-to-html
         mv -v spacemacs.html docs/index.html
     )
@@ -120,7 +121,7 @@ function export_documentation {
 
 echo "Note:"
 echo "  - If ${SPACEMACS_DIR} already exists, it will be moved to ${SPACEMACS_DIR}.${BACKUP_SUFFIX}."
-echo "  - If ~/.spacemacs.d already exists, it will be moved to ~/.spacemacs.d.${BACKUP_SUFFIX}."
+echo "  - If ${DOTSPACEMACS_DIR} already exists, it will be moved to ${DOTSPACEMACS_DIR}.${BACKUP_SUFFIX}."
 
 install_dependencies
 install_spacemacs
