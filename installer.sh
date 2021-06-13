@@ -32,7 +32,7 @@ function install_dependencies {
     sudo apt update
     sudo apt install -y entr xclip build-essential cmake g++ gcc \
         python3-dev python3-pip python3-wheel python3-venv python3-setuptools \
-        libz-dev libtinfo-dev notmuch libpq-dev
+        libz-dev libtinfo-dev notmuch libpq-dev sqlite3
     sudo python3 -m pip install wheel
 
     sudo snap install --channel=edge shellcheck
