@@ -52,6 +52,14 @@ Set shell to be ~bash~ explicitly because my default shell ~fish~ does not work 
 #+BEGIN_SRC emacs-lisp :tangle user-init.el
   (setq-default shell-file-name "/bin/bash")
 #+END_SRC
+** Layers
+*** groovy
+#+BEGIN_SRC emacs-lisp :tangle user-init.el
+  (setq default-groovy-lsp-jar-path "~/.spacemacs.d/groovy-language-server-all.jar")
+  (if (file-exists-p default-groovy-lsp-jar-path)
+      (setq groovy-lsp-jar-path default-groovy-lsp-jar-path)
+    (message (concat default-groovy-lsp-jar-path " does not exist")))
+#+END_SRC
 ** Workarounds
 *** Workaround for unsigned packages
 #+BEGIN_SRC emacs-lisp :tangle user-init.el
@@ -129,12 +137,8 @@ Use evil keybindings for selecting items in popup menus.
   (setup-web-dev-indent 2)
 #+END_SRC
 *** groovy (Jenkinsfile)
-#+BEGIN_SRC emacs-lisp :tangle user-config.el
+#+BEGIN_SRC emacs-lisp :tangle user-init.el
   (setq groovy-indent-offset 2)
-  (setq default-groovy-lsp-jar-path "~/.spacemacs.d/groovy-language-server-all.jar")
-  (if (file-exists-p default-groovy-lsp-jar-path)
-      (setq groovy-lsp-jar-path default-groovy-lsp-jar-path)
-    (message (concat default-groovy-lsp-jar-path " does not exist")))
 #+END_SRC
 *** plantuml
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
