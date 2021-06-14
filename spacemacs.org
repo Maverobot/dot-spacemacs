@@ -18,6 +18,12 @@ It is called immediately after
 useful for variables that need to be set before packages are loaded. If you are
 unsure, you should try in setting them in `dotspacemacs/user-config' first.
 #+end_quote
+
+** Theme
+#+BEGIN_SRC emacs-lisp :tangle user-init.el
+  (setq-default dotspacemacs-themes '(doom-one
+                                      doom-monokai-spectrum))
+#+END_SRC
 ** ROS
 #+BEGIN_SRC emacs-lisp :tangle user-init.el
   (defun spacemacs/update-ros-envs ()
@@ -280,11 +286,6 @@ The reason for this is that I mainly use emacs as a daemon and I don't want to c
   (setq scroll-step 1
         scroll-margin 0
         scroll-conservatively 100000)
-#+END_SRC
-*** Theme
-#+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (setq-default dotspacemacs-themes '(doom-one
-                                      doom-monokai-spectrum))
 #+END_SRC
 *** Transparency settings
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
