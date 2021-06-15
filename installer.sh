@@ -4,7 +4,7 @@ set -e
 readonly SPACEMACS_URL=https://github.com/syl20bnr/spacemacs
 readonly SPACEMACS_DIR=${HOME}/.emacs.d
 readonly DOTSPACEMACS_DIR=${HOME}/.spacemacs.d
-readonly BACKUP_SUFFIX="bk"
+readonly BACKUP_SUFFIX="backup-$(date +"%Y%m%d-%H%M%S")"
 
 ###############################################################################
 #                              Install Spacemacs                              #
