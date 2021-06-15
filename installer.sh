@@ -120,7 +120,8 @@ function export_documentation {
 
 
 echo "Note:"
-echo "  - If ${SPACEMACS_DIR} already exists, it will be moved to ${SPACEMACS_DIR}.${BACKUP_SUFFIX}."
+echo "  - If ${SPACEMACS_DIR} already exists but is not from 'syl20bnr/spacemacs', it will be moved to ${SPACEMACS_DIR}.${BACKUP_SUFFIX}."
+echo "  - If ${SPACEMACS_DIR} already exists and is from 'syl20bnr/spacemacs', the uncommitted changes will be stashed."
 echo "  - If ${DOTSPACEMACS_DIR} already exists, it will be moved to ${DOTSPACEMACS_DIR}.${BACKUP_SUFFIX}."
 
 install_dependencies
