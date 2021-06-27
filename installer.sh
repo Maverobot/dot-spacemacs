@@ -81,6 +81,13 @@ function compile_groovy_language_server {
     )
 }
 
+function download_plantuml {
+    (
+        cd ${DOTSPACEMACS_DIR}
+        wget -nc -q --show-progress http://sourceforge.net/projects/plantuml/files/plantuml.jar
+    )
+}
+
 ###############################################################################
 #                  Compile ccls (C/C++/ObjC language server)                  #
 ###############################################################################
@@ -131,3 +138,4 @@ update_spacemacs
 install_fonts
 export_documentation
 compile_groovy_language_server
+download_plantuml

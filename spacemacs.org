@@ -136,6 +136,12 @@ Use evil keybindings for selecting items in popup menus.
       (setq groovy-lsp-jar-path default-groovy-lsp-jar-path)
     (message (concat default-groovy-lsp-jar-path " does not exist")))
 #+END_SRC
+*** plantuml
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (when (fboundp 'plantuml-mode)
+    ;; Enable plantuml-mode for all *.pu files by default
+    (add-to-list 'auto-mode-alist '("\\.pu\\'" . plantuml-mode)))
+#+END_SRC
 *** nvm
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (condition-case nil
