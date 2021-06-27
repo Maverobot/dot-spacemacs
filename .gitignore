@@ -2,3 +2,5 @@ user-init.el
 user-config.el
 .spacemacs.env
 spacemacs.html
+groovy-language-server-all.jar
+plantuml.jar
