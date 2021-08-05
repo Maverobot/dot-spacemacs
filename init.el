@@ -67,9 +67,10 @@ This function should only modify configuration layer settings."
            rust-format-on-save t)
      (python :variables
              python-backend 'lsp
-             python-lsp-server 'pyls
+             python-lsp-server 'pylsp
+             python-formatter 'black
              python-sort-imports-on-save t
-             python-enable-yapf-format-on-save t)
+             python-format-on-save t)
      (c-c++ :variables
             c-c++-backend 'lsp-ccls
             c-c++-adopt-subprojects t

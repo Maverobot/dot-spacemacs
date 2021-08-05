@@ -407,7 +407,6 @@ E.g. when visiting a soft/hard link.
 #+END_SRC
 *** format-all
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (add-hook 'python-mode-hook #'yapf-mode)
   (add-hook 'sh-mode-hook #'format-all-mode)
   (add-hook 'fish-mode-hook #'format-all-mode)
   (add-hook 'cmake-mode-hook #'format-all-mode)
