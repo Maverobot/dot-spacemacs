@@ -52,7 +52,7 @@ This function should only modify configuration layer settings."
                  prettier-js-args nil)
      ;; Programming languages
      (docker :variables docker-dockerfile-backend 'lsp)
-     octave
+     major-modes
      (groovy :variables
              groovy-backend 'lsp)
      haskell
