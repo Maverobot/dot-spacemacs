@@ -65,6 +65,11 @@ Set shell to be ~bash~ explicitly because my default shell ~fish~ does not work 
 #+BEGIN_SRC emacs-lisp :tangle user-init.el
   (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 #+END_SRC
+*** Acknowledge org-roam-v2
+#+BEGIN_SRC emacs-lisp :tangle user-init.el
+  (setq org-roam-v2-ack t)
+#+END_SRC
+
 * user-config
 All code snippets under this section will be added to ~dotspacemacs//user-config~
 function, which is
