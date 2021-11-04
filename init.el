@@ -62,6 +62,7 @@ This function should only modify configuration layer settings."
          go-backend 'lsp
          go-tab-width 4
          go-format-before-save t
+         go-use-golangci-lint t
          gofmt-command "goimports")
      (rust :variables
            rust-format-on-save t)
