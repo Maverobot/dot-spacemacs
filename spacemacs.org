@@ -22,6 +22,7 @@ unsure, you should try in setting them in `dotspacemacs/user-config' first.
 ** Theme
 #+BEGIN_SRC emacs-lisp :tangle user-init.el
   (setq-default dotspacemacs-themes '(doom-one
+                                      doom-zenburn
                                       doom-monokai-spectrum))
 #+END_SRC
 ** ROS
