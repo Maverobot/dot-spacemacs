@@ -451,6 +451,27 @@ E.g. when visiting a soft/hard link.
     (define-key ranger-mode-map (kbd "M-n") 'ranger-new-tab))
   (spacemacs/set-leader-keys "ar" 'ranger)
 #+END_SRC
+*** cheat.sh
+The one and only one cheatsheet.
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (spacemacs/declare-prefix "aa" "cheat-sh")
+
+  ;; Prompt to select a topic to show its cheatsheet
+  (spacemacs/set-leader-keys "aaa" 'cheat-sh)
+
+  ;; Show the help page of cheat.sh
+  (spacemacs/set-leader-keys "aah" 'cheat-sh-help)
+
+  ;; Get the cheatsheet for the marked region
+  (spacemacs/set-leader-keys "aar" 'cheat-sh-region)
+
+  ;; Get a random page of cheatsheet
+  (spacemacs/set-leader-keys "aad"
+    (lambda ()
+      (interactive)
+      (cheat-sh ":random")))
+  (spacemacs/declare-prefix "aad" "cheat.sh/:random")
+#+END_SRC
 ** Workarounds
 *** Workaround to suppress a yas related [[https://github.com/syl20bnr/spacemacs/issues/12648][warning]]
 #+BEGIN_SRC emacs-lisp :tangle user-config.el

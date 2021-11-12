@@ -180,6 +180,7 @@ This function should only modify configuration layer settings."
                                       nvm
                                       org-make-toc
                                       flatbuffers-mode
+                                      cheat-sh
                                       (term-cursor :location (recipe :fetcher github :repo "h0d/term-cursor.el" )))
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
