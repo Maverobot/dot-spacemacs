@@ -56,8 +56,12 @@ This function should only modify configuration layer settings."
      (groovy :variables
              groovy-backend 'lsp)
      haskell
+     ess
      emacs-lisp
      shell-scripts
+     (julia :variables
+            julia-backend 'lsp
+            julia-mode-enable-ess t)
      (go :variables
          go-backend 'lsp
          go-tab-width 4

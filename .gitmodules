@@ -25,3 +25,6 @@
 [submodule "ccls"]
 	path = ccls
 	url = https://github.com/MaskRay/ccls
+[submodule "private/ob-julia"]
+	path = private/ob-julia
+	url = https://github.com/nico202/ob-julia.git
