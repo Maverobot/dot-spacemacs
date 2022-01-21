@@ -481,6 +481,10 @@ The one and only one cheatsheet.
   (defvaralias 'helm-c-yas-space-match-any-greedy 'helm-yas-space-match-any-greedy
     "Temporary alias for Emacs27")
 #+END_SRC
+*** Workaround for the [[https://github.com/syl20bnr/spacemacs/issues/15281][bug]] where keybinding of the projectile-find-other-file is shadowed.
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (with-eval-after-load 'lsp-mode (define-key lsp-command-map-prefix "ga" 'projectile-find-other-file))
+#+END_SRC
 *** Workaround for the [[https://github.com/syl20bnr/spacemacs/issues/13100][bug]] where fuzzy matching is not used in recent files
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (setq completion-styles `(basic partial-completion emacs22 initials
