@@ -83,6 +83,9 @@ function install_dependencies {
 
     # Install tldr to have awesome CLI cheatsheets
     npm install -g tldr
+
+    # Create ~/org folder if not yet present
+    mkdir ~/org -p
 }
 
 ###############################################################################
