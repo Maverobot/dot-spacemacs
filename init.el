@@ -103,6 +103,7 @@ This function should only modify configuration layer settings."
           lsp-enable-on-type-formatting nil
           lsp-enable-indentation nil
           lsp-enable-file-watchers t
+          lsp-use-upstream-bindings nil
           lsp-prefer-flymake nil
           lsp-file-watch-threshold nil
           lsp-auto-guess-root t
