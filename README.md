@@ -33,7 +33,7 @@ curl -o- https://raw.githubusercontent.com/Maverobot/dot-spacemacs/master/instal
 Root privileges will be needed by the script for package installation via `apt`, `snap` and `dpkg`. When in doubt, feel free to check out [installer.sh][installer.sh].
 
 
-### Manuel
+### Manual
 
 #### Requirements
 
