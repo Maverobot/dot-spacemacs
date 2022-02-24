@@ -189,7 +189,8 @@ This function should only modify configuration layer settings."
                                       emacs-everywhere
                                       jenkinsfile-mode
                                       feature-mode
-                                      (term-cursor :location (recipe :fetcher github :repo "h0d/term-cursor.el" )))
+                                      (term-cursor :location (recipe :fetcher github :repo "h0d/term-cursor.el" ))
+                                      org-roam-ui)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
 
