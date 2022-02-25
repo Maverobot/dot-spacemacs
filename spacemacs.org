@@ -81,6 +81,10 @@ This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code.
 #+end_quote
 ** IDE config
+*** Prevent using UI dialogs for prompts
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (setq use-dialog-box nil)
+#+END_SRC
 *** ccls
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (with-eval-after-load 'ccls
