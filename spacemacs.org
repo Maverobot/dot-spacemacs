@@ -80,6 +80,30 @@ Configuration function for user code.
 This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code.
 #+end_quote
+** Window manager
+*** exwm
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  ;; (push ?\s-\  exwm-input-prefix-keys)
+  (require 'exwm)
+  (setq exwm-input-global-keys
+      `(
+        ;; Bind "s-r" to exit char-mode and fullscreen mode.
+        ([?\s-r] . exwm-reset)
+        ;; Bind "s-w" to switch workspace interactively.
+        ([?\s-w] . exwm-workspace-switch)
+        ;; Bind "s-0" to "s-9" to switch to a workspace by its index.
+        ,@(mapcar (lambda (i)
+                    `(,(kbd (format "s-%d" i)) .
+                      (lambda ()
+                        (interactive)
+                        (exwm-workspace-switch-create ,i))))
+                  (number-sequence 0 9))
+        ;; Bind "s-d" to launch applications
+        ([?\s-d] . helm-run-external-command)
+        ;; Bind "s-b" to switch to buffer
+        ([?\s-b] . exwm-workspace-switch-to-buffer)
+        ))
+#+END_SRC
 ** IDE config
 *** Prevent using UI dialogs for prompts
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
@@ -333,6 +357,7 @@ The reason for this is that I mainly use emacs as a daemon and I don't want to c
 It is meant to avoid conflicts with i3wm, where I use ~alt~ as the meta key.
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (setq x-super-keysym 'meta)
+  (setq x-meta-keysym 'super)
 #+END_SRC
 *** Visiting a file uses its truename as the visited-file name
 E.g. when visiting a soft/hard link.

@@ -144,6 +144,14 @@ This function should only modify configuration layer settings."
           org-format-latex-options '(:foreground default :background default :scale 3.0
                                                  :html-foreground "Black" :html-background "Transparent" :html-scale 3.0
                                                  :matchers ("begin" "$1" "$" "$$" "\\(" "\\[")))
+     ;; Window manager
+     (exwm :variables exwm-enable-systray nil
+           exwm-autostart-xdg-applications nil
+           exwm-terminal-command "kitty"
+           exwm-locking-command nil
+           exwm-hide-tiling-modeline nil
+           exwm-workspace-switch-wrap t
+           exwm-randr-command nil)
 
      ;; Utils
      (plantuml :variables
