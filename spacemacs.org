@@ -327,6 +327,10 @@ E.g. when visiting a soft/hard link.
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (setq find-file-visit-truename t)
 #+END_SRC
+*** Do not autosave undo history
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (setq undo-tree-auto-save-history nil)
+#+END_SRC
 ** org-mode
 *** org-agenda
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
