@@ -400,6 +400,12 @@ E.g. when visiting a soft/hard link.
     (interactive)
     (org-roam-migrate-v1-to-v2))
 #+END_SRC
+*** org-clock
+**** Save the clock history across Emacs sessions
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (setq org-clock-persist 'history)
+  (org-clock-persistence-insinuate)
+#+END_SRC
 ** Utility
 *** Toggle clang-format on save
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
