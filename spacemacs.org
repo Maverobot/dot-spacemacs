@@ -393,6 +393,13 @@ E.g. when visiting a soft/hard link.
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (spacemacs/set-leader-keys-for-major-mode 'org-mode "Th" 'org-hugo-auto-export-mode)
 #+END_SRC
+*** org-roam
+**** Migrate the current buffer from org-roam v1 to v2
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (defun org-roam-migrate-current-buffer-v1-to-v2 ()
+    (interactive)
+    (org-roam-migrate-v1-to-v2))
+#+END_SRC
 ** Utility
 *** Toggle clang-format on save
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
