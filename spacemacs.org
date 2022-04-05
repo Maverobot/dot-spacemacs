@@ -331,6 +331,13 @@ E.g. when visiting a soft/hard link.
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (setq undo-tree-auto-save-history nil)
 #+END_SRC
+*** Native compilation
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (when (and (fboundp 'native-comp-available-p)
+             (native-comp-available-p))
+    (message "Native compilation is available")
+    (setq native-comp-async-report-warnings-errors nil))
+#+END_SRC
 ** org-mode
 *** org-agenda
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
