@@ -417,6 +417,24 @@ E.g. when visiting a soft/hard link.
   (setq org-clock-persist 'history)
   (org-clock-persistence-insinuate)
 #+END_SRC
+*** Replace selected markdown region to org format
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (defun replace-markdown-region-with-org (beginning end)
+    "Replace the selected markdown region with its corresponding org-mode format."
+    (interactive "r")
+    (if (use-region-p)
+        (let ((tmp-buffer "Markdown To Org Tmp"))
+          (pcase (shell-command-on-region (region-beginning) (region-end)
+                                          "pandoc -f markdown -t org" tmp-buffer t)
+            (0 (message "Successfully converted to org-mode format."))
+            (127 (message "pandoc not found. Install it with 'sudo apt install pandoc'."))
+            (_ (message "Failed to convert the selected region to org-mode format."))
+            )
+          )
+      (message "No active region is found.")))
+  (spacemacs/set-leader-keys-for-major-mode 'org-mode "RR" 'replace-markdown-region-with-org)
+#+END_SRC
+
 ** Utility
 *** Toggle clang-format on save
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
