@@ -397,15 +397,18 @@ E.g. when visiting a soft/hard link.
 *** org-todo
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (with-eval-after-load 'org
-    (setq org-todo-keywords
-          '((sequence "TODO(t)" "IN_PROGRESS" "UNDER_REVEW" "|" "DONE(d)")
-            (sequence "REPORT(r)" "BUG(b)" "KNOWNCAUSE(k)" "|" "FIXED(f)")
-            (sequence "|" "INCOMPLETE(i)" "CANCELED(c)")))
-    (setq org-capture-templates
-          '(("h" "Home" entry (file+headline "~/org/home/tasks.org" "Tasks")
-             "* TODO %?\n  %U\n  %i\n  %a")
-            ("w" "Work" entry (file+headline "~/org/work/tasks.org" "Tasks")
-             "* TODO %?\n  %U\n  %i\n  %a"))))
+    (let ((capture-template  "* TODO %?\n  %U\n  %i\n  %a"))
+      (progn
+        (setq org-todo-keywords
+              '((sequence "TODO(t)" "IN_PROGRESS" "UNDER_REVEW" "|" "DONE(d)")
+                (sequence "REPORT(r)" "BUG(b)" "KNOWNCAUSE(k)" "|" "FIXED(f)")
+                (sequence "|" "INCOMPLETE(i)" "CANCELED(c)")))
+        (setq org-capture-templates
+              '(("h" "Home" entry (file+headline "~/org/home/tasks.org" "Tasks")
+                 "* TODO %?\n  %U\n  %i\n  %a")
+                ("w" "Work" entry (file+headline "~/org/work/tasks.org" "Tasks")
+                 "* TODO %?\n  %U\n  %i\n  %a")))
+        (setq org-projectile-capture-template capture-template))))
   (spacemacs/set-leader-keys
     "aoh" (lambda () (interactive) (find-file "~/org/home/tasks.org"))
     "aow" (lambda () (interactive) (find-file "~/org/work/tasks.org")))
