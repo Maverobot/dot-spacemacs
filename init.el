@@ -188,7 +188,7 @@ This function should only modify configuration layer settings."
                                       flatbuffers-mode
                                       cheat-sh
                                       emacs-everywhere
-                                      jenkinsfile-mode
+                                      ;; jenkinsfile-mode
                                       feature-mode
                                       (term-cursor :location (recipe :fetcher github :repo "h0d/term-cursor.el" ))
                                       org-roam-ui)
