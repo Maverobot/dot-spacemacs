@@ -536,6 +536,11 @@ The one and only one cheatsheet.
       (cheat-sh ":random")))
   (spacemacs/declare-prefix "aad" "cheat.sh/:random")
 #+END_SRC
+*** Disable persistent undo-tree
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (require 'undo-tree)
+  (setq undo-tree-auto-save-history nil)
+#+END_SRC
 ** Workarounds
 *** Workaround to suppress a yas related [[https://github.com/syl20bnr/spacemacs/issues/12648][warning]]
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
