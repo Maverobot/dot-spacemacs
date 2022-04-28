@@ -31,8 +31,8 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-nvm install v10.19.0
-nvm use v10.19.0
+nvm install v16.2.0
+nvm use v16.2.0
 
 # marked
 npm install -g marked

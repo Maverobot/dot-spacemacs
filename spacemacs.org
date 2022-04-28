@@ -171,7 +171,7 @@ Use evil keybindings for selecting items in popup menus.
 *** nvm
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (condition-case nil
-      (nvm-use "v10.19.0")
+      (nvm-use "v16.2.0")
     (error (message "Could not initialize nvm for emacs.")))
 #+END_SRC
 *** ROS
