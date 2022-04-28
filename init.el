@@ -115,7 +115,8 @@ This function should only modify configuration layer settings."
           lsp-ui-doc-delay 0
           lsp-ui-sideline-enable nil
           lsp-ui-sideline-ignore-duplicate t
-          lsp-ui-sideline-show-code-actions t)
+          lsp-ui-sideline-show-code-actions t
+          lsp-lens-enable nil)
 
      ;; File types
      (markdown :variables
