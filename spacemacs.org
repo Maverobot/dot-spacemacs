@@ -161,6 +161,7 @@ Use evil keybindings for selecting items in popup menus.
 *** plantuml
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (when (fboundp 'plantuml-mode)
+    (require 'org-src)
     ;; Enable plantuml-mode for all *.pu files by default
     (add-to-list 'auto-mode-alist '("\\.pu\\'" . plantuml-mode))
     (setq org-plantuml-jar-path plantuml-jar-path)
