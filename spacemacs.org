@@ -354,10 +354,16 @@ E.g. when visiting a soft/hard link.
 ** org-mode
 *** org-agenda
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (defun scan-new-agenda-files ()
+    (interactive)
+    (setq org-agenda-files (directory-files-recursively "~/org/" "\.org$" nil nil t)))
+
   (with-eval-after-load 'org-agenda
-    (setq org-agenda-files (directory-files-recursively "~/org/" "\.org$" nil nil t))
+    (scan-new-agenda-files)
     (define-key org-agenda-mode-map "m" 'org-agenda-month-view)
     (define-key org-agenda-mode-map "y" 'org-agenda-year-view))
+
+  (spacemacs/set-leader-keys "aou" 'scan-new-agenda-files)
 #+END_SRC
 *** org-babel
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
