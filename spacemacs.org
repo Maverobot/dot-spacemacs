@@ -409,7 +409,7 @@ E.g. when visiting a soft/hard link.
         (setq org-todo-keywords
               '((sequence "TODO(t)" "IN_PROGRESS" "UNDER_REVEW" "|" "DONE(d)")
                 (sequence "REPORT(r)" "BUG(b)" "KNOWNCAUSE(k)" "|" "FIXED(f)")
-                (sequence "|" "INCOMPLETE(i)" "CANCELED(c)")))
+                (sequence "|" "INACTIVE(i)" "INCOMPLETE(n)" "CANCELED(c)" "REPORTED(R)")))
         (setq org-capture-templates
               '(("h" "Home" entry (file+headline "~/org/home/tasks.org" "Tasks")
                  "* TODO %?\n  %U\n  %i\n  %a")
