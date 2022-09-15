@@ -157,10 +157,6 @@ This function should only modify configuration layer settings."
      version-control
      search-engine
      command-log
-     (notmuch :variables
-              notmuch-spacemacs-layout-name "@Notmuch"
-              notmuch-spacemacs-layout-binding "n"
-              notmuch-search-oldest-first nil)
      (ranger :variables
              ranger-show-preview t)
      (shell :variables
