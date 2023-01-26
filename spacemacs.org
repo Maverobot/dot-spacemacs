@@ -365,6 +365,12 @@ E.g. when visiting a soft/hard link.
 
   (spacemacs/set-leader-keys "aou" 'scan-new-agenda-files)
 #+END_SRC
+*** org-cv
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (use-package ox-awesomecv
+    :load-path "~/.spacemacs.d/private/org-cv"
+    :init (require 'ox-awesomecv))
+#+END_SRC
 *** org-babel
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (load "~/.spacemacs.d/private/ob-julia/ob-julia.el")
