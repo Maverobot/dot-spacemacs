@@ -433,6 +433,10 @@ E.g. when visiting a soft/hard link.
   (spacemacs/set-leader-keys-for-major-mode 'org-mode "Th" 'org-hugo-auto-export-mode)
 #+END_SRC
 *** org-roam
+**** Automatically sync the database
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+(org-roam-db-autosync-mode)
+#+END_SRC
 **** Migrate the current buffer from org-roam v1 to v2
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (defun org-roam-migrate-current-buffer-v1-to-v2 ()
