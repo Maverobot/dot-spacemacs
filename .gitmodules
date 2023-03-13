@@ -30,4 +30,4 @@
 	url = https://github.com/nico202/ob-julia.git
 [submodule "private/org-cv"]
 	path = private/org-cv
-	url = git@github.com:Maverobot/org-cv.git
+	url = https://github.com/Maverobot/org-cv.git
