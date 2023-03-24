@@ -3,7 +3,7 @@ set -e
 
 git submodule update --init --recursive
 
-sudo apt install xclip build-essential cmake python3-dev python3-pip libz-dev libtinfo-dev
+sudo apt install xclip build-essential cmake python3-dev python3-pip libz-dev libtinfo-dev sox
 
 sudo snap install --channel=edge shellcheck
 

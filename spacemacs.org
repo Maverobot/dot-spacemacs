@@ -352,6 +352,15 @@ E.g. when visiting a soft/hard link.
     (setq native-comp-async-report-warnings-errors nil))
 #+END_SRC
 ** org-mode
+*** org-pomodora
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  ;; Lower the volume of the sounds
+  (setq org-pomodoro-audio-player "play")
+  (setq org-pomodoro-finished-sound-args "-v 0.01")
+  (setq org-pomodoro-long-break-sound-args "-v 0.01")
+  (setq org-pomodoro-short-break-sound-args "-v 0.01")
+#+END_SRC
+
 *** org-agenda
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (defun scan-new-agenda-files ()
