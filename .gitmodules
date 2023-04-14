@@ -34,3 +34,6 @@
 [submodule "private/chatgpt-shell"]
 	path = private/chatgpt-shell
 	url = https://github.com/xenodium/chatgpt-shell.git
+[submodule "private/whisper.el"]
+	path = private/whisper.el
+	url = https://github.com/natrys/whisper.el

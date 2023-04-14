@@ -352,6 +352,23 @@ E.g. when visiting a soft/hard link.
     (setq native-comp-async-report-warnings-errors nil))
 #+END_SRC
 ** org-mode
+*** org-ai
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (use-package org-ai
+    :ensure :commands
+    (org-ai-mode)
+    :custom (org-ai-openai-api-token (auth-source-pick-first-password :host "api.openai.com")):init
+    (add-hook 'org-mode-hook #'org-ai-mode)
+    :config (setq org-ai-default-chat-model "gpt-3.5-turbo")(org-ai-install-yasnippets))
+
+  (use-package whisper
+    :load-path "~/.spacemacs.d/private/whisper.el/whisper.el"
+    :bind ("M-s-r" . whisper-run))
+  (require 'whisper (expand-file-name "~/.spacemacs.d/private/whisper.el/whisper.el"))
+  (use-package greader :ensure)
+  (require 'org-ai-talk)
+#+END_SRC
+
 *** org-pomodora
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   ;; Lower the volume of the sounds
