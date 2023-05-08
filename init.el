@@ -122,6 +122,7 @@ This function should only modify configuration layer settings."
      (markdown :variables
                markdown-command "marked"
                markdown-live-preview-engine 'vmd)
+     confluence
      yaml
      pdf
      html
