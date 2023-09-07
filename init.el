@@ -55,7 +55,6 @@ This function should only modify configuration layer settings."
      major-modes
      (groovy :variables
              groovy-backend 'lsp)
-     haskell
      ess
      emacs-lisp
      shell-scripts
