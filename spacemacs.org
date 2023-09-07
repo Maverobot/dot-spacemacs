@@ -587,8 +587,7 @@ The one and only one cheatsheet.
 *** chatgpt-shell
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (use-package chatgpt-shell
-    :load-path "~/.spacemacs.d/private/chatgpt-shell"
-    :init (require 'ox-awesomecv))
+    :load-path "~/.spacemacs.d/private/chatgpt-shell")
   (setq chatgpt-shell-openai-key
         (auth-source-pick-first-password :host "api.openai.com"))
 #+END_SRC
