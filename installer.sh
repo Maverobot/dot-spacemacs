@@ -39,7 +39,6 @@ function install_dependencies {
     sudo snap install --channel=edge shellcheck
     sudo snap install shfmt
 
-    pip3 install --user rfc6555 # Dependency of offlineimap
     pip3 install --user yapf offlineimap
     pip3 install --user cmake-language-server cmake-format
 
@@ -53,36 +52,6 @@ function install_dependencies {
     # Install fd as an alternative to `find`
     curl -LOs https://github.com/sharkdp/fd/releases/download/v8.1.1/fd_8.1.1_amd64.deb
     sudo dpkg -i fd_8.1.1_amd64.deb
-
-    # Install nvm
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-    nvm install v16.2.0
-    nvm use v16.2.0
-
-    # Install golang dependencies
-    sudo snap install go --classic
-    GO111MODULE=on go install golang.org/x/tools/gopls@latest
-    GO111MODULE=on CGO_ENABLED=0 go install -v -trimpath -ldflags '-s -w' github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-    go install golang.org/x/tools/cmd/godoc@latest
-    go install golang.org/x/tools/cmd/goimports@latest
-    go install golang.org/x/tools/cmd/gorename@latest
-    go install golang.org/x/tools/cmd/guru@latest
-    go install github.com/cweill/gotests/...@latest
-    go install github.com/davidrjenni/reftools/cmd/fillstruct@latest
-    go install github.com/fatih/gomodifytags@latest
-    go install github.com/godoctor/godoctor@latest
-    go install github.com/haya14busa/gopkgs/cmd/gopkgs@latest
-    go install github.com/josharian/impl@latest
-    go install github.com/rogpeppe/godef@latest
-
-    # Install marked for generating html from markdown
-    npm install -g marked
-
-    # Install tldr to have awesome CLI cheatsheets
-    npm install -g tldr
 
     # Create ~/org folder if not yet present
     mkdir ~/org -p
