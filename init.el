@@ -188,6 +188,7 @@ This function should only modify configuration layer settings."
                                       (term-cursor :location (recipe :fetcher github :repo "h0d/term-cursor.el" ))
                                       org-roam-ui
                                       org-ai
+                                      ssh-agency
                                       greader)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
