@@ -496,6 +496,10 @@ E.g. when visiting a soft/hard link.
 #+END_SRC
 
 ** Utility
+*** beacon mode
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (beacon-mode 1)
+#+END_SRC
 *** Toggle clang-format on save
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (defun c-c++-toggle-clang-format-on-save ()

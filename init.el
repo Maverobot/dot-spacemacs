@@ -171,6 +171,7 @@ This function should only modify configuration layer settings."
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(helm-ros
+                                      beacon
                                       cmake-mode
                                       doom-themes
                                       format-all
