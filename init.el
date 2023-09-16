@@ -158,9 +158,6 @@ This function should only modify configuration layer settings."
      command-log
      (ranger :variables
              ranger-show-preview t)
-     (shell :variables
-            shell-default-height 30
-            shell-default-position 'bottom)
      (spell-checking :variables
                      spell-checking-enable-by-default nil
                      spell-checking-enable-auto-dictionary t
