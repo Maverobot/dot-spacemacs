@@ -122,7 +122,6 @@ This function should only modify configuration layer settings."
                markdown-command "marked"
                markdown-live-preview-engine 'vmd)
      yaml
-     pdf
      html
      (org :variables
           org-startup-indented t
