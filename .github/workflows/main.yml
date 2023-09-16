@@ -29,7 +29,8 @@ jobs:
         run: mkdir ~/org/home/roam -p
 
       - name: Install everything needed for the spacemacs config
-        run: curl -o- https://raw.githubusercontent.com/Maverobot/dot-spacemacs/${GITHUB_REF##*/}/installer.sh | tee /dev/tty | bash
+        run: ./installer.sh
+        shell: bash
 
       - name: Copy the generated index.html to the checked out repo path
         run: |
