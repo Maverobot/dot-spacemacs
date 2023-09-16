@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2.3.4
+        uses: actions/checkout@v3
 
       - name: Cache the spacemacs repository folder
         uses: actions/cache@v2
@@ -39,7 +39,7 @@ jobs:
 
       - name: GitHub Pages
         if: matrix.os == 'ubuntu-18.04' && success()
-        uses: crazy-max/ghaction-github-pages@v2.5.0
+        uses: crazy-max/ghaction-github-pages@v4
         with:
           target_branch: gh-pages
           build_dir: public
