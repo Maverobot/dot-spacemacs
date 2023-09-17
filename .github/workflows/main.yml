@@ -1,5 +1,8 @@
 name: CI
 
+env:
+ BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+
 on:
   push:
     branches: [ master ]
@@ -28,8 +31,12 @@ jobs:
       - name: Create a placeholder folder for org-roam
         run: mkdir ~/org/home/roam -p
 
+      - name: Get branch name
+        id: branch-name
+        uses: tj-actions/branch-names@v7
+
       - name: Install everything needed for the spacemacs config
-        run: ./installer.sh
+        run: ./installer.sh ${{ steps.branch-name.outputs.current_branch }}
         shell: bash
 
       - name: Copy the generated index.html to the checked out repo path

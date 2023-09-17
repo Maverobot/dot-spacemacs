@@ -5,6 +5,7 @@ readonly SPACEMACS_URL=https://github.com/syl20bnr/spacemacs
 readonly SPACEMACS_DIR=${HOME}/.emacs.d
 readonly DOTSPACEMACS_DIR=${HOME}/.spacemacs.d
 readonly BACKUP_SUFFIX="backup-$(date +"%Y%m%d-%H%M%S")"
+readonly DOTSPACEMACS_BRANCH="${1:-master}"
 
 ###############################################################################
 #                              Install Spacemacs                              #
@@ -23,7 +24,7 @@ function install_spacemacs {
     fi
 
     [[ -d "${DOTSPACEMACS_DIR}" ]] && mv -v ${DOTSPACEMACS_DIR} ${DOTSPACEMACS_DIR}.${BACKUP_SUFFIX}
-    git clone https://github.com/Maverobot/dot-spacemacs.git --recurse-submodules ${DOTSPACEMACS_DIR}
+    git clone https://github.com/Maverobot/dot-spacemacs.git --recurse-submodules -b ${DOTSPACEMACS_BRANCH} ${DOTSPACEMACS_DIR}
 }
 
 ###############################################################################
