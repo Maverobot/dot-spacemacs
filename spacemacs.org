@@ -177,6 +177,12 @@ Use evil keybindings for selecting items in popup menus.
       (nvm-use "v16.2.0")
     (error (message "Could not initialize nvm for emacs.")))
 #+END_SRC
+*** conf-mode
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (add-to-list 'auto-mode-alist '("\\.eds\\'" . conf-mode))
+  (add-to-list 'auto-mode-alist '("\\.dcf\\'" . conf-mode))
+#+END_SRC
+
 *** ROS
 **** helm-ros
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
