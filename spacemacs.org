@@ -449,7 +449,7 @@ E.g. when visiting a soft/hard link.
                  "* TODO %?\n  %U\n  %i\n  %a")
                 ("w" "Work" entry (file+headline "~/org/work/tasks.org" "Tasks")
                  "* TODO %?\n  %U\n  %i\n  %a")))
-        (setq org-projectile-capture-template capture-template))))
+        (setq org-project-capture-capture-template capture-template))))
   (spacemacs/set-leader-keys
     "aoh" (lambda () (interactive) (find-file "~/org/home/tasks.org"))
     "aow" (lambda () (interactive) (find-file "~/org/work/tasks.org")))
