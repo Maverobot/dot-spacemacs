@@ -32,30 +32,14 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(csv
-     ;; Web
-     (html :variables web-fmt-tool 'prettier)
-     (javascript :variables
-                 javascript-backend 'lsp
-                 javascript-fmt-tool 'prettier
-                 javascript-import-tool 'import-js
-                 javascript-fmt-on-save t
-                 ;; due to possible conflicts with flycheck (e.g. semicolon)
-                 js2-mode-show-strict-warnings nil
-                 prettier-js-args nil)
-     (typescript :variables
-                 typescript-backend 'lsp
-                 typescript-fmt-tool 'prettier
-                 typescript-import-tool 'import-js
-                 typescript-fmt-on-save t
-                 typescript-linter 'eslint
-                 prettier-js-args nil)
+   '(
      ;; Programming languages
      (docker :variables docker-dockerfile-backend 'lsp)
      major-modes
      (groovy :variables
              groovy-backend 'lsp)
      ess
+     php
      emacs-lisp
      shell-scripts
      (julia :variables
@@ -84,6 +68,21 @@ This function should only modify configuration layer settings."
      (cmake :variables
             cmake-enable-cmake-ide-support nil
             cmake-backend 'lsp)
+     (javascript :variables
+                 javascript-backend 'lsp
+                 javascript-fmt-tool 'prettier
+                 javascript-import-tool 'import-js
+                 javascript-fmt-on-save t
+                 ;; due to possible conflicts with flycheck (e.g. semicolon)
+                 js2-mode-show-strict-warnings nil
+                 prettier-js-args nil)
+     (typescript :variables
+                 typescript-backend 'lsp
+                 typescript-fmt-tool 'prettier
+                 typescript-import-tool 'import-js
+                 typescript-fmt-on-save t
+                 typescript-linter 'eslint
+                 prettier-js-args nil)
 
      ;; Autocompletion and language server
      syntax-checking
@@ -117,12 +116,16 @@ This function should only modify configuration layer settings."
           lsp-ui-sideline-show-code-actions t
           lsp-lens-enable nil)
 
+     ;; Virtual environments
+     (conda :variables conda-anaconda-home "~/.miniconda3")
+
      ;; File types
      (markdown :variables
                markdown-command "marked"
                markdown-live-preview-engine 'vmd)
+     csv
      yaml
-     html
+     (html :variables web-fmt-tool 'prettier)
      (org :variables
           org-startup-indented t
           org-want-todo-bindings t
