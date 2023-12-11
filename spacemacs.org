@@ -83,6 +83,14 @@ This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code.
 #+end_quote
 ** IDE config
+*** MacOS
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  ; Use Command key as meta in emacs
+  (setq mac-option-key-is-meta nil
+        mac-command-key-is-meta t
+        mac-command-modifier 'meta
+        mac-option-modifier 'none)
+#+END_SRC
 *** Prevent using UI dialogs for prompts
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (setq use-dialog-box nil)
