@@ -267,6 +267,22 @@ Autocompletion config for launch files.
 
 #+END_SRC
 
+*** copilot
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (setq copilot-node-executable "/usr/bin/node")
+
+  (with-eval-after-load 'company
+    ;; disable inline previews
+    (delq 'company-preview-if-just-one-frontend company-frontends))
+
+  (with-eval-after-load 'copilot
+    (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
+    (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)
+    (define-key copilot-completion-map (kbd "C-TAB") 'copilot-accept-completion-by-word)
+    (define-key copilot-completion-map (kbd "C-<tab>") 'copilot-accept-completion-by-word))
+
+  (add-hook 'prog-mode-hook 'copilot-mode)
+#+END_SRC
 ** Miscellaneous
 *** cursor
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
