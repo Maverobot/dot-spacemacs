@@ -189,7 +189,11 @@ This function should only modify configuration layer settings."
                                       org-roam-ui
                                       org-ai
                                       ssh-agency
-                                      greader)
+                                      greader
+                                      (copilot :location (recipe
+                                                          :fetcher github
+                                                          :repo "zerolfx/copilot.el"
+                                                          :files ("*.el" "dist"))))
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
 

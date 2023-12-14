@@ -269,7 +269,7 @@ Autocompletion config for launch files.
 
 *** copilot
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (setq copilot-node-executable "/usr/bin/node")
+  (setq copilot-node-executable (executable-find "node"))
 
   (with-eval-after-load 'company
     ;; disable inline previews
