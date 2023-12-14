@@ -284,6 +284,10 @@ Autocompletion config for launch files.
   (add-hook 'prog-mode-hook 'copilot-mode)
 #+END_SRC
 ** Miscellaneous
+*** No title bar
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+(add-to-list 'default-frame-alist '(undecorated-round . t))
+#+END_SRC
 *** cursor
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   ; Display Emacs cursor in terminal as it would be in GUI
