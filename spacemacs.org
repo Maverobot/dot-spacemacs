@@ -574,11 +574,12 @@ E.g. when visiting a soft/hard link.
 #+END_SRC
 *** google-search
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  ;; Set google as default search engine
+  ;; Set google as default search engine and open links with xdg-open or open depending on the OS
   (spacemacs/set-leader-keys "ag" 'engine/search-google)
   (setq browse-url-browser-function 'browse-url-generic
         engine/browser-function 'browse-url-generic
-        browse-url-generic-program "xdg-open")
+        browse-url-generic-program (cond ((string-equal system-type "darwin") "open")
+                                          ((string-equal system-type "gnu/linux") "xdg-open")))
 #+END_SRC
 *** Kill all buffers
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
