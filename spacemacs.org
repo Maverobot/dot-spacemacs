@@ -433,17 +433,12 @@ E.g. when visiting a soft/hard link.
 #+END_SRC
 *** org-babel
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (load "~/.spacemacs.d/private/ob-julia/ob-julia.el")
-
   (with-eval-after-load 'org
-    (with-eval-after-load 'org-python
-      (with-eval-after-load 'org-C
-        (org-babel-do-load-languages
-         'org-babel-load-languages
-         '((C . t)
-           (python . t)
-           (shell . t)
-           (julia . t))))))
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((C . t)
+       (python . t)
+       (shell . t))))
 #+END_SRC
 *** org-journal
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
