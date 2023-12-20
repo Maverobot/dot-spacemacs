@@ -307,7 +307,7 @@ Autocompletion config for launch files.
 #+END_SRC
 *** Default python interpreter
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (setq python-shell-interpreter "/usr/bin/python3")
+  (setq python-shell-interpreter (executable-find "python3"))
 #+END_SRC
 *** Disable spacemacs buffer warnings
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
