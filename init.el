@@ -190,7 +190,11 @@ This function should only modify configuration layer settings."
                                       (copilot :location (recipe
                                                           :fetcher github
                                                           :repo "zerolfx/copilot.el"
-                                                          :files ("*.el" "dist"))))
+                                                          :files ("*.el" "dist")))
+                                      (lean4-mode :location (recipe
+                                                             :fetcher github
+                                                             :repo "leanprover/lean4-mode"
+                                                             :files ("*.el" "data"))))
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
 
