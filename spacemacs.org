@@ -521,6 +521,12 @@ E.g. when visiting a soft/hard link.
       (message "No active region is found.")))
   (spacemacs/set-leader-keys-for-major-mode 'org-mode "RR" 'replace-markdown-region-with-org)
 #+END_SRC
+*** ob-lean4
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (use-package ob-lean4
+    :load-path "~/.spacemacs.d/private/ob-lean4")
+  (add-to-list 'org-babel-load-languages '(lean4 . t))
+#+END_SRC
 
 ** Utility
 *** beacon mode
