@@ -10,9 +10,6 @@
         - [Manuel](#manuel)
             - [Requirements](#requirements)
             - [Configuration](#configuration)
-    - [Tips and tricks](#tips-and-tricks)
-        - [ccls](#ccls)
-        - [Markdown live preview](#markdown-live-preview)
 
 <!-- markdown-toc end -->
 
@@ -77,29 +74,12 @@ Root privileges will be needed by the script for package installation via `apt`,
   cd ~/.spacemacs.d && ./build_ccls.sh
   ```
 
-## Tips and tricks
-### ccls
-For language server to work, it is necessary to compile the projects with flag `-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`. Take cmake project for example,
+## Other stuffs
 
-```sh
-# Go into build folder in cmake project
-mkdir build && cd build
-# Create compile_commands.json with the flag
-cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
-```
-
-### Markdown live preview
-Call `M-x start_glow_viewer` in a markdown buffer. See [here][start-glow-viewer] for details.
-
-In order to use this feature, `glow` has to be installed manually.
-
-```sh
-sudo snap install go --classic
-go get github.com/charmbracelet/glow
-```
+* [Tips and tricks][tips-and-tricks]
 
 [github-actions-badge]: https://github.com/maverobot/dot-spacemacs/actions/workflows/main.yml/badge.svg?branch=master
 [github-actions-link]: https://github.com/Maverobot/dot-spacemacs/actions
 [installer.sh]: https://raw.githubusercontent.com/Maverobot/dot-spacemacs/master/installer.sh
 [gcc-installation]: https://github.com/Maverobot/dot-spacemacs/blob/master/docs/gcc_installation.md
-[start-glow-viewer]: https://github.com/Maverobot/dot-spacemacs/blob/master/spacemacs.org#glow-the-markdown-viewer
+[tips-and-tricks]: https://github.com/Maverobot/dot-spacemacs/blob/master/docs/tips_and_tricks.md
