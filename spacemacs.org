@@ -1,5 +1,5 @@
 #+TITLE: Spacemacs tangled user configuration
-#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup
+#+SETUPFILE: ./docs/theme-readtheorg.setup
 #+STARTUP: headlines
 #+STARTUP: nohideblocks
 #+STARTUP: indent
