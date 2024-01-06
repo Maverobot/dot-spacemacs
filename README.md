@@ -32,6 +32,9 @@ Root privileges will be needed by the script for package installation via `apt`,
 
 ### Manual
 
+<details>
+  <summary>Click me</summary>
+
 #### Requirements
 
 * Emacs
@@ -73,6 +76,8 @@ Root privileges will be needed by the script for package installation via `apt`,
   ```sh
   cd ~/.spacemacs.d && ./build_ccls.sh
   ```
+
+</details>
 
 ## Other stuffs
 
