@@ -1,9 +1,10 @@
 [![Build Status][github-actions-badge]][github-actions-link]
 # dot-spacemacs
 
-This is the repository of a personal spacemacs config file. It contains a fully functioning c/c++ development environment with [ccls](https://github.com/MaskRay/ccls), which is a C/C++/ObjC language server supporting cross references, hierarchies, completion and semantic highlighting.
+This is the repository of a personal spacemacs config file. The configurations can be found in
 
-The content of the configuration can be found in the [spacemacs.org](spacemacs.org "Spacemacs configuration in org file") file.
+* [init.el](init.el) and
+* [spacemacs.org](spacemacs.org) or the [auto-generated documentation](https://maverobot.github.io/dot-spacemacs/)
 
 ## Installation
 
