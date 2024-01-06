@@ -5,6 +5,7 @@
 #+STARTUP: indent
 #+OPTIONS: toc:4 h:4
 #+PROPERTY: header-args:emacs-lisp :comments link
+
 * Introduction
 This is a org file where its code snippets will be read by ~spacemacs~ for ~user-init~ and ~user-config~. It is inspired by [[https://github.com/ralesi/spacemacs.org][spacemacs.org]].
 * user-init
@@ -389,6 +390,23 @@ E.g. when visiting a soft/hard link.
     (setq native-comp-async-report-warnings-errors nil))
 #+END_SRC
 ** org-mode
+*** Export code blocks with current theme
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (defun my/org-inline-css-hook (exporter)
+    "Insert custom inline css to automatically set the
+  background of code to whatever theme I'm using's background"
+    (when (eq exporter 'html)
+      (let* ((my-pre-bg (face-background 'default))
+             (my-pre-fg (face-foreground 'default)))
+        (setq
+         org-html-head-extra
+         (concat
+          org-html-head-extra
+          (format "<style type=\"text/css\">\n pre.src {background-color: %s; color: %s;}</style>\n"
+                  my-pre-bg my-pre-fg))))))
+
+  (add-hook 'org-export-before-processing-hook 'my/org-inline-css-hook)
+#+END_SRC
 *** org-ai
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
     (use-package org-ai
