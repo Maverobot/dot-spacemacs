@@ -1,18 +1,6 @@
 [![Build Status][github-actions-badge]][github-actions-link]
 # dot-spacemacs
 
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**Table of Contents**
-
-- [dot-spacemacs](#dot-spacemacs)
-    - [Installation](#installation)
-        - [Automatic](#automatic)
-        - [Manuel](#manuel)
-            - [Requirements](#requirements)
-            - [Configuration](#configuration)
-
-<!-- markdown-toc end -->
-
 This is the repository of a personal spacemacs config file. It contains a fully functioning c/c++ development environment with [ccls](https://github.com/MaskRay/ccls), which is a C/C++/ObjC language server supporting cross references, hierarchies, completion and semantic highlighting.
 
 The content of the configuration can be found in the [spacemacs.org](spacemacs.org "Spacemacs configuration in org file") file.
