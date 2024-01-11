@@ -287,6 +287,35 @@ Autocompletion config for launch files.
   (add-hook 'copilot-mode-hook (lambda ()
                                  (setq-local copilot--indent-warning-printed-p t)))
 #+END_SRC
+*** tramp + clang-format
+clang-format does not work properly when editing a file on a remote host or in a docker container with tramp.
+See the issue here: https://github.com/kljohann/clang-format.el/issues/5
+
+Here upon ~clang-format-region~ call, we first check if the file is on a remote host or in a docker container.
+- If not, we call ~clang-format-region~ as usual.
+- If yes, we first check if a file with the same path exists on the local disk.
+  - If yes, we assume it as the input file name for ~clang-format-region~.
+  - If not, we assume the input file is under the $HOME directory.
+
+Depending on where the input file is assumed to be, ~clang-format~ will find the ~.clang-format~ file for
+the formatting in a dominant parent directory of the assumed input file path.
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (defun tramp-aware-clang-format (orig-fun start end &optional style assume-file-name)
+    (unless assume-file-name
+      (setq assume-file-name
+            (if (file-remote-p buffer-file-name)
+                (let ((maybe-existing-local-buffer-file-name (replace-regexp-in-string "/docker:[^:]+:" "" buffer-file-name)))
+                  ;; If file `maybe-existing-local-buffer-file-name' exists on local disk, use it.
+                  (if (file-exists-p maybe-existing-local-buffer-file-name)
+                      maybe-existing-local-buffer-file-name
+                    ;; Otherwise, use `buffer-file-name' as if it is under the $HOME directory.
+                    (concat (getenv "HOME") "/" (file-name-nondirectory buffer-file-name))))
+              buffer-file-name)))
+    (message "assume-file-name: %s" assume-file-name)
+    (apply orig-fun (list start end style assume-file-name)))
+
+  (advice-add 'clang-format-region :around #'tramp-aware-clang-format)
+#+END_SRC
 ** Miscellaneous
 *** No title bar
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
