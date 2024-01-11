@@ -104,7 +104,9 @@ layers configuration. You are free to put any user code.
     (setq ccls-initialization-options
           (list :cache (list :directory (file-truename (concat (file-name-as-directory spacemacs-cache-directory) ".ccls-cache")))
                 :compilationDatabaseDirectory "build"))
-    (setq ccls-executable (file-truename "~/.spacemacs.d/ccls/Release/ccls")))
+    ;; Only set the specific ccls path if it exists
+    (when (file-exists-p "~/.spacemacs.d/ccls/Release/ccls")
+      (setq ccls-executable (file-truename "~/.spacemacs.d/ccls/Release/ccls"))))
 #+END_SRC
 *** cmake-ide
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
