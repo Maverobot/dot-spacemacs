@@ -318,6 +318,10 @@ the formatting in a dominant parent directory of the assumed input file path.
 
   (advice-add 'clang-format-region :around #'tramp-aware-clang-format)
 #+END_SRC
+*** Require final new line
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (setq-default require-final-newline t)
+#+END_SRC
 ** Miscellaneous
 *** No title bar
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
