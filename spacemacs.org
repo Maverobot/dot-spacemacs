@@ -321,6 +321,21 @@ the formatting in a dominant parent directory of the assumed input file path.
 *** Require final new line
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (setq-default require-final-newline t)
+*** Get current branch name in magit
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (defun magit-add-current-branch-name-to-kill-ring ()
+    "Show the current branch in the echo-area and add it to the `kill-ring'."
+    (interactive)
+    (let ((branch (magit-get-current-branch)))
+      (if branch
+          (progn (kill-new branch)
+                 (message "%s" branch))
+        (user-error "There is not current branch"))))
+
+  ; TODO: Move this keybinding from "Checkout" to "Do" section
+  (with-eval-after-load 'magit
+    (transient-insert-suffix 'magit-branch "b"
+      '("k" "copy branch name" magit-add-current-branch-name-to-kill-ring)))
 #+END_SRC
 ** Miscellaneous
 *** No title bar
