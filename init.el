@@ -662,7 +662,7 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
               (file-newer-than-file-p src uc))
       (call-process
        (concat invocation-directory invocation-name)
-       nil nil t
+       nil "*tangle-spacemacs-org-file-output*" t
        "-q" "--batch" "--eval" "(require 'ob-tangle)"
        "--eval" (format "(org-babel-tangle-file \"%s\")" src)))
     (load-file ui)))
