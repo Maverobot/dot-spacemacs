@@ -156,6 +156,7 @@ This function should only modify configuration layer settings."
      version-control
      search-engine
      command-log
+     pdf
      (ranger :variables
              ranger-show-preview t)
      (spell-checking :variables
@@ -188,7 +189,6 @@ This function should only modify configuration layer settings."
                                       org-make-toc
                                       org-noter
                                       org-roam-ui
-                                      pdf-tools
                                       posframe
                                       ssh-agency
                                       xclip
