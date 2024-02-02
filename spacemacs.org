@@ -438,6 +438,10 @@ E.g. when visiting a soft/hard link.
     (message "Native compilation is available")
     (setq native-comp-async-report-warnings-errors nil))
 #+END_SRC
+*** Use pdf-tools by default
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (pdf-tools-install)
+#+END_SRC
 ** org-mode
 *** Export code blocks with current theme
 #+BEGIN_SRC emacs-lisp :tangle user-config.el

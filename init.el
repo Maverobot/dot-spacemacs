@@ -186,7 +186,9 @@ This function should only modify configuration layer settings."
                                       nvm
                                       org-ai
                                       org-make-toc
+                                      org-noter
                                       org-roam-ui
+                                      pdf-tools
                                       posframe
                                       ssh-agency
                                       xclip
