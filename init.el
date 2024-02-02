@@ -167,35 +167,30 @@ This function should only modify configuration layer settings."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(helm-ros
+   dotspacemacs-additional-packages '(
+                                      (copilot :location (recipe :fetcher github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
+                                      (lean4-mode :location (recipe :fetcher github :repo "leanprover/lean4-mode" :files ("*.el" "data")))
+                                      (term-cursor :location (recipe :fetcher github :repo "h0d/term-cursor.el" ))
+                                      arduino-mode
                                       beacon
+                                      cheat-sh
                                       cmake-mode
                                       doom-themes
-                                      format-all
-                                      xclip
-                                      posframe
-                                      arduino-mode
-                                      exec-path-from-shell
-                                      nvm
-                                      org-make-toc
-                                      flatbuffers-mode
-                                      cheat-sh
                                       emacs-everywhere
-                                      ;; jenkinsfile-mode
+                                      exec-path-from-shell
                                       feature-mode
-                                      (term-cursor :location (recipe :fetcher github :repo "h0d/term-cursor.el" ))
-                                      org-roam-ui
-                                      org-ai
-                                      ssh-agency
+                                      flatbuffers-mode
+                                      format-all
                                       greader
-                                      (copilot :location (recipe
-                                                          :fetcher github
-                                                          :repo "zerolfx/copilot.el"
-                                                          :files ("*.el" "dist")))
-                                      (lean4-mode :location (recipe
-                                                             :fetcher github
-                                                             :repo "leanprover/lean4-mode"
-                                                             :files ("*.el" "data"))))
+                                      helm-ros
+                                      nvm
+                                      org-ai
+                                      org-make-toc
+                                      org-roam-ui
+                                      posframe
+                                      ssh-agency
+                                      xclip
+                                      )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
 
