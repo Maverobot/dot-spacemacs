@@ -40,3 +40,6 @@
 [submodule "private/ob-lean4"]
 	path = private/ob-lean4
 	url = https://github.com/Maverobot/ob-lean4.git
+[submodule "private/w3m"]
+	path = private/w3m
+	url = https://github.com/venmos/w3m-layer.git
