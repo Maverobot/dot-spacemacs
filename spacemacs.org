@@ -525,12 +525,7 @@ E.g. when visiting a soft/hard link.
     "aojj" (lambda () (interactive)
              (let ((org-journal-dir "~/org/home/roam/journal/"))
                (org-journal-new-entry nil))))
-  (spacemacs/set-leader-keys
-    "aojw" (lambda () (interactive)
-             (let ((org-journal-dir "~/org/work/journal/"))
-               (org-journal-new-entry nil))))
   (spacemacs/declare-prefix "aojj" "journal-home")
-  (spacemacs/declare-prefix "aojw" "journal-work")
 #+END_SRC
 *** org-table
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
