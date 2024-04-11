@@ -84,6 +84,16 @@ This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code.
 #+end_quote
 ** IDE config
+*** Disable auto-indent in C/C++ mode after typing ~::~
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  ;; Disable electric indentation in C and C++ modes
+  (defun my-disable-electric-indent-mode ()
+    (setq-local c-electric-flag nil))
+
+  ;; Hook this function to C mode and C++ mode
+  (add-hook 'c-mode-hook 'my-disable-electric-indent-mode)
+  (add-hook 'c++-mode-hook 'my-disable-electric-indent-mode)
+#+END_SRC
 *** MacOS
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   ; Use Command key as meta in emacs
