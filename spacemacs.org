@@ -528,13 +528,13 @@ E.g. when visiting a soft/hard link.
 *** org-journal
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (with-eval-after-load 'org-journal
+    (setq org-journal-dir "~/org/home/roam/journal/")
     (setq org-journal-file-type 'monthly)
     (setq org-journal-file-format "%Y%m%d.org"))
 
   (spacemacs/set-leader-keys
     "aojj" (lambda () (interactive)
-             (let ((org-journal-dir "~/org/home/roam/journal/"))
-               (org-journal-new-entry nil))))
+             (org-journal-new-entry nil)))
   (spacemacs/declare-prefix "aojj" "journal-home")
 #+END_SRC
 *** org-table
