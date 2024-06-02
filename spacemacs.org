@@ -19,7 +19,10 @@ It is called immediately after
 useful for variables that need to be set before packages are loaded. If you are
 unsure, you should try in setting them in `dotspacemacs/user-config' first.
 #+end_quote
-
+** Locale
+#+BEGIN_SRC emacs-lisp :tangle user-init.el
+  (setq system-time-locale "C")
+#+END_SRC
 ** Theme
 #+BEGIN_SRC emacs-lisp :tangle user-init.el
   (setq-default dotspacemacs-themes '(
