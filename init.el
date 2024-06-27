@@ -662,12 +662,12 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
     (when (or (file-newer-than-file-p src ui)
               (file-newer-than-file-p src uc))
       (setq call-process-result (call-process
-                                  (concat invocation-directory invocation-name)
-                                  nil "*tangle-spacemacs-org-file-output*" t
-                                  "-q" "--batch" "--eval" "(require 'ob-tangle)"
-                                  "--eval" (format "(org-babel-tangle-file \"%s\")" src))))
+                                 (concat invocation-directory invocation-name)
+                                 nil "*tangle-spacemacs-org-file-output*" t
+                                 "-q" "--batch" "--eval" "(require 'ob-tangle)"
+                                 "--eval" (format "(org-babel-tangle-file \"%s\")" src)))
       (if (not (zerop call-process-result))
-          (error "Error during tangling of %s with exit code %d" src call-process-result))
+          (error "Error during tangling of %s with exit code %d" src call-process-result)))
     (load-file ui)))
 
 (defun dotspacemacs/user-config ()
