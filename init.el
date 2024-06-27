@@ -145,7 +145,6 @@ This function should only modify configuration layer settings."
                                                  :matchers ("begin" "$1" "$" "$$" "\\(" "\\[")))
 
      ;; Utils
-     w3m
      (plantuml :variables
                plantuml-jar-path (file-truename "~/.spacemacs.d/plantuml.jar"))
      dap
