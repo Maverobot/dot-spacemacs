@@ -1,0 +1,1430 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2024-06-27 Thu 19:25 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Spacemacs tangled user configuration</title>
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/readtheorg.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/js/readtheorg.js"></script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">Spacemacs tangled user configuration</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org7af3a4e">1. Introduction</a></li>
+<li><a href="#orgb12889a">2. user-init</a>
+<ul>
+<li><a href="#orga97db01">2.1. Locale</a></li>
+<li><a href="#org8d72560">2.2. Theme</a></li>
+<li><a href="#orgcfc8321">2.3. ROS</a></li>
+<li><a href="#org7bfef63">2.4. Shell</a></li>
+<li><a href="#org9ea4f02">2.5. Layers</a>
+<ul>
+<li><a href="#org5744168">2.5.1. groovy</a></li>
+</ul>
+</li>
+<li><a href="#org9458704">2.6. Workarounds</a>
+<ul>
+<li><a href="#org29a2da1">2.6.1. Workaround for unsigned packages</a></li>
+<li><a href="#orgfbd5300">2.6.2. Acknowledge org-roam-v2</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orga3c733c">3. user-config</a>
+<ul>
+<li><a href="#orgbcc9336">3.1. IDE config</a>
+<ul>
+<li><a href="#org2d86358">3.1.1. Disable auto-indent in C/C++ mode after typing <code>::</code></a></li>
+<li><a href="#org0e08d0d">3.1.2. MacOS</a></li>
+<li><a href="#org6fdd5b8">3.1.3. Prevent using UI dialogs for prompts</a></li>
+<li><a href="#orgde5cfcf">3.1.4. ccls</a></li>
+<li><a href="#org7fb374e">3.1.5. cmake-ide</a></li>
+<li><a href="#orge1be6a2">3.1.6. company</a></li>
+<li><a href="#org39c74ca">3.1.7. lsp-ui</a></li>
+<li><a href="#orgc9b8775">3.1.8. popup</a></li>
+<li><a href="#org7505166">3.1.9. dap</a></li>
+<li><a href="#org4584473">3.1.10. flycheck</a></li>
+<li><a href="#org1d15ea7">3.1.11. Indentation for web development</a></li>
+<li><a href="#org5248cc3">3.1.12. groovy (Jenkinsfile)</a></li>
+<li><a href="#orgc4b12e7">3.1.13. plantuml</a></li>
+<li><a href="#org4ca97e0">3.1.14. nvm</a></li>
+<li><a href="#orgb70d67c">3.1.15. conf-mode</a></li>
+<li><a href="#org76886bc">3.1.16. ROS</a>
+<ul>
+<li><a href="#orgbe3bece">3.1.16.1. helm-ros</a></li>
+<li><a href="#orgc5801ea">3.1.16.2. roslaunch-jump</a></li>
+<li><a href="#org9c208bb">3.1.16.3. company-roslaunch</a></li>
+<li><a href="#org3741ea2">3.1.16.4. catkin-make</a></li>
+</ul>
+</li>
+<li><a href="#org2ccd081">3.1.17. Style for linux kernel development</a></li>
+<li><a href="#org39260be">3.1.18. copilot</a></li>
+<li><a href="#org18ceb18">3.1.19. tramp + clang-format</a></li>
+<li><a href="#orgc5f780c">3.1.20. Get current branch name in magit</a></li>
+</ul>
+</li>
+<li><a href="#org34b75ef">3.2. Miscellaneous</a>
+<ul>
+<li><a href="#orgcd8bd0d">3.2.1. No title bar</a></li>
+<li><a href="#org272c5bd">3.2.2. cursor</a></li>
+<li><a href="#orga043968">3.2.3. ripgrep</a></li>
+<li><a href="#org66317fe">3.2.4. <code>C-a</code> for increasing number, <code>C-x</code> for descreasing number</a></li>
+<li><a href="#org3d7b2ae">3.2.5. Default python interpreter</a></li>
+<li><a href="#orgc4957ea">3.2.6. Disable spacemacs buffer warnings</a></li>
+<li><a href="#orgd5fff4a">3.2.7. Find this file</a></li>
+<li><a href="#org9d23b5b">3.2.8. <code>-</code> for going to the first non-blank position of the previous line</a></li>
+<li><a href="#org6a424ae">3.2.9. helm-swoop</a></li>
+<li><a href="#orge284856">3.2.10. Keybinding for Zoom in / out</a></li>
+<li><a href="#orgb5ce0da">3.2.11. Kill frame when pressing <code>SPC q q</code></a></li>
+<li><a href="#org17a79a1">3.2.12. Make <code>w</code> in vim mode move to end of the word (not stopped by <code>_</code>)</a></li>
+<li><a href="#orgdc6955f">3.2.13. Smooth scrolling</a></li>
+<li><a href="#org9fb79e3">3.2.14. Transparency settings</a></li>
+<li><a href="#org1d92379">3.2.15. Turn on xclip-mode</a></li>
+<li><a href="#orge15bfd9">3.2.16. Use windows key as meta key</a></li>
+<li><a href="#org04b1b3b">3.2.17. Visiting a file uses its truename as the visited-file name</a></li>
+<li><a href="#org5908639">3.2.18. Do not autosave undo history</a></li>
+<li><a href="#orgdd63e4b">3.2.19. Native compilation</a></li>
+</ul>
+</li>
+<li><a href="#org968c9ee">3.3. org-mode</a>
+<ul>
+<li><a href="#org5c1de52">3.3.1. Export code blocks with current theme</a></li>
+<li><a href="#org8b30dc0">3.3.2. org-ai</a></li>
+<li><a href="#org13f3400">3.3.3. org-pomodora</a></li>
+<li><a href="#org345178b">3.3.4. org-agenda</a></li>
+<li><a href="#orgf96e7ff">3.3.5. org-cv</a></li>
+<li><a href="#org43c5c38">3.3.6. org-babel</a></li>
+<li><a href="#orgec9d0f8">3.3.7. org-journal</a></li>
+<li><a href="#org14bd64a">3.3.8. org-table</a></li>
+<li><a href="#org51800da">3.3.9. org-todo</a></li>
+<li><a href="#org1f2ad5d">3.3.10. org-hugo</a></li>
+<li><a href="#org44dba0a">3.3.11. org-roam</a>
+<ul>
+<li><a href="#org0b5cbe1">3.3.11.1. Automatically sync the database</a></li>
+<li><a href="#org5537e1d">3.3.11.2. Migrate the current buffer from org-roam v1 to v2</a></li>
+</ul>
+</li>
+<li><a href="#org2ce5851">3.3.12. org-clock</a>
+<ul>
+<li><a href="#org28a4a10">3.3.12.1. Save the clock history across Emacs sessions</a></li>
+</ul>
+</li>
+<li><a href="#orgedb241c">3.3.13. Replace selected markdown region to org format</a></li>
+<li><a href="#org78d7d57">3.3.14. ob-lean4</a></li>
+</ul>
+</li>
+<li><a href="#org77cffb1">3.4. Utility</a>
+<ul>
+<li><a href="#org5796680">3.4.1. beacon mode</a></li>
+<li><a href="#org1df9a3d">3.4.2. Toggle clang-format on save</a></li>
+<li><a href="#org7af9d1e">3.4.3. auto-indent</a></li>
+<li><a href="#orgf70a1ff">3.4.4. format-all</a></li>
+<li><a href="#orga23143a">3.4.5. glow, the markdown viewer</a></li>
+<li><a href="#orgab8ed44">3.4.6. google-search</a></li>
+<li><a href="#org00b00fc">3.4.7. Kill all buffers</a></li>
+<li><a href="#orgbd3e24d">3.4.8. ranger</a></li>
+<li><a href="#orge7400eb">3.4.9. cheat.sh</a></li>
+<li><a href="#org1519b2c">3.4.10. Disable persistent undo-tree</a></li>
+<li><a href="#org3118624">3.4.11. chatgpt-shell</a></li>
+</ul>
+</li>
+<li><a href="#org1613b90">3.5. Workarounds</a>
+<ul>
+<li><a href="#org1423337">3.5.1. Workaround to suppress a yas related warning</a></li>
+<li><a href="#orgb896704">3.5.2. Workaround for the bug where keybinding of the projectile-find-other-file is shadowed.</a></li>
+<li><a href="#org216a6c4">3.5.3. Workaround for the bug where fuzzy matching is not used in recent files</a></li>
+<li><a href="#orge54696b">3.5.4. Workaround for the bug where company-mode and evil-mode are conflicting</a></li>
+<li><a href="#orgcce5c9b">3.5.5. Workaround for the bug where evil search breaks spacemacs.</a></li>
+<li><a href="#org91a53c2">3.5.6. Setting part of a word to be bold, italics, underline, and strikethrough.</a></li>
+<li><a href="#orgb98a8a7">3.5.7. Enable doom-modeline-icons in gui and disable them in terminal</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org7af3a4e" class="outline-2">
+<h2 id="org7af3a4e"><span class="section-number-2">1.</span> Introduction</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+This is a org file where its code snippets will be read by <code>spacemacs</code> for <code>user-init</code> and <code>user-config</code>. It is inspired by <a href="https://github.com/ralesi/spacemacs.org">spacemacs.org</a>.
+</p>
+</div>
+</div>
+<div id="outline-container-orgb12889a" class="outline-2">
+<h2 id="orgb12889a"><span class="section-number-2">2.</span> user-init</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+All code snippets under this section will be added to <code>dotspacemacs//user-init</code>
+function, which is
+</p>
+<blockquote>
+<p>
+Initialization function for user code.
+</p>
+
+<p>
+It is called immediately after
+<code>dotspacemacs/init</code>, before layer configuration executes. This function is mostly
+useful for variables that need to be set before packages are loaded. If you are
+unsure, you should try in setting them in `dotspacemacs/user-config' first.
+</p>
+</blockquote>
+</div>
+<div id="outline-container-orga97db01" class="outline-3">
+<h3 id="orga97db01"><span class="section-number-3">2.1.</span> Locale</h3>
+<div class="outline-text-3" id="text-2-1">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> system-time-locale <span class="org-string">"C"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org8d72560" class="outline-3">
+<h3 id="org8d72560"><span class="section-number-3">2.2.</span> Theme</h3>
+<div class="outline-text-3" id="text-2-2">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq-default</span> dotspacemacs-themes '<span class="org-rainbow-delimiters-depth-2">(</span>
+                                    doom-monokai-pro
+                                    spacemacs-dark
+                                    doom-one
+                                    doom-zenburn<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgcfc8321" class="outline-3">
+<h3 id="orgcfc8321"><span class="section-number-3">2.3.</span> ROS</h3>
+<div class="outline-text-3" id="text-2-3">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">spacemacs/update-ros-envs</span> <span class="org-rainbow-delimiters-depth-2">()</span>
+  <span class="org-doc">"Update all environment variables in `</span><span class="org-doc"><span class="org-constant">spacemacs-ignored-environment-variables</span></span><span class="org-doc">'</span>
+<span class="org-doc">from their values currently sourced in the shell environment (e.g. .bashrc)"</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">interactive</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">setq</span> exec-path-from-shell-check-startup-files nil<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>exec-path-from-shell-copy-envs spacemacs-ignored-environment-variables<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>message <span class="org-string">"ROS environment copied successfully from shell"</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+
+<span class="org-comment-delimiter">;; </span><span class="org-comment">Ignore any ROS environment variables since they might change depending</span>
+<span class="org-comment-delimiter">;; </span><span class="org-comment">on which catkin workspace is used. When a new catkin workspace is chosen</span>
+<span class="org-comment-delimiter">;; </span><span class="org-comment">call `</span><span class="org-comment"><span class="org-constant">spacemacs/update-ros-envs</span></span><span class="org-comment">' to update theses envs accordingly</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq-default</span> spacemacs-ignored-environment-variables '<span class="org-rainbow-delimiters-depth-2">(</span><span class="org-string">"ROS_IP"</span>
+                                                        <span class="org-string">"PYTHONPATH"</span>
+                                                        <span class="org-string">"CMAKE_PREFIX_PATH"</span>
+                                                        <span class="org-string">"ROS_MASTER_URI"</span>
+                                                        <span class="org-string">"ROS_PACKAGE_PATH"</span>
+                                                        <span class="org-string">"ROSLISP_PACKAGE_DIRECTORIES"</span>
+                                                        <span class="org-string">"PKG_CONFIG_PATH"</span>
+                                                        <span class="org-string">"LD_LIBRARY_PATH"</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org7bfef63" class="outline-3">
+<h3 id="org7bfef63"><span class="section-number-3">2.4.</span> Shell</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+Set shell to be <code>bash</code> explicitly because my default shell <code>fish</code> does not work along with spacemacs.
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq-default</span> shell-file-name <span class="org-string">"/bin/bash"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org9ea4f02" class="outline-3">
+<h3 id="org9ea4f02"><span class="section-number-3">2.5.</span> Layers</h3>
+<div class="outline-text-3" id="text-2-5">
+</div>
+<div id="outline-container-org5744168" class="outline-4">
+<h4 id="org5744168"><span class="section-number-4">2.5.1.</span> groovy</h4>
+<div class="outline-text-4" id="text-2-5-1">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> default-groovy-lsp-jar-path <span class="org-string">"~/.spacemacs.d/groovy-language-server-all.jar"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">if</span> <span class="org-rainbow-delimiters-depth-2">(</span>file-exists-p default-groovy-lsp-jar-path<span class="org-rainbow-delimiters-depth-2">)</span>
+    <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">setq</span> groovy-lsp-jar-path default-groovy-lsp-jar-path<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>message <span class="org-rainbow-delimiters-depth-3">(</span>concat default-groovy-lsp-jar-path <span class="org-string">" does not exist"</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org9458704" class="outline-3">
+<h3 id="org9458704"><span class="section-number-3">2.6.</span> Workarounds</h3>
+<div class="outline-text-3" id="text-2-6">
+</div>
+<div id="outline-container-org29a2da1" class="outline-4">
+<h4 id="org29a2da1"><span class="section-number-4">2.6.1.</span> Workaround for unsigned packages</h4>
+<div class="outline-text-4" id="text-2-6-1">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> gnutls-algorithm-priority <span class="org-string">"NORMAL:-VERS-TLS1.3"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgfbd5300" class="outline-4">
+<h4 id="orgfbd5300"><span class="section-number-4">2.6.2.</span> Acknowledge org-roam-v2</h4>
+<div class="outline-text-4" id="text-2-6-2">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> org-roam-v2-ack t<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga3c733c" class="outline-2">
+<h2 id="orga3c733c"><span class="section-number-2">3.</span> user-config</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+All code snippets under this section will be added to <code>dotspacemacs//user-config</code>
+function, which is
+</p>
+<blockquote>
+<p>
+Configuration function for user code.
+</p>
+
+<p>
+This function is called at the very end of Spacemacs initialization after
+layers configuration. You are free to put any user code.
+</p>
+</blockquote>
+</div>
+<div id="outline-container-orgbcc9336" class="outline-3">
+<h3 id="orgbcc9336"><span class="section-number-3">3.1.</span> IDE config</h3>
+<div class="outline-text-3" id="text-3-1">
+</div>
+<div id="outline-container-org2d86358" class="outline-4">
+<h4 id="org2d86358"><span class="section-number-4">3.1.1.</span> Disable auto-indent in C/C++ mode after typing <code>::</code></h4>
+<div class="outline-text-4" id="text-3-1-1">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-comment-delimiter">;; </span><span class="org-comment">Disable electric indentation in C and C++ modes</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">my-disable-electric-indent-mode</span> <span class="org-rainbow-delimiters-depth-2">()</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">setq-local</span> c-electric-flag nil<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-comment-delimiter">;; </span><span class="org-comment">Hook this function to C mode and C++ mode</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>add-hook 'c-mode-hook 'my-disable-electric-indent-mode<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>add-hook 'c++-mode-hook 'my-disable-electric-indent-mode<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org0e08d0d" class="outline-4">
+<h4 id="org0e08d0d"><span class="section-number-4">3.1.2.</span> MacOS</h4>
+<div class="outline-text-4" id="text-3-1-2">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-comment-delimiter">; </span><span class="org-comment">Use Command key as meta in emacs</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> mac-option-key-is-meta nil
+      mac-command-key-is-meta t
+      mac-command-modifier 'meta
+      mac-option-modifier 'none<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org6fdd5b8" class="outline-4">
+<h4 id="org6fdd5b8"><span class="section-number-4">3.1.3.</span> Prevent using UI dialogs for prompts</h4>
+<div class="outline-text-4" id="text-3-1-3">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> use-dialog-box nil<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgde5cfcf" class="outline-4">
+<h4 id="orgde5cfcf"><span class="section-number-4">3.1.4.</span> ccls</h4>
+<div class="outline-text-4" id="text-3-1-4">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">with-eval-after-load</span> 'ccls
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">setq</span> ccls-root-files <span class="org-rainbow-delimiters-depth-3">(</span>add-to-list 'ccls-root-files <span class="org-string">"build/compile_commands.json"</span> t<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">setq</span> ccls-sem-highlight-method 'font-lock<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">setq</span> ccls-initialization-options
+        <span class="org-rainbow-delimiters-depth-3">(</span>list <span class="org-builtin">:cache</span> <span class="org-rainbow-delimiters-depth-4">(</span>list <span class="org-builtin">:directory</span> <span class="org-rainbow-delimiters-depth-5">(</span>file-truename <span class="org-rainbow-delimiters-depth-6">(</span>concat <span class="org-rainbow-delimiters-depth-7">(</span>file-name-as-directory spacemacs-cache-directory<span class="org-rainbow-delimiters-depth-7">)</span> <span class="org-string">".ccls-cache"</span><span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span>
+              <span class="org-builtin">:compilationDatabaseDirectory</span> <span class="org-string">"build"</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-comment-delimiter">;; </span><span class="org-comment">Only set the specific ccls path if it exists</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">when</span> <span class="org-rainbow-delimiters-depth-3">(</span>file-exists-p <span class="org-string">"~/.spacemacs.d/ccls/Release/ccls"</span><span class="org-rainbow-delimiters-depth-3">)</span>
+    <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-keyword">setq</span> ccls-executable <span class="org-rainbow-delimiters-depth-4">(</span>file-truename <span class="org-string">"~/.spacemacs.d/ccls/Release/ccls"</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org7fb374e" class="outline-4">
+<h4 id="org7fb374e"><span class="section-number-4">3.1.5.</span> cmake-ide</h4>
+<div class="outline-text-4" id="text-3-1-5">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-comment-delimiter">;; </span><span class="org-comment">C++ build dir setting</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>put 'cmake-ide-dir 'safe-local-variable 'stringp<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>put 'cmake-ide-make-command 'safe-local-variable 'stringp<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>put 'cmake-ide-cmake-args 'safe-local-variable 'stringp<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orge1be6a2" class="outline-4">
+<h4 id="orge1be6a2"><span class="section-number-4">3.1.6.</span> company</h4>
+<div class="outline-text-4" id="text-3-1-6">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">with-eval-after-load</span> 'company
+  <span class="org-rainbow-delimiters-depth-2">(</span>define-key company-active-map <span class="org-rainbow-delimiters-depth-3">(</span>kbd <span class="org-string">"M-n"</span><span class="org-rainbow-delimiters-depth-3">)</span> nil<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>define-key company-active-map <span class="org-rainbow-delimiters-depth-3">(</span>kbd <span class="org-string">"M-p"</span><span class="org-rainbow-delimiters-depth-3">)</span> nil<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>define-key company-active-map <span class="org-rainbow-delimiters-depth-3">(</span>kbd <span class="org-string">"C-j"</span><span class="org-rainbow-delimiters-depth-3">)</span> 'company-select-next<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>define-key company-active-map <span class="org-rainbow-delimiters-depth-3">(</span>kbd <span class="org-string">"C-k"</span><span class="org-rainbow-delimiters-depth-3">)</span> 'company-select-previous<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org39c74ca" class="outline-4">
+<h4 id="org39c74ca"><span class="section-number-4">3.1.7.</span> lsp-ui</h4>
+<div class="outline-text-4" id="text-3-1-7">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">with-eval-after-load</span> 'lsp-ui
+  <span class="org-rainbow-delimiters-depth-2">(</span>define-key lsp-ui-peek-mode-map <span class="org-rainbow-delimiters-depth-3">(</span>kbd <span class="org-string">"C-j"</span><span class="org-rainbow-delimiters-depth-3">)</span> 'lsp-ui-peek--select-next<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>define-key lsp-ui-peek-mode-map <span class="org-rainbow-delimiters-depth-3">(</span>kbd <span class="org-string">"j"</span><span class="org-rainbow-delimiters-depth-3">)</span> 'lsp-ui-peek--select-next<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>define-key lsp-ui-peek-mode-map <span class="org-rainbow-delimiters-depth-3">(</span>kbd <span class="org-string">"C-k"</span><span class="org-rainbow-delimiters-depth-3">)</span> 'lsp-ui-peek--select-prev<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>define-key lsp-ui-peek-mode-map <span class="org-rainbow-delimiters-depth-3">(</span>kbd <span class="org-string">"k"</span><span class="org-rainbow-delimiters-depth-3">)</span> 'lsp-ui-peek--select-prev<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgc9b8775" class="outline-4">
+<h4 id="orgc9b8775"><span class="section-number-4">3.1.8.</span> popup</h4>
+<div class="outline-text-4" id="text-3-1-8">
+<p>
+Use evil keybindings for selecting items in popup menus.
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">with-eval-after-load</span> 'popup
+  <span class="org-rainbow-delimiters-depth-2">(</span>define-key popup-menu-keymap <span class="org-rainbow-delimiters-depth-3">(</span>kbd <span class="org-string">"C-j"</span><span class="org-rainbow-delimiters-depth-3">)</span> 'popup-next<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>define-key popup-menu-keymap <span class="org-rainbow-delimiters-depth-3">(</span>kbd <span class="org-string">"C-k"</span><span class="org-rainbow-delimiters-depth-3">)</span> 'popup-previous<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org7505166" class="outline-4">
+<h4 id="org7505166"><span class="section-number-4">3.1.9.</span> dap</h4>
+<div class="outline-text-4" id="text-3-1-9">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span>add-hook 'dap-stopped-hook
+          <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">lambda</span> <span class="org-rainbow-delimiters-depth-3">(</span>arg<span class="org-rainbow-delimiters-depth-3">)</span> <span class="org-rainbow-delimiters-depth-3">(</span>call-interactively #'dap-hydra<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>add-hook 'dap-stopped-hook
+          <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">lambda</span> <span class="org-rainbow-delimiters-depth-3">(</span>arg<span class="org-rainbow-delimiters-depth-3">)</span> <span class="org-rainbow-delimiters-depth-3">(</span>call-interactively #'dap-hydra<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org4584473" class="outline-4">
+<h4 id="org4584473"><span class="section-number-4">3.1.10.</span> flycheck</h4>
+<div class="outline-text-4" id="text-3-1-10">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">with-eval-after-load</span> 'flycheck
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">setq</span> flycheck-check-syntax-automatically '<span class="org-rainbow-delimiters-depth-3">(</span>save
+                                              idle-buffer-switch
+                                              mode-enabled<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org1d15ea7" class="outline-4">
+<h4 id="org1d15ea7"><span class="section-number-4">3.1.11.</span> Indentation for web development</h4>
+<div class="outline-text-4" id="text-3-1-11">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">setup-web-dev-indent</span> <span class="org-rainbow-delimiters-depth-2">(</span>n<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-comment-delimiter">;; </span><span class="org-comment">web development</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">setq</span> coffee-tab-width n<span class="org-rainbow-delimiters-depth-2">)</span> <span class="org-comment-delimiter">; </span><span class="org-comment">coffeescript</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">setq</span> javascript-indent-level n<span class="org-rainbow-delimiters-depth-2">)</span> <span class="org-comment-delimiter">; </span><span class="org-comment">javascript-mode</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">setq</span> js-indent-level n<span class="org-rainbow-delimiters-depth-2">)</span> <span class="org-comment-delimiter">; </span><span class="org-comment">js-mode</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">setq</span> js2-basic-offset n<span class="org-rainbow-delimiters-depth-2">)</span> <span class="org-comment-delimiter">; </span><span class="org-comment">js2-mode, in latest js2-mode, it's alias of js-indent-level</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">setq</span> web-mode-markup-indent-offset n<span class="org-rainbow-delimiters-depth-2">)</span> <span class="org-comment-delimiter">; </span><span class="org-comment">web-mode, html tag in html file</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">setq</span> web-mode-css-indent-offset n<span class="org-rainbow-delimiters-depth-2">)</span> <span class="org-comment-delimiter">; </span><span class="org-comment">web-mode, css in html file</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">setq</span> web-mode-code-indent-offset n<span class="org-rainbow-delimiters-depth-2">)</span> <span class="org-comment-delimiter">; </span><span class="org-comment">web-mode, js code in html file</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">setq</span> css-indent-offset n<span class="org-rainbow-delimiters-depth-2">)</span> <span class="org-comment-delimiter">; </span><span class="org-comment">css-mode</span>
+  <span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>setup-web-dev-indent <span class="org-highlight-numbers-number">2</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org5248cc3" class="outline-4">
+<h4 id="org5248cc3"><span class="section-number-4">3.1.12.</span> groovy (Jenkinsfile)</h4>
+<div class="outline-text-4" id="text-3-1-12">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> groovy-indent-offset <span class="org-highlight-numbers-number">2</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgc4b12e7" class="outline-4">
+<h4 id="orgc4b12e7"><span class="section-number-4">3.1.13.</span> plantuml</h4>
+<div class="outline-text-4" id="text-3-1-13">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">when</span> <span class="org-rainbow-delimiters-depth-2">(</span>fboundp 'plantuml-mode<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">require</span> '<span class="org-constant">org-src</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-comment-delimiter">;; </span><span class="org-comment">Enable plantuml-mode for all *.pu files by default</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>add-to-list 'auto-mode-alist '<span class="org-rainbow-delimiters-depth-3">(</span><span class="org-string">"\\.pu\\'"</span> . plantuml-mode<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">setq</span> org-plantuml-jar-path plantuml-jar-path<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>add-to-list 'org-src-lang-modes '<span class="org-rainbow-delimiters-depth-3">(</span><span class="org-string">"plantuml"</span> . plantuml<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>org-babel-do-load-languages 'org-babel-load-languages '<span class="org-rainbow-delimiters-depth-3">(</span><span class="org-rainbow-delimiters-depth-4">(</span>plantuml . t<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org4ca97e0" class="outline-4">
+<h4 id="org4ca97e0"><span class="section-number-4">3.1.14.</span> nvm</h4>
+<div class="outline-text-4" id="text-3-1-14">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-comment-delimiter">;; </span><span class="org-comment"><span class="org-hl-todo"><span class="custom">TODO</span></span></span><span class="org-comment">: use the default version instead of hard-coding the specific version</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">condition-case</span> err
+    <span class="org-rainbow-delimiters-depth-2">(</span>nvm-use <span class="org-string">"20"</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-warning">error</span> <span class="org-rainbow-delimiters-depth-3">(</span>message <span class="org-string">"Could not initialize nvm for emacs. %s"</span> <span class="org-rainbow-delimiters-depth-4">(</span>error-message-string err<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgb70d67c" class="outline-4">
+<h4 id="orgb70d67c"><span class="section-number-4">3.1.15.</span> conf-mode</h4>
+<div class="outline-text-4" id="text-3-1-15">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span>add-to-list 'auto-mode-alist '<span class="org-rainbow-delimiters-depth-2">(</span><span class="org-string">"\\.eds\\'"</span> . conf-mode<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>add-to-list 'auto-mode-alist '<span class="org-rainbow-delimiters-depth-2">(</span><span class="org-string">"\\.dcf\\'"</span> . conf-mode<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org76886bc" class="outline-4">
+<h4 id="org76886bc"><span class="section-number-4">3.1.16.</span> ROS</h4>
+<div class="outline-text-4" id="text-3-1-16">
+</div>
+<div id="outline-container-orgbe3bece" class="outline-5">
+<h5 id="orgbe3bece"><span class="section-number-5">3.1.16.1.</span> helm-ros</h5>
+<div class="outline-text-5" id="text-3-1-16-1">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-comment-delimiter">;; </span><span class="org-comment">ROS shortcut</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/set-leader-keys <span class="org-string">"ye"</span> 'spacemacs/update-ros-envs<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/declare-prefix <span class="org-string">"y"</span> <span class="org-string">"ROS"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/set-leader-keys <span class="org-string">"yy"</span> 'helm-ros<span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/declare-prefix <span class="org-string">"yt"</span> <span class="org-string">"ROS topics"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/set-leader-keys <span class="org-string">"ytt"</span> 'helm-ros-topics<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/set-leader-keys <span class="org-string">"ytz"</span> 'helm-ros-rostopic-hz<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/set-leader-keys <span class="org-string">"yti"</span> 'helm-ros-rostopic-info<span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/declare-prefix <span class="org-string">"yn"</span> <span class="org-string">"ROS nodes"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/set-leader-keys <span class="org-string">"yni"</span> 'helm-ros-rosnode-info<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/set-leader-keys <span class="org-string">"ynn"</span> 'helm-ros-rosnode-list<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/set-leader-keys <span class="org-string">"ynd"</span> 'helm-ros-kill-node<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/set-leader-keys <span class="org-string">"ynr"</span> 'helm-ros-run-node<span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/set-leader-keys <span class="org-string">"ym"</span> 'helm-ros-set-master-uri<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgc5801ea" class="outline-5">
+<h5 id="orgc5801ea"><span class="section-number-5">3.1.16.2.</span> roslaunch-jump</h5>
+<div class="outline-text-5" id="text-3-1-16-2">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-comment-delimiter">;; </span><span class="org-comment"><span class="org-hl-todo"><span class="custom">TODO</span></span></span><span class="org-comment">: load package lazily</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">use-package</span> <span class="org-constant">roslaunch-jump</span>
+  <span class="org-builtin">:defer</span> <span class="org-highlight-numbers-number">1</span>
+  <span class="org-builtin">:load-path</span> <span class="org-string">"~/.spacemacs.d/private/roslaunch-jump"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org9c208bb" class="outline-5">
+<h5 id="org9c208bb"><span class="section-number-5">3.1.16.3.</span> company-roslaunch</h5>
+<div class="outline-text-5" id="text-3-1-16-3">
+<p>
+Autocompletion config for launch files.
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-comment-delimiter">;; </span><span class="org-comment"><span class="org-hl-todo"><span class="custom">TODO</span></span></span><span class="org-comment">: load package lazily</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">use-package</span> <span class="org-constant">company-roslaunch</span>
+  <span class="org-builtin">:load-path</span> <span class="org-string">"~/.spacemacs.d/private/company-roslaunch"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org3741ea2" class="outline-5">
+<h5 id="org3741ea2"><span class="section-number-5">3.1.16.4.</span> catkin-make</h5>
+<div class="outline-text-5" id="text-3-1-16-4">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">use-package</span> <span class="org-constant">catkin-make</span>
+  <span class="org-builtin">:load-path</span> <span class="org-string">"~/.spacemacs.d/private/catkin-make"</span>
+  <span class="org-builtin">:config</span> <span class="org-rainbow-delimiters-depth-2">(</span>catkin-make-keybinding-setup<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org2ccd081" class="outline-4">
+<h4 id="org2ccd081"><span class="section-number-4">3.1.17.</span> Style for linux kernel development</h4>
+<div class="outline-text-4" id="text-3-1-17">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-comment-delimiter">;; </span><span class="org-comment">Linux kernel development</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">c-lineup-arglist-tabs-only</span> <span class="org-rainbow-delimiters-depth-2">(</span>ignored<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-doc">"Line up argument lists by tabs, not spaces"</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">let*</span> <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-rainbow-delimiters-depth-4">(</span>anchor <span class="org-rainbow-delimiters-depth-5">(</span>c-langelem-pos c-syntactic-element<span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span>
+         <span class="org-rainbow-delimiters-depth-4">(</span>column <span class="org-rainbow-delimiters-depth-5">(</span>c-langelem-2nd-pos c-syntactic-element<span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span>
+         <span class="org-rainbow-delimiters-depth-4">(</span>offset <span class="org-rainbow-delimiters-depth-5">(</span>- <span class="org-rainbow-delimiters-depth-6">(</span>1+ column<span class="org-rainbow-delimiters-depth-6">)</span> anchor<span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span>
+         <span class="org-rainbow-delimiters-depth-4">(</span>steps <span class="org-rainbow-delimiters-depth-5">(</span>floor offset c-basic-offset<span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
+    <span class="org-rainbow-delimiters-depth-3">(</span>* <span class="org-rainbow-delimiters-depth-4">(</span>max steps <span class="org-highlight-numbers-number">1</span><span class="org-rainbow-delimiters-depth-4">)</span>
+       c-basic-offset<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-rainbow-delimiters-depth-1">(</span>add-hook 'c-mode-common-hook
+          <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">lambda</span> <span class="org-rainbow-delimiters-depth-3">()</span>
+            <span class="org-comment-delimiter">;; </span><span class="org-comment">Add kernel style</span>
+            <span class="org-rainbow-delimiters-depth-3">(</span>c-add-style
+             <span class="org-string">"linux-tabs-only"</span>
+             '<span class="org-rainbow-delimiters-depth-4">(</span><span class="org-string">"linux"</span> <span class="org-rainbow-delimiters-depth-5">(</span>c-offsets-alist
+                        <span class="org-rainbow-delimiters-depth-6">(</span>arglist-cont-nonempty
+                         c-lineup-gcc-asm-reg
+                         c-lineup-arglist-tabs-only<span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>add-hook 'c-mode-hook
+          <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">lambda</span> <span class="org-rainbow-delimiters-depth-3">()</span>
+            <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-keyword">let</span> <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-rainbow-delimiters-depth-5">(</span>filename <span class="org-rainbow-delimiters-depth-6">(</span>buffer-file-name<span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span>
+              <span class="org-comment-delimiter">;; </span><span class="org-comment">Enable kernel mode for the appropriate files</span>
+              <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-keyword">when</span> <span class="org-rainbow-delimiters-depth-5">(</span><span class="org-keyword">and</span> filename
+                         <span class="org-comment-delimiter">;; </span><span class="org-comment"><span class="org-hl-todo"><span class="custom">TODO</span></span></span><span class="org-comment">: avoid the harded coded path</span>
+                         <span class="org-rainbow-delimiters-depth-6">(</span>string-match <span class="org-rainbow-delimiters-depth-7">(</span>expand-file-name <span class="org-string">"~/Dev/kernels"</span><span class="org-rainbow-delimiters-depth-7">)</span>
+                                       filename<span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span>
+                <span class="org-rainbow-delimiters-depth-5">(</span><span class="org-keyword">setq</span> indent-tabs-mode t<span class="org-rainbow-delimiters-depth-5">)</span>
+                <span class="org-rainbow-delimiters-depth-5">(</span><span class="org-keyword">setq</span> show-trailing-whitespace t<span class="org-rainbow-delimiters-depth-5">)</span>
+                <span class="org-rainbow-delimiters-depth-5">(</span>c-set-style <span class="org-string">"linux-tabs-only"</span><span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org39260be" class="outline-4">
+<h4 id="org39260be"><span class="section-number-4">3.1.18.</span> copilot</h4>
+<div class="outline-text-4" id="text-3-1-18">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> copilot-node-executable <span class="org-rainbow-delimiters-depth-2">(</span>executable-find <span class="org-string">"node"</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">with-eval-after-load</span> 'company
+  <span class="org-comment-delimiter">;; </span><span class="org-comment">disable inline previews</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>delq 'company-preview-if-just-one-frontend company-frontends<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-comment-delimiter">;; </span><span class="org-comment">Keybindings</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">with-eval-after-load</span> 'copilot
+  <span class="org-rainbow-delimiters-depth-2">(</span>define-key copilot-completion-map <span class="org-rainbow-delimiters-depth-3">(</span>kbd <span class="org-string">"&lt;tab&gt;"</span><span class="org-rainbow-delimiters-depth-3">)</span> 'copilot-accept-completion<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>define-key copilot-completion-map <span class="org-rainbow-delimiters-depth-3">(</span>kbd <span class="org-string">"TAB"</span><span class="org-rainbow-delimiters-depth-3">)</span> 'copilot-accept-completion<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>define-key copilot-completion-map <span class="org-rainbow-delimiters-depth-3">(</span>kbd <span class="org-string">"C-TAB"</span><span class="org-rainbow-delimiters-depth-3">)</span> 'copilot-accept-completion-by-word<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>define-key copilot-completion-map <span class="org-rainbow-delimiters-depth-3">(</span>kbd <span class="org-string">"C-&lt;tab&gt;"</span><span class="org-rainbow-delimiters-depth-3">)</span> 'copilot-accept-completion-by-word<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-comment-delimiter">;; </span><span class="org-comment">Enable copilot mode in programming modes, markdown-mode and org-mode</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>add-hook 'prog-mode-hook 'copilot-mode<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>add-hook 'markdown-mode-hook 'copilot-mode<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>add-hook 'org-mode-hook 'copilot-mode<span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-comment-delimiter">;; </span><span class="org-comment">Disable the warning message</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>add-hook 'copilot-mode-hook <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">lambda</span> <span class="org-rainbow-delimiters-depth-3">()</span>
+                               <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-keyword">setq-local</span> copilot--indent-warning-printed-p t<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org18ceb18" class="outline-4">
+<h4 id="org18ceb18"><span class="section-number-4">3.1.19.</span> tramp + clang-format</h4>
+<div class="outline-text-4" id="text-3-1-19">
+<p>
+clang-format does not work properly when editing a file on a remote host or in a docker container with tramp.
+See the issue here: <a href="https://github.com/kljohann/clang-format.el/issues/5">https://github.com/kljohann/clang-format.el/issues/5</a>
+</p>
+
+<p>
+Here upon <code>clang-format-region</code> call, we first check if the file is on a remote host or in a docker container.
+</p>
+<ul class="org-ul">
+<li>If not, we call <code>clang-format-region</code> as usual.</li>
+<li>If yes, we first check if a file with the same path exists on the local disk.
+<ul class="org-ul">
+<li>If yes, we assume it as the input file name for <code>clang-format-region</code>.</li>
+<li>If not, we assume the input file is under the $HOME directory.</li>
+</ul></li>
+</ul>
+
+<p>
+Depending on where the input file is assumed to be, <code>clang-format</code> will find the <code>.clang-format</code> file for
+the formatting in a dominant parent directory of the assumed input file path.
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">tramp-aware-clang-format</span> <span class="org-rainbow-delimiters-depth-2">(</span>orig-fun start end <span class="org-type">&amp;optional</span> style assume-file-name<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">unless</span> assume-file-name
+    <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-keyword">setq</span> assume-file-name
+          <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-keyword">if</span> <span class="org-rainbow-delimiters-depth-5">(</span>file-remote-p buffer-file-name<span class="org-rainbow-delimiters-depth-5">)</span>
+              <span class="org-rainbow-delimiters-depth-5">(</span><span class="org-keyword">let</span> <span class="org-rainbow-delimiters-depth-6">(</span><span class="org-rainbow-delimiters-depth-7">(</span>maybe-existing-local-buffer-file-name <span class="org-rainbow-delimiters-depth-8">(</span>replace-regexp-in-string <span class="org-string">"/docker:[</span><span class="org-string"><span class="org-negation-char">^</span></span><span class="org-string">:]+:"</span> <span class="org-string">""</span> buffer-file-name<span class="org-rainbow-delimiters-depth-8">)</span><span class="org-rainbow-delimiters-depth-7">)</span><span class="org-rainbow-delimiters-depth-6">)</span>
+                <span class="org-comment-delimiter">;; </span><span class="org-comment">If file `</span><span class="org-comment"><span class="org-constant">maybe-existing-local-buffer-file-name</span></span><span class="org-comment">' exists on local disk, use it.</span>
+                <span class="org-rainbow-delimiters-depth-6">(</span><span class="org-keyword">if</span> <span class="org-rainbow-delimiters-depth-7">(</span>file-exists-p maybe-existing-local-buffer-file-name<span class="org-rainbow-delimiters-depth-7">)</span>
+                    maybe-existing-local-buffer-file-name
+                  <span class="org-comment-delimiter">;; </span><span class="org-comment">Otherwise, use `</span><span class="org-comment"><span class="org-constant">buffer-file-name</span></span><span class="org-comment">' as if it is under the $HOME directory.</span>
+                  <span class="org-rainbow-delimiters-depth-7">(</span>concat <span class="org-rainbow-delimiters-depth-8">(</span>getenv <span class="org-string">"HOME"</span><span class="org-rainbow-delimiters-depth-8">)</span> <span class="org-string">"/"</span> <span class="org-rainbow-delimiters-depth-8">(</span>file-name-nondirectory buffer-file-name<span class="org-rainbow-delimiters-depth-8">)</span><span class="org-rainbow-delimiters-depth-7">)</span><span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span>
+            buffer-file-name<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>message <span class="org-string">"assume-file-name: %s"</span> assume-file-name<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>apply orig-fun <span class="org-rainbow-delimiters-depth-3">(</span>list start end style assume-file-name<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-rainbow-delimiters-depth-1">(</span>advice-add 'clang-format-region <span class="org-builtin">:around</span> #'tramp-aware-clang-format<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgc5f780c" class="outline-4">
+<h4 id="orgc5f780c"><span class="section-number-4">3.1.20.</span> Get current branch name in magit</h4>
+<div class="outline-text-4" id="text-3-1-20">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">magit-add-current-branch-name-to-kill-ring</span> <span class="org-rainbow-delimiters-depth-2">()</span>
+  <span class="org-doc">"Show the current branch in the echo-area and add it to the `</span><span class="org-doc"><span class="org-constant">kill-ring</span></span><span class="org-doc">'."</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">interactive</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">let</span> <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-rainbow-delimiters-depth-4">(</span>branch <span class="org-rainbow-delimiters-depth-5">(</span>magit-get-current-branch<span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
+    <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-keyword">if</span> branch
+        <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-keyword">progn</span> <span class="org-rainbow-delimiters-depth-5">(</span>kill-new branch<span class="org-rainbow-delimiters-depth-5">)</span>
+               <span class="org-rainbow-delimiters-depth-5">(</span>message <span class="org-string">"%s"</span> branch<span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span>
+      <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-warning">user-error</span> <span class="org-string">"There is not current branch"</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-comment-delimiter">; </span><span class="org-comment"><span class="org-hl-todo"><span class="custom">TODO</span></span></span><span class="org-comment">: Move this keybinding from "Checkout" to "Do" section</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">with-eval-after-load</span> 'magit
+  <span class="org-rainbow-delimiters-depth-2">(</span>transient-insert-suffix 'magit-branch <span class="org-string">"b"</span>
+    '<span class="org-rainbow-delimiters-depth-3">(</span><span class="org-string">"k"</span> <span class="org-string">"copy branch name"</span> magit-add-current-branch-name-to-kill-ring<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org34b75ef" class="outline-3">
+<h3 id="org34b75ef"><span class="section-number-3">3.2.</span> Miscellaneous</h3>
+<div class="outline-text-3" id="text-3-2">
+</div>
+<div id="outline-container-orgcd8bd0d" class="outline-4">
+<h4 id="orgcd8bd0d"><span class="section-number-4">3.2.1.</span> No title bar</h4>
+<div class="outline-text-4" id="text-3-2-1">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span>add-to-list 'default-frame-alist '<span class="org-rainbow-delimiters-depth-2">(</span>undecorated-round . t<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org272c5bd" class="outline-4">
+<h4 id="org272c5bd"><span class="section-number-4">3.2.2.</span> cursor</h4>
+<div class="outline-text-4" id="text-3-2-2">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-comment-delimiter">; </span><span class="org-comment">Display Emacs cursor in terminal as it would be in GUI</span>
+<span class="org-comment-delimiter">;; </span><span class="org-comment">(global-term-cursor-mode)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga043968" class="outline-4">
+<h4 id="orga043968"><span class="section-number-4">3.2.3.</span> ripgrep</h4>
+<div class="outline-text-4" id="text-3-2-3">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span>custom-set-variables
+ '<span class="org-rainbow-delimiters-depth-2">(</span>helm-ag-base-command <span class="org-string">"rg --no-heading"</span><span class="org-rainbow-delimiters-depth-2">)</span>
+ `<span class="org-rainbow-delimiters-depth-2">(</span>helm-ag-success-exit-status '<span class="org-rainbow-delimiters-depth-3">(</span><span class="org-highlight-numbers-number">0</span> <span class="org-highlight-numbers-number">2</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org66317fe" class="outline-4">
+<h4 id="org66317fe"><span class="section-number-4">3.2.4.</span> <code>C-a</code> for increasing number, <code>C-x</code> for descreasing number</h4>
+<div class="outline-text-4" id="text-3-2-4">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">evil-define-key</span> 'normal global-map <span class="org-rainbow-delimiters-depth-2">(</span>kbd <span class="org-string">"C-a"</span><span class="org-rainbow-delimiters-depth-2">)</span> 'evil-numbers/inc-at-pt<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">evil-define-key</span> 'normal global-map <span class="org-rainbow-delimiters-depth-2">(</span>kbd <span class="org-string">"C-x"</span><span class="org-rainbow-delimiters-depth-2">)</span> 'evil-numbers/dec-at-pt<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org3d7b2ae" class="outline-4">
+<h4 id="org3d7b2ae"><span class="section-number-4">3.2.5.</span> Default python interpreter</h4>
+<div class="outline-text-4" id="text-3-2-5">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> python-shell-interpreter <span class="org-rainbow-delimiters-depth-2">(</span>executable-find <span class="org-string">"python3"</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgc4957ea" class="outline-4">
+<h4 id="orgc4957ea"><span class="section-number-4">3.2.6.</span> Disable spacemacs buffer warnings</h4>
+<div class="outline-text-4" id="text-3-2-6">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> spacemacs-buffer--warnings nil<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgd5fff4a" class="outline-4">
+<h4 id="orgd5fff4a"><span class="section-number-4">3.2.7.</span> Find this file</h4>
+<div class="outline-text-4" id="text-3-2-7">
+<p>
+Create binding to spacemacs.org file
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">spacemacs/find-config-file</span> <span class="org-rainbow-delimiters-depth-2">()</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">interactive</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>find-file <span class="org-rainbow-delimiters-depth-3">(</span>concat dotspacemacs-directory <span class="org-string">"/spacemacs.org"</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/set-leader-keys <span class="org-string">"fec"</span> 'spacemacs/find-config-file<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org9d23b5b" class="outline-4">
+<h4 id="org9d23b5b"><span class="section-number-4">3.2.8.</span> <code>-</code> for going to the first non-blank position of the previous line</h4>
+<div class="outline-text-4" id="text-3-2-8">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">evil-define-key</span> 'normal global-map <span class="org-rainbow-delimiters-depth-2">(</span>kbd <span class="org-string">"-"</span><span class="org-rainbow-delimiters-depth-2">)</span> 'evil-previous-line-first-non-blank<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org6a424ae" class="outline-4">
+<h4 id="org6a424ae"><span class="section-number-4">3.2.9.</span> helm-swoop</h4>
+<div class="outline-text-4" id="text-3-2-9">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> helm-swoop-use-fuzzy-match t<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> helm-swoop-use-line-number-face t<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orge284856" class="outline-4">
+<h4 id="orge284856"><span class="section-number-4">3.2.10.</span> Keybinding for Zoom in / out</h4>
+<div class="outline-text-4" id="text-3-2-10">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span>define-key <span class="org-rainbow-delimiters-depth-2">(</span>current-global-map<span class="org-rainbow-delimiters-depth-2">)</span> <span class="org-rainbow-delimiters-depth-2">(</span>kbd <span class="org-string">"C-+"</span><span class="org-rainbow-delimiters-depth-2">)</span> 'spacemacs/zoom-frm-in<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>define-key <span class="org-rainbow-delimiters-depth-2">(</span>current-global-map<span class="org-rainbow-delimiters-depth-2">)</span> <span class="org-rainbow-delimiters-depth-2">(</span>kbd <span class="org-string">"C--"</span><span class="org-rainbow-delimiters-depth-2">)</span> 'spacemacs/zoom-frm-out<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgb5ce0da" class="outline-4">
+<h4 id="orgb5ce0da"><span class="section-number-4">3.2.11.</span> Kill frame when pressing <code>SPC q q</code></h4>
+<div class="outline-text-4" id="text-3-2-11">
+<p>
+The reason for this is that I mainly use emacs as a daemon and I don't want to close the daemon by accident.
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/set-leader-keys <span class="org-string">"qq"</span> 'spacemacs/frame-killer<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org17a79a1" class="outline-4">
+<h4 id="org17a79a1"><span class="section-number-4">3.2.12.</span> Make <code>w</code> in vim mode move to end of the word (not stopped by <code>_</code>)</h4>
+<div class="outline-text-4" id="text-3-2-12">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">with-eval-after-load</span> 'evil
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">defalias</span> #'forward-evil-word #'forward-evil-symbol<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgdc6955f" class="outline-4">
+<h4 id="orgdc6955f"><span class="section-number-4">3.2.13.</span> Smooth scrolling</h4>
+<div class="outline-text-4" id="text-3-2-13">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-comment-delimiter">;; </span><span class="org-comment">Scroll one line at a time (less "jumpy" than defaults)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">when</span> <span class="org-rainbow-delimiters-depth-2">(</span>display-graphic-p<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">setq</span> mouse-wheel-scroll-amount '<span class="org-rainbow-delimiters-depth-3">(</span><span class="org-highlight-numbers-number">1</span> <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-rainbow-delimiters-depth-5">(</span>shift<span class="org-rainbow-delimiters-depth-5">)</span> . <span class="org-highlight-numbers-number">1</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
+        mouse-wheel-progressive-speed nil<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> scroll-step <span class="org-highlight-numbers-number">1</span>
+      scroll-margin <span class="org-highlight-numbers-number">0</span>
+      scroll-conservatively <span class="org-highlight-numbers-number">100000</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org9fb79e3" class="outline-4">
+<h4 id="org9fb79e3"><span class="section-number-4">3.2.14.</span> Transparency settings</h4>
+<div class="outline-text-4" id="text-3-2-14">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/set-leader-keys <span class="org-string">"tt"</span> 'spacemacs/toggle-transparency<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>add-hook 'after-make-frame-functions 'spacemacs/enable-transparency<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org1d92379" class="outline-4">
+<h4 id="org1d92379"><span class="section-number-4">3.2.15.</span> Turn on xclip-mode</h4>
+<div class="outline-text-4" id="text-3-2-15">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">use-package</span> <span class="org-constant">xclip</span>
+  <span class="org-builtin">:config</span> <span class="org-rainbow-delimiters-depth-2">(</span>xclip-mode t<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orge15bfd9" class="outline-4">
+<h4 id="orge15bfd9"><span class="section-number-4">3.2.16.</span> Use windows key as meta key</h4>
+<div class="outline-text-4" id="text-3-2-16">
+<p>
+It is meant to avoid conflicts with i3wm, where I use <code>alt</code> as the meta key.
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> x-super-keysym 'meta<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org04b1b3b" class="outline-4">
+<h4 id="org04b1b3b"><span class="section-number-4">3.2.17.</span> Visiting a file uses its truename as the visited-file name</h4>
+<div class="outline-text-4" id="text-3-2-17">
+<p>
+E.g. when visiting a soft/hard link.
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> find-file-visit-truename t<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org5908639" class="outline-4">
+<h4 id="org5908639"><span class="section-number-4">3.2.18.</span> Do not autosave undo history</h4>
+<div class="outline-text-4" id="text-3-2-18">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> undo-tree-auto-save-history nil<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgdd63e4b" class="outline-4">
+<h4 id="orgdd63e4b"><span class="section-number-4">3.2.19.</span> Native compilation</h4>
+<div class="outline-text-4" id="text-3-2-19">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">when</span> <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">and</span> <span class="org-rainbow-delimiters-depth-3">(</span>fboundp 'native-comp-available-p<span class="org-rainbow-delimiters-depth-3">)</span>
+           <span class="org-rainbow-delimiters-depth-3">(</span>native-comp-available-p<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>message <span class="org-string">"Native compilation is available"</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">setq</span> native-comp-async-report-warnings-errors nil<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org968c9ee" class="outline-3">
+<h3 id="org968c9ee"><span class="section-number-3">3.3.</span> org-mode</h3>
+<div class="outline-text-3" id="text-3-3">
+</div>
+<div id="outline-container-org5c1de52" class="outline-4">
+<h4 id="org5c1de52"><span class="section-number-4">3.3.1.</span> Export code blocks with current theme</h4>
+<div class="outline-text-4" id="text-3-3-1">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">my/org-inline-css-hook</span> <span class="org-rainbow-delimiters-depth-2">(</span>exporter<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-doc">"Insert custom inline css to automatically set the</span>
+<span class="org-doc">background of code to whatever theme I'm using's background"</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">when</span> <span class="org-rainbow-delimiters-depth-3">(</span>eq exporter 'html<span class="org-rainbow-delimiters-depth-3">)</span>
+    <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-keyword">let*</span> <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-rainbow-delimiters-depth-5">(</span>my-pre-bg <span class="org-rainbow-delimiters-depth-6">(</span>face-background 'default<span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span>
+           <span class="org-rainbow-delimiters-depth-5">(</span>my-pre-fg <span class="org-rainbow-delimiters-depth-6">(</span>face-foreground 'default<span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span>
+      <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-keyword">setq</span>
+       org-html-head-extra
+       <span class="org-rainbow-delimiters-depth-5">(</span>concat
+        org-html-head-extra
+        <span class="org-rainbow-delimiters-depth-6">(</span>format <span class="org-string">"&lt;style type=\"text/css\"&gt;\n pre.src {background-color: %s; color: %s;}&lt;/style&gt;\n"</span>
+                my-pre-bg my-pre-fg<span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-rainbow-delimiters-depth-1">(</span>add-hook 'org-export-before-processing-hook 'my/org-inline-css-hook<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org8b30dc0" class="outline-4">
+<h4 id="org8b30dc0"><span class="section-number-4">3.3.2.</span> org-ai</h4>
+<div class="outline-text-4" id="text-3-3-2">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">use-package</span> <span class="org-constant">org-ai</span>
+  <span class="org-builtin">:ensure</span> t
+  <span class="org-builtin">:commands</span> <span class="org-rainbow-delimiters-depth-2">(</span>org-ai-mode
+             org-ai-global-mode<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-builtin">:custom</span> <span class="org-rainbow-delimiters-depth-2">(</span>org-ai-openai-api-token <span class="org-rainbow-delimiters-depth-3">(</span>auth-source-pick-first-password <span class="org-builtin">:host</span> <span class="org-string">"api.openai.com"</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-builtin">:init</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>add-hook 'org-mode-hook #'org-ai-mode<span class="org-rainbow-delimiters-depth-2">)</span> <span class="org-comment-delimiter">; </span><span class="org-comment">enable org-ai in org-mode</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>org-ai-global-mode<span class="org-rainbow-delimiters-depth-2">)</span> <span class="org-comment-delimiter">; </span><span class="org-comment">installs global keybindings on C-c M-a</span>
+  <span class="org-builtin">:config</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">setq</span> org-ai-default-chat-model <span class="org-string">"gpt-4"</span><span class="org-rainbow-delimiters-depth-2">)</span> <span class="org-comment-delimiter">; </span><span class="org-comment">if you are on the gpt-4 beta:</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>org-ai-install-yasnippets<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span> <span class="org-comment-delimiter">; </span><span class="org-comment">if you are using yasnippet and want `ai` snippets  (require 'org-ai-talk)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org13f3400" class="outline-4">
+<h4 id="org13f3400"><span class="section-number-4">3.3.3.</span> org-pomodora</h4>
+<div class="outline-text-4" id="text-3-3-3">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-comment-delimiter">;; </span><span class="org-comment">Lower the volume of the sounds</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> org-pomodoro-audio-player <span class="org-string">"play"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> org-pomodoro-finished-sound-args <span class="org-string">"-v 0.01"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> org-pomodoro-long-break-sound-args <span class="org-string">"-v 0.01"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> org-pomodoro-short-break-sound-args <span class="org-string">"-v 0.01"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org345178b" class="outline-4">
+<h4 id="org345178b"><span class="section-number-4">3.3.4.</span> org-agenda</h4>
+<div class="outline-text-4" id="text-3-3-4">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">scan-new-agenda-files</span> <span class="org-rainbow-delimiters-depth-2">()</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">interactive</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>message <span class="org-string">"Scanning new agenda files..."</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">setq</span> org-agenda-files <span class="org-rainbow-delimiters-depth-3">(</span>directory-files-recursively <span class="org-string">"~/org/"</span> <span class="org-string">"</span><span class="org-string"><span class="org-warning">\</span></span><span class="org-string">.org$"</span> nil nil t<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">with-eval-after-load</span> 'org-agenda
+  <span class="org-rainbow-delimiters-depth-2">(</span>scan-new-agenda-files<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>define-key org-agenda-mode-map <span class="org-string">"m"</span> 'org-agenda-month-view<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>define-key org-agenda-mode-map <span class="org-string">"y"</span> 'org-agenda-year-view<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/set-leader-keys <span class="org-string">"aou"</span> 'scan-new-agenda-files<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgf96e7ff" class="outline-4">
+<h4 id="orgf96e7ff"><span class="section-number-4">3.3.5.</span> org-cv</h4>
+<div class="outline-text-4" id="text-3-3-5">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">use-package</span> <span class="org-constant">ox-awesomecv</span>
+  <span class="org-builtin">:load-path</span> <span class="org-string">"~/.spacemacs.d/private/org-cv"</span>
+  <span class="org-builtin">:init</span> <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">require</span> '<span class="org-constant">ox-awesomecv</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org43c5c38" class="outline-4">
+<h4 id="org43c5c38"><span class="section-number-4">3.3.6.</span> org-babel</h4>
+<div class="outline-text-4" id="text-3-3-6">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">with-eval-after-load</span> 'org
+  <span class="org-rainbow-delimiters-depth-2">(</span>org-babel-do-load-languages
+   'org-babel-load-languages
+   '<span class="org-rainbow-delimiters-depth-3">(</span><span class="org-rainbow-delimiters-depth-4">(</span>C . t<span class="org-rainbow-delimiters-depth-4">)</span>
+     <span class="org-rainbow-delimiters-depth-4">(</span>python . t<span class="org-rainbow-delimiters-depth-4">)</span>
+     <span class="org-rainbow-delimiters-depth-4">(</span>shell . t<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgec9d0f8" class="outline-4">
+<h4 id="orgec9d0f8"><span class="section-number-4">3.3.7.</span> org-journal</h4>
+<div class="outline-text-4" id="text-3-3-7">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">with-eval-after-load</span> 'org-journal
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">setq</span> org-journal-dir <span class="org-string">"~/org/home/roam/journal/"</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">setq</span> org-journal-file-type 'monthly<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">setq</span> org-journal-file-format <span class="org-string">"%Y%m%d.org"</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/set-leader-keys
+  <span class="org-string">"aojj"</span> <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">lambda</span> <span class="org-rainbow-delimiters-depth-3">()</span> <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-keyword">interactive</span><span class="org-rainbow-delimiters-depth-3">)</span>
+           <span class="org-rainbow-delimiters-depth-3">(</span>org-journal-new-entry nil<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/declare-prefix <span class="org-string">"aojj"</span> <span class="org-string">"journal-home"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org14bd64a" class="outline-4">
+<h4 id="org14bd64a"><span class="section-number-4">3.3.8.</span> org-table</h4>
+<div class="outline-text-4" id="text-3-3-8">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">with-eval-after-load</span> 'org-mode
+  <span class="org-rainbow-delimiters-depth-2">(</span>define-key org-mode-map <span class="org-rainbow-delimiters-depth-3">(</span>kbd <span class="org-string">"C-&lt;tab&gt;"</span><span class="org-rainbow-delimiters-depth-3">)</span> 'org-table-previous-field<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org51800da" class="outline-4">
+<h4 id="org51800da"><span class="section-number-4">3.3.9.</span> org-todo</h4>
+<div class="outline-text-4" id="text-3-3-9">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">with-eval-after-load</span> 'org
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">let</span> <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-rainbow-delimiters-depth-4">(</span>capture-template  <span class="org-string">"* </span><span class="org-string"><span class="org-hl-todo"><span class="custom-1">TODO</span></span></span><span class="org-string"> %?\n%U\n%i\n%a"</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
+    <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-keyword">progn</span>
+      <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-keyword">setq</span> org-todo-keywords
+            '<span class="org-rainbow-delimiters-depth-5">(</span><span class="org-rainbow-delimiters-depth-6">(</span>sequence <span class="org-string">"</span><span class="org-string"><span class="org-hl-todo"><span class="custom-1">TODO</span></span></span><span class="org-string">(t)"</span> <span class="org-string">"IN_PROGRESS"</span> <span class="org-string">"UNDER_REVEW"</span> <span class="org-string">"|"</span> <span class="org-string">"</span><span class="org-string"><span class="org-hl-todo"><span class="custom">DONE</span></span></span><span class="org-string">(d)"</span><span class="org-rainbow-delimiters-depth-6">)</span>
+              <span class="org-rainbow-delimiters-depth-6">(</span>sequence <span class="org-string">"REPORT(r)"</span> <span class="org-string">"BUG(b)"</span> <span class="org-string">"KNOWNCAUSE(k)"</span> <span class="org-string">"|"</span> <span class="org-string">"FIXED(f)"</span><span class="org-rainbow-delimiters-depth-6">)</span>
+              <span class="org-rainbow-delimiters-depth-6">(</span>sequence <span class="org-string">"|"</span> <span class="org-string">"INACTIVE(i)"</span> <span class="org-string">"INCOMPLETE(n)"</span> <span class="org-string">"CANCELED(c)"</span> <span class="org-string">"REPORTED(R)"</span><span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span>
+      <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-keyword">setq</span> org-capture-templates
+            '<span class="org-rainbow-delimiters-depth-5">(</span><span class="org-rainbow-delimiters-depth-6">(</span><span class="org-string">"h"</span> <span class="org-string">"Home"</span> entry <span class="org-rainbow-delimiters-depth-7">(</span>file+headline <span class="org-string">"~/org/home/tasks.org"</span> <span class="org-string">"Tasks"</span><span class="org-rainbow-delimiters-depth-7">)</span>
+               <span class="org-string">"* </span><span class="org-string"><span class="org-hl-todo"><span class="custom-1">TODO</span></span></span><span class="org-string"> %?\n%U\n%i\n%a"</span><span class="org-rainbow-delimiters-depth-6">)</span>
+              <span class="org-rainbow-delimiters-depth-6">(</span><span class="org-string">"w"</span> <span class="org-string">"Work"</span> entry <span class="org-rainbow-delimiters-depth-7">(</span>file+headline <span class="org-string">"~/org/work/tasks.org"</span> <span class="org-string">"Tasks"</span><span class="org-rainbow-delimiters-depth-7">)</span>
+               <span class="org-string">"* </span><span class="org-string"><span class="org-hl-todo"><span class="custom-1">TODO</span></span></span><span class="org-string"> %?\n%U\n%i\n%a"</span><span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span>
+      <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-keyword">setq</span> org-project-capture-capture-template capture-template<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/set-leader-keys
+  <span class="org-string">"aoh"</span> <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">lambda</span> <span class="org-rainbow-delimiters-depth-3">()</span> <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-keyword">interactive</span><span class="org-rainbow-delimiters-depth-3">)</span> <span class="org-rainbow-delimiters-depth-3">(</span>find-file <span class="org-string">"~/org/home/tasks.org"</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-string">"aow"</span> <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">lambda</span> <span class="org-rainbow-delimiters-depth-3">()</span> <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-keyword">interactive</span><span class="org-rainbow-delimiters-depth-3">)</span> <span class="org-rainbow-delimiters-depth-3">(</span>find-file <span class="org-string">"~/org/work/tasks.org"</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/declare-prefix <span class="org-string">"aoh"</span> <span class="org-string">"Home tasks"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/declare-prefix <span class="org-string">"aow"</span> <span class="org-string">"Work tasks"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org1f2ad5d" class="outline-4">
+<h4 id="org1f2ad5d"><span class="section-number-4">3.3.10.</span> org-hugo</h4>
+<div class="outline-text-4" id="text-3-3-10">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/set-leader-keys-for-major-mode 'org-mode <span class="org-string">"Th"</span> 'org-hugo-auto-export-mode<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org44dba0a" class="outline-4">
+<h4 id="org44dba0a"><span class="section-number-4">3.3.11.</span> org-roam</h4>
+<div class="outline-text-4" id="text-3-3-11">
+</div>
+<div id="outline-container-org0b5cbe1" class="outline-5">
+<h5 id="org0b5cbe1"><span class="section-number-5">3.3.11.1.</span> Automatically sync the database</h5>
+<div class="outline-text-5" id="text-3-3-11-1">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span>org-roam-db-autosync-mode<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org5537e1d" class="outline-5">
+<h5 id="org5537e1d"><span class="section-number-5">3.3.11.2.</span> Migrate the current buffer from org-roam v1 to v2</h5>
+<div class="outline-text-5" id="text-3-3-11-2">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">org-roam-migrate-current-buffer-v1-to-v2</span> <span class="org-rainbow-delimiters-depth-2">()</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">interactive</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>org-roam-migrate-v1-to-v2<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org2ce5851" class="outline-4">
+<h4 id="org2ce5851"><span class="section-number-4">3.3.12.</span> org-clock</h4>
+<div class="outline-text-4" id="text-3-3-12">
+</div>
+<div id="outline-container-org28a4a10" class="outline-5">
+<h5 id="org28a4a10"><span class="section-number-5">3.3.12.1.</span> Save the clock history across Emacs sessions</h5>
+<div class="outline-text-5" id="text-3-3-12-1">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> org-clock-persist 'history<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>org-clock-persistence-insinuate<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-orgedb241c" class="outline-4">
+<h4 id="orgedb241c"><span class="section-number-4">3.3.13.</span> Replace selected markdown region to org format</h4>
+<div class="outline-text-4" id="text-3-3-13">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">replace-markdown-region-with-org</span> <span class="org-rainbow-delimiters-depth-2">(</span>beginning end<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-doc">"Replace the selected markdown region with its corresponding org-mode format."</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">interactive</span> <span class="org-string">"r"</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">if</span> <span class="org-rainbow-delimiters-depth-3">(</span>use-region-p<span class="org-rainbow-delimiters-depth-3">)</span>
+      <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-keyword">let</span> <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-rainbow-delimiters-depth-5">(</span>tmp-buffer <span class="org-string">"Markdown To Org Tmp"</span><span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span>
+        <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-keyword">pcase</span> <span class="org-rainbow-delimiters-depth-5">(</span>shell-command-on-region <span class="org-rainbow-delimiters-depth-6">(</span>region-beginning<span class="org-rainbow-delimiters-depth-6">)</span> <span class="org-rainbow-delimiters-depth-6">(</span>region-end<span class="org-rainbow-delimiters-depth-6">)</span>
+                                        <span class="org-string">"pandoc -f markdown -t org"</span> tmp-buffer t<span class="org-rainbow-delimiters-depth-5">)</span>
+          <span class="org-rainbow-delimiters-depth-5">(</span><span class="org-highlight-numbers-number">0</span> <span class="org-rainbow-delimiters-depth-6">(</span>message <span class="org-string">"Successfully converted to org-mode format."</span><span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span>
+          <span class="org-rainbow-delimiters-depth-5">(</span><span class="org-highlight-numbers-number">127</span> <span class="org-rainbow-delimiters-depth-6">(</span>message <span class="org-string">"pandoc not found. Install it with 'sudo apt install pandoc'."</span><span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span>
+          <span class="org-rainbow-delimiters-depth-5">(</span>_ <span class="org-rainbow-delimiters-depth-6">(</span>message <span class="org-string">"Failed to convert the selected region to org-mode format."</span><span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span>
+          <span class="org-rainbow-delimiters-depth-4">)</span>
+        <span class="org-rainbow-delimiters-depth-3">)</span>
+    <span class="org-rainbow-delimiters-depth-3">(</span>message <span class="org-string">"No active region is found."</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/set-leader-keys-for-major-mode 'org-mode <span class="org-string">"RR"</span> 'replace-markdown-region-with-org<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org78d7d57" class="outline-4">
+<h4 id="org78d7d57"><span class="section-number-4">3.3.14.</span> ob-lean4</h4>
+<div class="outline-text-4" id="text-3-3-14">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">use-package</span> <span class="org-constant">ob-lean4</span>
+  <span class="org-builtin">:load-path</span> <span class="org-string">"~/.spacemacs.d/private/ob-lean4"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>add-to-list 'org-babel-load-languages '<span class="org-rainbow-delimiters-depth-2">(</span>lean4 . t<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org77cffb1" class="outline-3">
+<h3 id="org77cffb1"><span class="section-number-3">3.4.</span> Utility</h3>
+<div class="outline-text-3" id="text-3-4">
+</div>
+<div id="outline-container-org5796680" class="outline-4">
+<h4 id="org5796680"><span class="section-number-4">3.4.1.</span> beacon mode</h4>
+<div class="outline-text-4" id="text-3-4-1">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span>beacon-mode <span class="org-highlight-numbers-number">1</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org1df9a3d" class="outline-4">
+<h4 id="org1df9a3d"><span class="section-number-4">3.4.2.</span> Toggle clang-format on save</h4>
+<div class="outline-text-4" id="text-3-4-2">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">c-c++-toggle-clang-format-on-save</span> <span class="org-rainbow-delimiters-depth-2">()</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">interactive</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">cond</span>
+   <span class="org-rainbow-delimiters-depth-3">(</span>c-c++-enable-clang-format-on-save
+    <span class="org-rainbow-delimiters-depth-4">(</span>message <span class="org-string">"[c-c++] disable clang-format on save"</span><span class="org-rainbow-delimiters-depth-4">)</span>
+    <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-keyword">setq</span> c-c++-enable-clang-format-on-save nil<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
+   <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-rainbow-delimiters-depth-4">(</span>not c-c++-enable-clang-format-on-save<span class="org-rainbow-delimiters-depth-4">)</span>
+    <span class="org-rainbow-delimiters-depth-4">(</span>message <span class="org-string">"[c-c++] enable clang-format on save"</span><span class="org-rainbow-delimiters-depth-4">)</span>
+    <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-keyword">setq</span> c-c++-enable-clang-format-on-save t<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
+   <span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/set-leader-keys-for-major-mode 'c-mode <span class="org-string">"Tf"</span> 'c-c++-toggle-clang-format-on-save<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/set-leader-keys-for-major-mode 'c++-mode <span class="org-string">"Tf"</span> 'c-c++-toggle-clang-format-on-save<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/declare-prefix-for-mode 'c-mode <span class="org-string">"Tf"</span> <span class="org-string">"toggle-clang-format-on-save"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/declare-prefix-for-mode 'c++-mode <span class="org-string">"Tf"</span> <span class="org-string">"toggle-clang-format-on-save"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org7af9d1e" class="outline-4">
+<h4 id="org7af9d1e"><span class="section-number-4">3.4.3.</span> auto-indent</h4>
+<div class="outline-text-4" id="text-3-4-3">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-comment-delimiter">;; </span><span class="org-comment">I want to disable pasting with formatting on C/C++ buffers</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>add-to-list 'spacemacs-indent-sensitive-modes 'c-mode<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>add-to-list 'spacemacs-indent-sensitive-modes 'c++-mode<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgf70a1ff" class="outline-4">
+<h4 id="orgf70a1ff"><span class="section-number-4">3.4.4.</span> format-all</h4>
+<div class="outline-text-4" id="text-3-4-4">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span>add-hook 'sh-mode-hook #'format-all-mode<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>add-hook 'fish-mode-hook #'format-all-mode<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>add-hook 'cmake-mode-hook #'format-all-mode<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orga23143a" class="outline-4">
+<h4 id="orga23143a"><span class="section-number-4">3.4.5.</span> glow, the markdown viewer</h4>
+<div class="outline-text-4" id="text-3-4-5">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-comment-delimiter">;; </span><span class="org-comment">Configure glow viewer</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">start-glow-viewer</span> <span class="org-rainbow-delimiters-depth-2">()</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">interactive</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>start-process <span class="org-string">"glow-markdown-viewer"</span> nil
+                 <span class="org-string">"/usr/bin/x-terminal-emulator"</span>
+                 <span class="org-rainbow-delimiters-depth-3">(</span>file-truename <span class="org-string">"~/.spacemacs.d/scripts/glow_mk_viewer.sh"</span><span class="org-rainbow-delimiters-depth-3">)</span>
+                 <span class="org-rainbow-delimiters-depth-3">(</span>buffer-file-name nil<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgab8ed44" class="outline-4">
+<h4 id="orgab8ed44"><span class="section-number-4">3.4.6.</span> google-search</h4>
+<div class="outline-text-4" id="text-3-4-6">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-comment-delimiter">;; </span><span class="org-comment">Set google as default search engine and open links with xdg-open or open depending on the OS</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/set-leader-keys <span class="org-string">"ag"</span> 'engine/search-google<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> browse-url-browser-function 'browse-url-generic
+      engine/browser-function 'browse-url-generic
+      browse-url-generic-program <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">cond</span> <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-rainbow-delimiters-depth-4">(</span>string-equal system-type <span class="org-string">"darwin"</span><span class="org-rainbow-delimiters-depth-4">)</span> <span class="org-string">"open"</span><span class="org-rainbow-delimiters-depth-3">)</span>
+                                        <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-rainbow-delimiters-depth-4">(</span>string-equal system-type <span class="org-string">"gnu/linux"</span><span class="org-rainbow-delimiters-depth-4">)</span> <span class="org-string">"xdg-open"</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org00b00fc" class="outline-4">
+<h4 id="org00b00fc"><span class="section-number-4">3.4.7.</span> Kill all buffers</h4>
+<div class="outline-text-4" id="text-3-4-7">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">nuke-all-buffers</span> <span class="org-rainbow-delimiters-depth-2">()</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">interactive</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>mapcar 'kill-buffer <span class="org-rainbow-delimiters-depth-3">(</span>buffer-list<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>delete-other-windows<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>global-set-key <span class="org-rainbow-delimiters-depth-2">(</span>kbd <span class="org-string">"C-x K"</span><span class="org-rainbow-delimiters-depth-2">)</span> 'nuke-all-buffers<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgbd3e24d" class="outline-4">
+<h4 id="orgbd3e24d"><span class="section-number-4">3.4.8.</span> ranger</h4>
+<div class="outline-text-4" id="text-3-4-8">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">with-eval-after-load</span> 'ranger
+  <span class="org-rainbow-delimiters-depth-2">(</span>define-key ranger-mode-map <span class="org-rainbow-delimiters-depth-3">(</span>kbd <span class="org-string">"M-h"</span><span class="org-rainbow-delimiters-depth-3">)</span> 'ranger-prev-tab<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>define-key ranger-mode-map <span class="org-rainbow-delimiters-depth-3">(</span>kbd <span class="org-string">"M-l"</span><span class="org-rainbow-delimiters-depth-3">)</span> 'ranger-next-tab<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>define-key ranger-mode-map <span class="org-rainbow-delimiters-depth-3">(</span>kbd <span class="org-string">"M-n"</span><span class="org-rainbow-delimiters-depth-3">)</span> 'ranger-new-tab<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/set-leader-keys <span class="org-string">"ar"</span> 'ranger<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orge7400eb" class="outline-4">
+<h4 id="orge7400eb"><span class="section-number-4">3.4.9.</span> cheat.sh</h4>
+<div class="outline-text-4" id="text-3-4-9">
+<p>
+The one and only one cheatsheet.
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/declare-prefix <span class="org-string">"aa"</span> <span class="org-string">"cheat-sh"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-comment-delimiter">;; </span><span class="org-comment">Prompt to select a topic to show its cheatsheet</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/set-leader-keys <span class="org-string">"aaa"</span> 'cheat-sh<span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-comment-delimiter">;; </span><span class="org-comment">Show the help page of cheat.sh</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/set-leader-keys <span class="org-string">"aah"</span> 'cheat-sh-help<span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-comment-delimiter">;; </span><span class="org-comment">Get the cheatsheet for the marked region</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/set-leader-keys <span class="org-string">"aar"</span> 'cheat-sh-region<span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-comment-delimiter">;; </span><span class="org-comment">Get a random page of cheatsheet</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/set-leader-keys <span class="org-string">"aad"</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">lambda</span> <span class="org-rainbow-delimiters-depth-3">()</span>
+    <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-keyword">interactive</span><span class="org-rainbow-delimiters-depth-3">)</span>
+    <span class="org-rainbow-delimiters-depth-3">(</span>cheat-sh <span class="org-string">":random"</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>spacemacs/declare-prefix <span class="org-string">"aad"</span> <span class="org-string">"cheat.sh/:random"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org1519b2c" class="outline-4">
+<h4 id="org1519b2c"><span class="section-number-4">3.4.10.</span> Disable persistent undo-tree</h4>
+<div class="outline-text-4" id="text-3-4-10">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">require</span> '<span class="org-constant">undo-tree</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> undo-tree-auto-save-history nil<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org3118624" class="outline-4">
+<h4 id="org3118624"><span class="section-number-4">3.4.11.</span> chatgpt-shell</h4>
+<div class="outline-text-4" id="text-3-4-11">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">use-package</span> <span class="org-constant">chatgpt-shell</span>
+  <span class="org-builtin">:load-path</span> <span class="org-string">"~/.spacemacs.d/private/chatgpt-shell"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> chatgpt-shell-openai-key
+      <span class="org-rainbow-delimiters-depth-2">(</span>auth-source-pick-first-password <span class="org-builtin">:host</span> <span class="org-string">"api.openai.com"</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org1613b90" class="outline-3">
+<h3 id="org1613b90"><span class="section-number-3">3.5.</span> Workarounds</h3>
+<div class="outline-text-3" id="text-3-5">
+</div>
+<div id="outline-container-org1423337" class="outline-4">
+<h4 id="org1423337"><span class="section-number-4">3.5.1.</span> Workaround to suppress a yas related <a href="https://github.com/syl20bnr/spacemacs/issues/12648">warning</a></h4>
+<div class="outline-text-4" id="text-3-5-1">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defvaralias</span> '<span class="org-variable-name">helm-c-yas-space-match-any-greedy</span> 'helm-yas-space-match-any-greedy
+  <span class="org-doc">"Temporary alias for Emacs27"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgb896704" class="outline-4">
+<h4 id="orgb896704"><span class="section-number-4">3.5.2.</span> Workaround for the <a href="https://github.com/syl20bnr/spacemacs/issues/15281">bug</a> where keybinding of the projectile-find-other-file is shadowed.</h4>
+<div class="outline-text-4" id="text-3-5-2">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-comment-delimiter">;; </span><span class="org-comment">(with-eval-after-load 'lsp-mode (define-key lsp-command-map-prefix "ga" 'projectile-find-other-file))</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org216a6c4" class="outline-4">
+<h4 id="org216a6c4"><span class="section-number-4">3.5.3.</span> Workaround for the <a href="https://github.com/syl20bnr/spacemacs/issues/13100">bug</a> where fuzzy matching is not used in recent files</h4>
+<div class="outline-text-4" id="text-3-5-3">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> completion-styles `<span class="org-rainbow-delimiters-depth-2">(</span>basic partial-completion emacs22 initials
+                                ,<span class="org-rainbow-delimiters-depth-3">(</span><span class="org-keyword">if</span> <span class="org-rainbow-delimiters-depth-4">(</span>version&lt;= emacs-version <span class="org-string">"27.0"</span><span class="org-rainbow-delimiters-depth-4">)</span> 'helm-flex 'flex<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orge54696b" class="outline-4">
+<h4 id="orge54696b"><span class="section-number-4">3.5.4.</span> Workaround for the <a href="https://github.com/company-mode/company-mode/issues/383">bug</a> where company-mode and evil-mode are conflicting</h4>
+<div class="outline-text-4" id="text-3-5-4">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span>evil-declare-change-repeat 'company-complete<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgcce5c9b" class="outline-4">
+<h4 id="orgcce5c9b"><span class="section-number-4">3.5.5.</span> Workaround for the <a href="https://github.com/syl20bnr/spacemacs/issues/10410">bug</a> where evil search breaks spacemacs.</h4>
+<div class="outline-text-4" id="text-3-5-5">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">kill-minibuffer</span> <span class="org-rainbow-delimiters-depth-2">()</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">interactive</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">when</span> <span class="org-rainbow-delimiters-depth-3">(</span>windowp <span class="org-rainbow-delimiters-depth-4">(</span>active-minibuffer-window<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
+    <span class="org-rainbow-delimiters-depth-3">(</span>evil-ex-search-exit<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>add-hook 'mouse-leave-buffer-hook #'kill-minibuffer<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org91a53c2" class="outline-4">
+<h4 id="org91a53c2"><span class="section-number-4">3.5.6.</span> Setting part of a word to be bold, italics, underline, and strikethrough.</h4>
+<div class="outline-text-4" id="text-3-5-6">
+<p>
+The visualization in org-mode can be wrong, which needs a fix.
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-comment-delimiter">;; </span><span class="org-comment">This commented out because it messed up with org highlight</span>
+<span class="org-comment-delimiter">;; </span><span class="org-comment">(setcar org-emphasis-regexp-components " \t('\"{[:alpha:]")</span>
+<span class="org-comment-delimiter">;; </span><span class="org-comment">(setcar (nthcdr 1 org-emphasis-regexp-components) "[:alpha:]- \t.,:!?;'\")}\\")</span>
+<span class="org-comment-delimiter">;; </span><span class="org-comment">(org-set-emph-re 'org-emphasis-regexp-components org-emphasis-regexp-components)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb98a8a7" class="outline-4">
+<h4 id="orgb98a8a7"><span class="section-number-4">3.5.7.</span> Enable doom-modeline-icons in gui and disable them in terminal</h4>
+<div class="outline-text-4" id="text-3-5-7">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-comment-delimiter">;; </span><span class="org-comment">Enable doom-modeline-icons in gui and disable them in terminal</span>
+<span class="org-comment-delimiter">;; </span><span class="org-comment"><span class="org-hl-todo"><span class="custom">TODO</span></span></span><span class="org-comment">: check if this is still working</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">enable-doom-modeline-icons</span><span class="org-rainbow-delimiters-depth-2">()</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">setq</span> doom-modeline-icon <span class="org-rainbow-delimiters-depth-3">(</span>display-graphic-p<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">enable-doom-modeline-icons-weird</span> <span class="org-rainbow-delimiters-depth-2">(</span>_frame<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-comment-delimiter">;; </span><span class="org-comment"><span class="org-hl-todo"><span class="custom">TODO</span></span></span><span class="org-comment">: Don't know why this "not" is needed...</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">setq</span> doom-modeline-icon <span class="org-rainbow-delimiters-depth-3">(</span>not <span class="org-rainbow-delimiters-depth-4">(</span>display-graphic-p<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>add-hook 'focus-in-hook
+          #'enable-doom-modeline-icons<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>add-hook 'after-make-frame-functions
+          #'enable-doom-modeline-icons-weird<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="date">Created: 2024-06-27 Thu 19:25</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
