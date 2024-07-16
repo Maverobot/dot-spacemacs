@@ -611,6 +611,13 @@ E.g. when visiting a soft/hard link.
   (add-to-list 'org-babel-load-languages '(lean4 . t))
 #+END_SRC
 
+*** ob-cmake
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (use-package ob-cmake
+    :load-path "~/.spacemacs.d/private/ob-cmake")
+  (add-to-list 'org-babel-load-languages '(cmake . t))
+#+END_SRC
+
 ** Utility
 *** beacon mode
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
