@@ -249,6 +249,10 @@ Autocompletion config for launch files.
     :load-path "~/.spacemacs.d/private/catkin-make"
     :config (catkin-make-keybinding-setup))
 #+END_SRC
+*** scad-mode
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (add-hook 'scad-mode-hook 'flymake-mode-on)
+#+END_SRC
 *** Style for linux kernel development
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   ;; Linux kernel development
