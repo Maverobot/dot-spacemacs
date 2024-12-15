@@ -254,6 +254,15 @@ Autocompletion config for launch files.
   (use-package scad-mode
     :load-path "~/.spacemacs.d/private/scad-mode")
   (add-hook 'scad-mode-hook 'flymake-mode-on)
+  (with-eval-after-load 'scad-mode
+    (define-key scad-preview-mode-map (kbd "C-h") 'scad-preview-rotate-z-)
+    (define-key scad-preview-mode-map (kbd "C-l") 'scad-preview-rotate-z+)
+    (define-key scad-preview-mode-map (kbd "C-k") 'scad-preview-rotate-x-)
+    (define-key scad-preview-mode-map (kbd "C-j") 'scad-preview-rotate-x+)
+    (define-key scad-preview-mode-map (kbd "M-h") 'scad-preview-distance-)
+    (define-key scad-preview-mode-map (kbd "M-l") 'scad-preview-distance+)
+    (define-key scad-preview-mode-map (kbd "M-k") 'scad-preview-translate-z+)
+    (define-key scad-preview-mode-map (kbd "M-j") 'scad-preview-translate-z-))
 #+END_SRC
 *** Style for linux kernel development
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
