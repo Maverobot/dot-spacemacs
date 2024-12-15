@@ -46,3 +46,6 @@
 [submodule "private/ob-cmake"]
 	path = private/ob-cmake
 	url = https://github.com/Maverobot/ob-cmake.git
+[submodule "private/scad-mode"]
+	path = private/scad-mode
+	url = https://github.com/Maverobot/emacs-scad-mode.git

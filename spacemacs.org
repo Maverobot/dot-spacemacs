@@ -251,6 +251,8 @@ Autocompletion config for launch files.
 #+END_SRC
 *** scad-mode
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (use-package scad-mode
+    :load-path "~/.spacemacs.d/private/scad-mode")
   (add-hook 'scad-mode-hook 'flymake-mode-on)
 #+END_SRC
 *** Style for linux kernel development

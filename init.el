@@ -190,7 +190,6 @@ This function should only modify configuration layer settings."
                                       org-noter
                                       org-roam-ui
                                       posframe
-                                      scad-mode
                                       ssh-agency
                                       xclip
                                       )
