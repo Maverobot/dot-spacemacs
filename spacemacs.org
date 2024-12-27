@@ -547,6 +547,7 @@ E.g. when visiting a soft/hard link.
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (with-eval-after-load 'org-journal
     (setq org-journal-dir "~/org/home/roam/journal/")
+    (setq org-journal-date-format "%A, %m/%d/%Y")
     (setq org-journal-file-type 'monthly)
     (setq org-journal-file-format "%Y%m%d.org"))
 
