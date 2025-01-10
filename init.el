@@ -172,6 +172,7 @@ This function should only modify configuration layer settings."
                                       (copilot :location (recipe :fetcher github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
                                       (lean4-mode :location (recipe :fetcher github :repo "leanprover/lean4-mode" :files ("*.el" "data")))
                                       (term-cursor :location (recipe :fetcher github :repo "h0d/term-cursor.el" ))
+                                      (ultra-scroll :location (recipe :fetcher github :repo "jdtsmith/ultra-scroll"))
                                       arduino-mode
                                       beacon
                                       cheat-sh

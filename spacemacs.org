@@ -369,6 +369,15 @@ the formatting in a dominant parent directory of the assumed input file path.
       '("k" "copy branch name" magit-add-current-branch-name-to-kill-ring)))
 #+END_SRC
 ** Miscellaneous
+*** ultra-scroll
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (use-package ultra-scroll
+  :init
+  (setq scroll-conservatively 101 ; important!
+        scroll-margin 0)
+  :config
+  (ultra-scroll-mode 1))
+#+END_SRC
 *** No title bar
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
 (add-to-list 'default-frame-alist '(undecorated-round . t))
