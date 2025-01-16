@@ -186,6 +186,7 @@ This function should only modify configuration layer settings."
                                       greader
                                       helm-ros
                                       nvm
+                                      ob-rust
                                       org-ai
                                       org-make-toc
                                       org-noter

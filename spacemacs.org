@@ -249,6 +249,26 @@ Autocompletion config for launch files.
     :load-path "~/.spacemacs.d/private/catkin-make"
     :config (catkin-make-keybinding-setup))
 #+END_SRC
+*** Rust
+**** Allow user input in the rust-run command
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (spacemacs/set-leader-keys-for-major-mode 'rustic-mode "cx" 'rustic-cargo-run-with-user-input)
+  (defun rustic-cargo-run-with-user-input ()
+    "Build and run Rust code."
+    (interactive)
+    (rustic-cargo-run)
+    (let (
+          (orig-win (selected-window))
+          (run-win (display-buffer (get-buffer "*cargo-run*") nil 'visible))
+          )
+      (select-window run-win)
+      (comint-mode)
+      (read-only-mode 0)
+      (select-window orig-win)
+      )
+    )
+#+END_SRC
+
 *** scad-mode
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (use-package scad-mode
