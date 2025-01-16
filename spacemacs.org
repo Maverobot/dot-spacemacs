@@ -813,3 +813,9 @@ The visualization in org-mode can be wrong, which needs a fix.
   (add-hook 'after-make-frame-functions
             #'enable-doom-modeline-icons-weird)
 #+END_SRC
+
+*** Workaround for spammed false positive warning messages
+Ticket: [[https://github.com/syl20bnr/spacemacs/issues/16575][syl20bnr/spacemacs#16575 ‘org-element-at-point’ cannot be used in non-Org buffer]]
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (add-to-list 'warning-suppress-types '(org-element org-element-parser))
+#+END_SRC
