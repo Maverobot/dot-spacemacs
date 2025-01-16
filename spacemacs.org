@@ -762,41 +762,9 @@ The one and only one cheatsheet.
         (auth-source-pick-first-password :host "api.openai.com"))
 #+END_SRC
 ** Workarounds
-*** Workaround to suppress a yas related [[https://github.com/syl20bnr/spacemacs/issues/12648][warning]]
-#+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (defvaralias 'helm-c-yas-space-match-any-greedy 'helm-yas-space-match-any-greedy
-    "Temporary alias for Emacs27")
-#+END_SRC
-*** Workaround for the [[https://github.com/syl20bnr/spacemacs/issues/15281][bug]] where keybinding of the projectile-find-other-file is shadowed.
-#+BEGIN_SRC emacs-lisp :tangle user-config.el
-  ;; (with-eval-after-load 'lsp-mode (define-key lsp-command-map-prefix "ga" 'projectile-find-other-file))
-#+END_SRC
-*** Workaround for the [[https://github.com/syl20bnr/spacemacs/issues/13100][bug]] where fuzzy matching is not used in recent files
-#+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (setq completion-styles `(basic partial-completion emacs22 initials
-                                  ,(if (version<= emacs-version "27.0") 'helm-flex 'flex)))
-#+END_SRC
 *** Workaround for the [[https://github.com/company-mode/company-mode/issues/383][bug]] where company-mode and evil-mode are conflicting
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (evil-declare-change-repeat 'company-complete)
-#+END_SRC
-
-*** Workaround for the [[https://github.com/syl20bnr/spacemacs/issues/10410][bug]] where evil search breaks spacemacs.
-#+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (defun kill-minibuffer ()
-    (interactive)
-    (when (windowp (active-minibuffer-window))
-      (evil-ex-search-exit)))
-  (add-hook 'mouse-leave-buffer-hook #'kill-minibuffer)
-#+END_SRC
-
-*** Setting part of a word to be bold, italics, underline, and strikethrough.
-The visualization in org-mode can be wrong, which needs a fix.
-#+BEGIN_SRC emacs-lisp :tangle user-config.el
-  ;; This commented out because it messed up with org highlight
-  ;; (setcar org-emphasis-regexp-components " \t('\"{[:alpha:]")
-  ;; (setcar (nthcdr 1 org-emphasis-regexp-components) "[:alpha:]- \t.,:!?;'\")}\\")
-  ;; (org-set-emph-re 'org-emphasis-regexp-components org-emphasis-regexp-components)
 #+END_SRC
 
 *** Enable doom-modeline-icons in gui and disable them in terminal
