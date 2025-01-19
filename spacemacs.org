@@ -662,6 +662,11 @@ E.g. when visiting a soft/hard link.
     :load-path "~/.spacemacs.d/private/ob-cmake")
   (add-to-list 'org-babel-load-languages '(cmake . t))
 #+END_SRC
+*** ob-rust
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (require 'ob-rust)
+  (add-to-list 'org-babel-load-languages '(rust . t))
+#+END_SRC
 
 ** Utility
 *** beacon mode
