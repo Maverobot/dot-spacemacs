@@ -87,6 +87,19 @@ This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code.
 #+end_quote
 ** IDE config
+*** Apply ANSI Color codes for buffer and region
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (defun apply-ansi-color-codes-to-region (beginning end)
+    "Apply ANSI color codes to the selected region."
+    (interactive "r")
+    (ansi-color-apply-on-region beginning end))
+
+  (defun apply-ansi-color-codes-to-buffer ()
+    "Apply ANSI color codes to the whole buffer."
+    (interactive)
+    (apply-ansi-color-codes-to-region (point-min) (point-max)))
+#+END_SRC
+
 *** Disable auto-indent in C/C++ mode after typing ~::~
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   ;; Disable electric indentation in C and C++ modes
