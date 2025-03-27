@@ -177,6 +177,7 @@ This function should only modify configuration layer settings."
                                       beacon
                                       cheat-sh
                                       cmake-mode
+                                      copilot-chat
                                       doom-themes
                                       emacs-everywhere
                                       exec-path-from-shell
