@@ -543,7 +543,7 @@ E.g. when visiting a soft/hard link.
     (add-hook 'org-mode-hook #'org-ai-mode) ; enable org-ai in org-mode
     (org-ai-global-mode) ; installs global keybindings on C-c M-a
     :config
-    (setq org-ai-default-chat-model "o3-mini")
+    (setq org-ai-default-chat-model "gpt-4o")
     (org-ai-install-yasnippets)) ; if you are using yasnippet and want `ai` snippets  (require 'org-ai-talk)
 #+END_SRC
 
