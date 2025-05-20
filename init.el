@@ -154,6 +154,9 @@ This function should only modify configuration layer settings."
      neotree
      systemd
      version-control
+     (shell :variables
+            shell-default-shell 'multi-vterm
+            shell-default-term-shell "/usr/bin/fish")
      search-engine
      command-log
      pdf
