@@ -374,7 +374,7 @@ It should only modify the values of Spacemacs settings."
    ;; a non-negative integer (pixel size), or a floating-point (point size).
    ;; Point size is recommended, because it's device independent. (default 10.0)
    dotspacemacs-default-font '("Monaco"
-                               :size 10.0
+                               :size 11.0
                                :weight normal
                                :width normal
                                :powerline-scale 1.3)
@@ -492,7 +492,7 @@ It should only modify the values of Spacemacs settings."
    ;; A value from the range (0..100), in increasing opacity, which describes
    ;; the transparency level of a frame when it's inactive or deselected.
    ;; Transparency can be toggled through `toggle-transparency'. (default 90)
-   dotspacemacs-inactive-transparency 90
+   dotspacemacs-inactive-transparency 100
 
    ;; If non-nil show the titles of transient states. (default t)
    dotspacemacs-show-transient-state-title t
@@ -683,3 +683,25 @@ Put your configuration code here, except for variables that should be set
 before packages are loaded."
   (let ((uc (concat dotspacemacs-directory "user-config.el")))
     (load-file uc)))
+(defun dotspacemacs/emacs-custom-settings ()
+  "Emacs custom settings.
+This is an auto-generated function, do not modify its content directly, use
+Emacs customize menu instead.
+This function is called at the very end of Spacemacs initialization."
+  (custom-set-variables
+   ;; custom-set-variables was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   '(helm-ag-base-command "rg --no-heading")
+   '(helm-ag-success-exit-status '(0 2))
+   '(org-journal-date-format "%A, %d/%m/%Y")
+   '(package-selected-packages
+     '(org memoize doom-modeline shrink-path nerd-icons yasnippet-snippets yapfify yaml-mode xclip ws-butler writeroom-mode wolfram-mode winum which-key web-mode web-beautify volatile-highlights vmd-mode vim-powerline vi-tilde-fringe vala-snippets vala-mode uuidgen undo-tree typescript-mode toml-mode toc-org thrift term-cursor tagedit systemd symon symbol-overlay string-inflection string-edit-at-point stickyfunc-enhance stan-mode ssh-agency srefactor sphinx-doc spacemacs-whitespace-cleanup spacemacs-purpose-popwin spaceline-all-the-icons space-doc smeargle slim-mode shfmt scss-mode scad-mode sass-mode rustic ron-mode restart-emacs ranger rainbow-delimiters quickrun qml-mode pytest pylookup pyenv-mode pydoc py-isort pug-mode prettier-js popwin poetry plantuml-mode pkgbuild-mode pippel pipenv pip-requirements phpunit php-extras php-auto-yasnippets persp-mode pdf-view-restore pcre2el password-generator paradox ox-hugo ox-gfm overseer orgit-forge org-superstar org-roam-ui org-rich-yank org-re-reveal org-projectile org-present org-pomodoro org-noter org-mime org-make-toc org-journal org-download org-contrib org-cliplink org-ai open-junk-file nvm npm-mode nose nodejs-repl neotree nameless multi-line matlab-mode markdown-toc macrostep lsp-ui lsp-pyright lsp-origami lorem-ipsum logcat livid-mode live-py-mode link-hint lean4-mode keycast json-reformat json-navigator json-mode js2-refactor js-doc journalctl-mode inspector insert-shebang info+ indent-guide importmagic impatient-mode hybrid-mode hungry-delete hoon-mode holy-mode hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt helm-xref helm-themes helm-swoop helm-rtags helm-ros helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-org helm-mode-manager helm-make helm-lsp helm-ls-git helm-git-grep helm-descbinds helm-ctest helm-css-scss helm-company helm-comint helm-c-yasnippet helm-ag groovy-mode groovy-imports greader google-translate google-c-style golden-ratio godoctor go-tag go-rename go-impl go-guru go-gen-test go-fill-struct go-eldoc gnuplot gitignore-templates git-timemachine git-modes git-messenger git-link gh-md gendoxy gemini-mode geben format-all flyspell-popup flyspell-correct-helm flycheck-ycmd flycheck-rtags flycheck-pos-tip flycheck-package flycheck-golangci-lint flycheck-elsa flycheck-bashate flx-ido flatbuffers-mode fish-mode feature-mode fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-evilified-state evil-escape evil-easymotion evil-collection evil-cleverparens evil-args evil-anzu eval-sexp-fu ess-R-data-view engine-mode emr emmet-mode emacs-everywhere elisp-slime-nav elisp-demos elisp-def ebuild-mode dumb-jump drupal-mode drag-stuff dotenv-mode doom-themes dockerfile-mode docker disaster dired-quick-sort diminish diff-hl devdocs define-word dap-mode cython-mode csv-mode cpp-auto-include copilot conda company-ycmd company-web company-statistics company-shell company-rtags company-quickhelp company-phpactor company-php company-c-headers company-anaconda command-log-mode column-enforce-mode code-cells cmake-mode clean-aindent-mode cheat-sh centered-cursor-mode ccls browse-at-remote blacken beacon auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile arduino-mode aggressive-indent ace-link ace-jump-helm-line)))
+  (custom-set-faces
+   ;; custom-set-faces was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   )
+  )
