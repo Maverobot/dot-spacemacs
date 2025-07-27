@@ -505,7 +505,8 @@ E.g. when visiting a soft/hard link.
 #+END_SRC
 *** Do not autosave undo history
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (setq undo-tree-auto-save-history nil)
+  (with-eval-after-load 'undo-tree
+    (setq undo-tree-auto-save-history nil))
 #+END_SRC
 *** Native compilation
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
