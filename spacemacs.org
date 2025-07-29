@@ -206,6 +206,8 @@ Use evil keybindings for selecting items in popup menus.
     (setq org-plantuml-jar-path plantuml-jar-path)
     (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
     (org-babel-do-load-languages 'org-babel-load-languages '((plantuml . t)))
+    (setq plantuml-svg-background "white")
+    (setq plantuml-indent-level 2)
     )
 #+END_SRC
 *** nvm
