@@ -258,12 +258,6 @@ Autocompletion config for launch files.
   (use-package company-roslaunch
     :load-path "~/.spacemacs.d/private/company-roslaunch")
 #+END_SRC
-**** catkin-make
-#+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (use-package catkin-make
-    :load-path "~/.spacemacs.d/private/catkin-make"
-    :config (catkin-make-keybinding-setup))
-#+END_SRC
 *** Rust
 **** Allow user input in the rust-run command
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
