@@ -188,7 +188,6 @@ This function should only modify configuration layer settings."
                                       flatbuffers-mode
                                       format-all
                                       greader
-                                      helm-ros
                                       nvm
                                       ob-rust
                                       org-ai
