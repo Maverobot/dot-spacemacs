@@ -33,7 +33,7 @@ jobs:
 
       - name: Get branch name
         id: branch-name
-        uses: tj-actions/branch-names@v7
+        uses: tj-actions/branch-names@v9
 
       - name: Install everything needed for the spacemacs config
         run: ./installer.sh ${{ steps.branch-name.outputs.current_branch }}
