@@ -149,7 +149,7 @@ This function should only modify configuration layer settings."
                plantuml-jar-path (file-truename "~/.spacemacs.d/plantuml.jar"))
      dap
      multiple-cursors
-     helm
+     compleseus
      git
      neotree
      systemd

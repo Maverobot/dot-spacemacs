@@ -237,26 +237,6 @@ Use evil keybindings for selecting items in popup menus.
 #+END_SRC
 
 *** ROS
-**** helm-ros
-#+BEGIN_SRC emacs-lisp :tangle user-config.el
-  ;; ROS shortcut
-  (spacemacs/set-leader-keys "ye" 'spacemacs/update-ros-envs)
-  (spacemacs/declare-prefix "y" "ROS")
-  (spacemacs/set-leader-keys "yy" 'helm-ros)
-
-  (spacemacs/declare-prefix "yt" "ROS topics")
-  (spacemacs/set-leader-keys "ytt" 'helm-ros-topics)
-  (spacemacs/set-leader-keys "ytz" 'helm-ros-rostopic-hz)
-  (spacemacs/set-leader-keys "yti" 'helm-ros-rostopic-info)
-
-  (spacemacs/declare-prefix "yn" "ROS nodes")
-  (spacemacs/set-leader-keys "yni" 'helm-ros-rosnode-info)
-  (spacemacs/set-leader-keys "ynn" 'helm-ros-rosnode-list)
-  (spacemacs/set-leader-keys "ynd" 'helm-ros-kill-node)
-  (spacemacs/set-leader-keys "ynr" 'helm-ros-run-node)
-
-  (spacemacs/set-leader-keys "ym" 'helm-ros-set-master-uri)
-#+END_SRC
 **** roslaunch-jump
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   ;; TODO: load package lazily
@@ -430,12 +410,6 @@ the formatting in a dominant parent directory of the assumed input file path.
   ;; (global-term-cursor-mode)
 #+END_SRC
 
-*** ripgrep
-#+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (custom-set-variables
-   '(helm-ag-base-command "rg --no-heading")
-   `(helm-ag-success-exit-status '(0 2)))
-#+END_SRC
 *** ~C-a~ for increasing number, ~C-x~ for descreasing number
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (evil-define-key 'normal global-map (kbd "C-a") 'evil-numbers/inc-at-pt)
@@ -461,11 +435,6 @@ Create binding to spacemacs.org file
 *** ~-~ for going to the first non-blank position of the previous line
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (evil-define-key 'normal global-map (kbd "-") 'evil-previous-line-first-non-blank)
-#+END_SRC
-*** helm-swoop
-#+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (setq helm-swoop-use-fuzzy-match t)
-  (setq helm-swoop-use-line-number-face t)
 #+END_SRC
 *** Keybinding for Zoom in / out
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
