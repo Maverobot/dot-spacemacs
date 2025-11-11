@@ -86,6 +86,19 @@ Configuration function for user code.
 This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code.
 #+end_quote
+** AI assistant
+*** copilot
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (spacemacs/declare-prefix "ai" "AI")
+  (spacemacs/set-leader-keys "aic" 'copilot-chat)
+  (spacemacs/set-leader-keys "aif" 'copilot-chat-fix)
+  (spacemacs/set-leader-keys "air" 'copilot-chat-review)
+  (spacemacs/set-leader-keys "aie" 'copilot-chat-explain)
+  (spacemacs/set-leader-keys "aio" 'copilot-chat-optimize)
+  (spacemacs/set-leader-keys "aid" 'copilot-chat-doc)
+  (spacemacs/set-leader-keys "ait" 'copilot-chat-test)
+  (spacemacs/set-leader-keys "aiq" 'copilot-chat-quotas)
+#+END_SRC
 ** IDE config
 *** Apply ANSI Color codes for buffer and region
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
