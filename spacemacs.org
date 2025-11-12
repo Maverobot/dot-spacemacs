@@ -236,21 +236,6 @@ Use evil keybindings for selecting items in popup menus.
   (add-to-list 'auto-mode-alist '("\\.dcf\\'" . conf-mode))
 #+END_SRC
 
-*** ROS
-**** roslaunch-jump
-#+BEGIN_SRC emacs-lisp :tangle user-config.el
-  ;; TODO: load package lazily
-  (use-package roslaunch-jump
-    :defer 1
-    :load-path "~/.spacemacs.d/private/roslaunch-jump")
-#+END_SRC
-**** company-roslaunch
-Autocompletion config for launch files.
-#+BEGIN_SRC emacs-lisp :tangle user-config.el
-  ;; TODO: load package lazily
-  (use-package company-roslaunch
-    :load-path "~/.spacemacs.d/private/company-roslaunch")
-#+END_SRC
 *** Rust
 **** Allow user input in the rust-run command
 #+BEGIN_SRC emacs-lisp :tangle user-config.el

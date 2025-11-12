@@ -6,17 +6,9 @@
 	path = reveal.js
 	url = https://github.com/hakimel/reveal.js.git
 	branch = master
-[submodule "private/roslaunch-jump"]
-	path = private/roslaunch-jump
-	url = https://github.com/Maverobot/roslaunch-jump.git
-	branch = master
 [submodule "snippets"]
 	path = snippets
 	url = https://github.com/Maverobot/snippets.git
-	branch = master
-[submodule "private/company-roslaunch"]
-	path = private/company-roslaunch
-	url = https://github.com/Maverobot/company-roslaunch.git
 	branch = master
 [submodule "ccls"]
 	path = ccls
