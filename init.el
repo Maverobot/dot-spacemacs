@@ -197,6 +197,7 @@ This function should only modify configuration layer settings."
                                       org-make-toc
                                       org-noter
                                       org-roam-ui
+                                      platformio-mode
                                       posframe
                                       ssh-agency
                                       xclip
