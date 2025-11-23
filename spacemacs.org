@@ -87,17 +87,29 @@ This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code.
 #+end_quote
 ** AI assistant
+*** Aider
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (spacemacs/set-leader-keys "aa" 'aidermacs-transient-menu)
+
+  (setq aidermacs-default-model "github_copilot/gpt-5.1")
+  (setq aidermacs-weak-model "github_copilot/gpt-4o")
+  (setq aidermacs-backend 'vterm)
+  (setq aidermacs-default-chat-mode 'code)
+#+END_SRC
 *** copilot
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (spacemacs/declare-prefix "ai" "AI")
-  (spacemacs/set-leader-keys "aic" 'copilot-chat)
-  (spacemacs/set-leader-keys "aif" 'copilot-chat-fix)
-  (spacemacs/set-leader-keys "air" 'copilot-chat-review)
-  (spacemacs/set-leader-keys "aie" 'copilot-chat-explain)
-  (spacemacs/set-leader-keys "aio" 'copilot-chat-optimize)
-  (spacemacs/set-leader-keys "aid" 'copilot-chat-doc)
-  (spacemacs/set-leader-keys "ait" 'copilot-chat-test)
-  (spacemacs/set-leader-keys "aiq" 'copilot-chat-quotas)
+  (with-eval-after-load 'copilot-chat
+    (setq copilot-chat-default-model "gpt-5")
+    (spacemacs/declare-prefix "ai" "AI")
+    (spacemacs/set-leader-keys "aic" 'copilot-chat)
+    (spacemacs/set-leader-keys "aif" 'copilot-chat-fix)
+    (spacemacs/set-leader-keys "air" 'copilot-chat-review)
+    (spacemacs/set-leader-keys "aie" 'copilot-chat-explain)
+    (spacemacs/set-leader-keys "aio" 'copilot-chat-optimize)
+    (spacemacs/set-leader-keys "aid" 'copilot-chat-doc)
+    (spacemacs/set-leader-keys "ait" 'copilot-chat-test)
+    (spacemacs/set-leader-keys "aiq" 'copilot-chat-quotas)
+    )
 #+END_SRC
 ** IDE config
 *** Apply ANSI Color codes for buffer and region
@@ -718,23 +730,23 @@ E.g. when visiting a soft/hard link.
 *** cheat.sh
 The one and only one cheatsheet.
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (spacemacs/declare-prefix "aa" "cheat-sh")
+  (spacemacs/declare-prefix "ac" "cheat-sh")
 
   ;; Prompt to select a topic to show its cheatsheet
-  (spacemacs/set-leader-keys "aaa" 'cheat-sh)
+  (spacemacs/set-leader-keys "acl" 'cheat-sh)
 
   ;; Show the help page of cheat.sh
-  (spacemacs/set-leader-keys "aah" 'cheat-sh-help)
+  (spacemacs/set-leader-keys "ach" 'cheat-sh-help)
 
   ;; Get the cheatsheet for the marked region
-  (spacemacs/set-leader-keys "aar" 'cheat-sh-region)
+  (spacemacs/set-leader-keys "acr" 'cheat-sh-region)
 
   ;; Get a random page of cheatsheet
-  (spacemacs/set-leader-keys "aad"
+  (spacemacs/set-leader-keys "acr"
     (lambda ()
       (interactive)
       (cheat-sh ":random")))
-  (spacemacs/declare-prefix "aad" "cheat.sh/:random")
+  (spacemacs/declare-prefix "acr" "cheat.sh/:random")
 #+END_SRC
 *** chatgpt-shell
 #+BEGIN_SRC emacs-lisp :tangle user-config.el

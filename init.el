@@ -172,6 +172,9 @@ This function should only modify configuration layer settings."
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(
+                                      (aidermacs :variables
+                                                 aidermacs-default-chat-mode 'architect
+                                                 aidermacs-default-model "github_copilot/gpt-5.1")
                                       (copilot :location (recipe :fetcher github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
                                       (lean4-mode :location (recipe :fetcher github :repo "leanprover/lean4-mode" :files ("*.el" "data")))
                                       (term-cursor :location (recipe :fetcher github :repo "h0d/term-cursor.el" ))
