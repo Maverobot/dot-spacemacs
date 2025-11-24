@@ -99,7 +99,7 @@ layers configuration. You are free to put any user code.
 *** copilot
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (with-eval-after-load 'copilot-chat
-    (setq copilot-chat-default-model "gpt-5")
+    (setq copilot-chat-default-model "gpt-4o")
     (spacemacs/declare-prefix "ai" "AI")
     (spacemacs/set-leader-keys "aic" 'copilot-chat)
     (spacemacs/set-leader-keys "aif" 'copilot-chat-fix)
