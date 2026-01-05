@@ -112,6 +112,10 @@ layers configuration. You are free to put any user code.
     )
 #+END_SRC
 ** IDE config
+*** Add new line when a file is about to be saved
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (setq require-final-newline t)
+#+END_SRC
 *** Apply ANSI Color codes for buffer and region
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (defun apply-ansi-color-codes-to-region (beginning end)
