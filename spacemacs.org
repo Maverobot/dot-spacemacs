@@ -565,6 +565,19 @@ E.g. when visiting a soft/hard link.
        (python . t)
        (shell . t))))
 #+END_SRC
+*** org-latex
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (with-eval-after-load 'ox-latex
+    (add-to-list 'org-latex-classes
+                 '("scrartcl"
+                   "\\documentclass[a4paper,11pt]{scrartcl}"
+                   ("\\section{%s}" . "\\section*{%s}")
+                   ("\\subsection{%s}" . "\\subsection*{%s}")
+                   ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                   ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                   ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+
+#+END_SRC
 *** org-journal
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (with-eval-after-load 'org-journal
