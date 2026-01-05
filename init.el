@@ -95,24 +95,26 @@ This function should only modify configuration layer settings."
                       auto-completion-enable-snippets-in-popup t
                       auto-completion-private-snippets-directory "~/.spacemacs.d/snippets")
      (lsp :variables
-          lsp-enable-symbol-highlighting nil
-          lsp-enable-on-type-formatting nil
-          lsp-enable-indentation nil
-          lsp-enable-file-watchers t
-          lsp-use-upstream-bindings nil
-          lsp-prefer-flymake nil
-          lsp-file-watch-threshold nil
           lsp-auto-guess-root t
           lsp-before-save-edits nil
+          lsp-enable-file-watchers t
+          lsp-enable-indentation nil
+          lsp-enable-on-type-formatting nil
+          lsp-enable-symbol-highlighting nil
+          lsp-file-watch-threshold nil
+          lsp-lens-enable nil
+          lsp-prefer-flymake nil
+          lsp-pylsp-plugins-isort-enabled t
+          lsp-ui-doc-border (face-foreground 'default)
+          lsp-ui-doc-delay 0
           lsp-ui-doc-enable nil
           lsp-ui-doc-header t
           lsp-ui-doc-include-signature t
-          lsp-ui-doc-border (face-foreground 'default)
-          lsp-ui-doc-delay 0
           lsp-ui-sideline-enable nil
           lsp-ui-sideline-ignore-duplicate t
           lsp-ui-sideline-show-code-actions t
-          lsp-lens-enable nil)
+          lsp-use-upstream-bindings nil
+          )
 
      ;; Virtual environments
      (conda :variables conda-anaconda-home "~/.miniconda3")
