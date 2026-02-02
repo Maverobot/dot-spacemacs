@@ -3,26 +3,14 @@ set -e
 
 git submodule update --init --recursive
 
-sudo apt install xclip build-essential cmake python3-dev python3-pip libz-dev libtinfo-dev sox
+sudo apt install xclip build-essential cmake python3-dev python3-pip libz-dev libtinfo-dev sox cmake-format ripgrep fd-find
 
 sudo snap install --channel=edge shellcheck
-
-pip3 install --user rfc6555 # Dependency of offlineimap
-pip3 install --user yapf offlineimap
-pip3 install --user cmake-language-server cmake-format
-
+sudo snap install --channel=edge cmake-language-server
 sudo snap install shfmt
 
 # Install fonts
 curl -L https://github.com/hbin/top-programming-fonts/raw/master/install.sh | bash
-
-# Install ripgrep
-curl -LOs https://github.com/BurntSushi/ripgrep/releases/download/11.0.2/ripgrep_11.0.2_amd64.deb
-sudo dpkg -i ripgrep_11.0.2_amd64.deb
-
-# Install fd
-curl -LOs https://github.com/sharkdp/fd/releases/download/v8.1.1/fd_8.1.1_amd64.deb
-sudo dpkg -i fd_8.1.1_amd64.deb
 
 # Install nvm
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash

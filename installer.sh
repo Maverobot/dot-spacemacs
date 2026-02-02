@@ -34,25 +34,14 @@ function install_dependencies {
     sudo apt update
     sudo apt install -y entr xclip build-essential cmake g++ gcc \
         python3-dev python3-pip python3-wheel python3-venv python3-setuptools \
-        libz-dev libtinfo-dev libpq-dev sqlite3
-    sudo python3 -m pip install wheel
+        libz-dev libtinfo-dev libpq-dev sqlite3 cmake-format ripgrep fd-find
 
     sudo snap install --channel=edge shellcheck
+    sudo snap install --channel=edge cmake-language-server
     sudo snap install shfmt
-
-    pip3 install --user yapf offlineimap
-    pip3 install --user cmake-language-server cmake-format
 
     # Install fonts
     curl -Ls https://github.com/hbin/top-programming-fonts/raw/master/install.sh | bash
-
-    # Install ripgrep as an alternative to `grep`
-    curl -LOs https://github.com/BurntSushi/ripgrep/releases/download/11.0.2/ripgrep_11.0.2_amd64.deb
-    sudo dpkg -i ripgrep_11.0.2_amd64.deb
-
-    # Install fd as an alternative to `find`
-    curl -LOs https://github.com/sharkdp/fd/releases/download/v8.1.1/fd_8.1.1_amd64.deb
-    sudo dpkg -i fd_8.1.1_amd64.deb
 
     # Create ~/org folder if not yet present
     mkdir ~/org -p
