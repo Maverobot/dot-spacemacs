@@ -92,14 +92,14 @@ layers configuration. You are free to put any user code.
   (spacemacs/set-leader-keys "aa" 'aidermacs-transient-menu)
 
   (setq aidermacs-default-model "github_copilot/claude-opus-4.5")
-  (setq aidermacs-weak-model "github_copilot/gpt-4o")
+  (setq aidermacs-weak-model "github_copilot/gpt-5-mini")
   (setq aidermacs-backend 'vterm)
   (setq aidermacs-default-chat-mode 'code)
 #+END_SRC
 *** copilot
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (with-eval-after-load 'copilot-chat
-    (setq copilot-chat-default-model "gpt-4o")
+    (setq copilot-chat-default-model "gpt-5-mini")
     (spacemacs/declare-prefix "ai" "AI")
     (spacemacs/set-leader-keys "aic" 'copilot-chat)
     (spacemacs/set-leader-keys "aif" 'copilot-chat-fix)
