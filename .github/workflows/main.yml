@@ -16,7 +16,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04]
+        os: [ubuntu-24.04]
 
     steps:
       - name: Checkout
@@ -45,7 +45,7 @@ jobs:
           cp ~/.spacemacs.d/docs/index.html ~/work/dot-spacemacs/dot-spacemacs/public
 
       - name: GitHub Pages
-        if: matrix.os == 'ubuntu-20.04' && success()
+        if: matrix.os == 'ubuntu-24.04' && success()
         uses: crazy-max/ghaction-github-pages@v4
         with:
           target_branch: gh-pages
