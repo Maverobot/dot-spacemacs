@@ -36,6 +36,12 @@ function install_dependencies {
         python3-dev python3-pip python3-wheel python3-venv python3-setuptools \
         libz-dev libtinfo-dev libpq-dev sqlite3 cmake-format ripgrep fd-find
 
+    # Install LLVM for ccls (Ubuntu 24.04 and newer)
+    readonly SHORT_CODE=$(lsb_release -cs)
+    if [ "${SHORT_CODE}" = "noble" ]; then
+        sudo apt install -y llvm-18-dev clang-18 libclang-18-dev
+    fi
+
     sudo snap install --channel=edge shellcheck
     sudo snap install --channel=edge cmake-language-server
     sudo snap install shfmt
