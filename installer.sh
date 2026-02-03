@@ -38,7 +38,7 @@ function install_dependencies {
 
     # Install LLVM for ccls (Ubuntu 24.04 and newer)
     readonly SHORT_CODE=$(lsb_release -cs)
-    if [ "${SHORT_CODE}" == "noble" ]; then
+    if [ "${SHORT_CODE}" = "noble" ]; then
         sudo apt install -y llvm-18-dev clang-18 libclang-18-dev
     fi
 
