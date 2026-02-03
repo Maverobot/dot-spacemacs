@@ -8,7 +8,7 @@ if [ -d "ccls" ]; then
     cd ccls
 
     readonly SHORT_CODE=$(lsb_release -cs)
-    
+
     # For Ubuntu 24.04 and newer, use system LLVM packages
     if [ "${SHORT_CODE}" == "noble" ]; then
         # Ubuntu 24.04 - use system LLVM 18
@@ -26,6 +26,9 @@ if [ -d "ccls" ]; then
             LLVM_BASENAME="clang+llvm-9.0.0-$(uname -m)-linux-gnu-ubuntu-18.04"
             wget -c "https://releases.llvm.org/9.0.0/${LLVM_BASENAME}.tar.xz"
             echo "a23b082b30c128c9831dbdd96edad26b43f56624d0ad0ea9edec506f5385038d  ${LLVM_BASENAME}.tar.xz" | sha256sum --check
+        else
+            echo "Error: Unsupported Ubuntu version '${SHORT_CODE}'. Supported versions: noble (24.04), focal (20.04), bionic (18.04)" >&2
+            exit 1
         fi
 
         rm -rf "${LLVM_BASENAME}"
