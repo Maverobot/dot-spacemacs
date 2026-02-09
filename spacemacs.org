@@ -112,6 +112,10 @@ layers configuration. You are free to put any user code.
     )
 #+END_SRC
 ** IDE config
+*** isort, compatible with black
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (setq py-isort-options '("--profile" "black" "--filename" buffer-file-name))
+#+END_SRC
 *** Add new line when a file is about to be saved
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (setq require-final-newline t)
