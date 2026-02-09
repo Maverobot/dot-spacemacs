@@ -91,7 +91,7 @@ layers configuration. You are free to put any user code.
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (spacemacs/set-leader-keys "aa" 'aidermacs-transient-menu)
 
-  (setq aidermacs-default-model "github_copilot/claude-opus-4.5")
+  (setq aidermacs-default-model "github_copilot/claude-sonnet-4.5")
   (setq aidermacs-weak-model "github_copilot/gpt-5-mini")
   (setq aidermacs-backend 'vterm)
   (setq aidermacs-default-chat-mode 'code)
