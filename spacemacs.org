@@ -554,6 +554,40 @@ E.g. when visiting a soft/hard link.
     (define-key org-agenda-mode-map "y" 'org-agenda-year-view))
 
   (spacemacs/set-leader-keys "aou" 'scan-new-agenda-files)
+
+  ;; Add category into the ~org-todo-list~ view
+  (setq org-agenda-prefix-format
+        '((agenda . " %i %-12:c%?-12t% s")
+          (todo   . " %i %-12:c ") ;; Added a space here
+          (tags   . " %i %-12:c")
+          (search . " %i %-12:c")))
+
+  ;; Add custom agenda view for my dashboard
+  (setq org-agenda-custom-commands
+        '(("d" "My Dashboard"
+           ((agenda "" ((org-agenda-span 7)))      ;; Show 7 days of calendar
+            (todo "IN_PROGRESS"                    ;; Show what I'm working on NOW
+                  ((org-agenda-overriding-header "Current Focus")))
+            (todo "TODO"                           ;; Show the rest of the list
+                  ((org-agenda-overriding-header "Inbox / Backlog")))))))
+
+
+  ;; Customize the colors of TODO keywords for better visual distinction
+  (setq org-todo-keyword-faces
+        '(;; Standard Flow
+          ("TODO"         . (:foreground "goldenrod" :weight bold))
+          ("IN_PROGRESS"  . (:foreground "deep sky blue" :weight bold))
+          ("UNDER_REVEW"  . (:foreground "medium purple" :weight bold))
+
+          ;; Bug Tracking Flow
+          ("REPORT"       . (:foreground "indian red" :weight bold))
+          ("BUG"          . (:foreground "red" :weight bold))
+          ("KNOWNCAUSE"   . (:foreground "orange" :weight bold))
+          ("FIXED"        . (:foreground "green" :weight bold))
+
+          ;; Terminal / Inactive States (Muted)
+          ("CANCELED"     . (:foreground "dark gray" :strike-through t))
+          ("REPORTED"     . (:foreground "cadet blue"))))
 #+END_SRC
 *** org-cv
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
