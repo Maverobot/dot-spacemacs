@@ -137,7 +137,10 @@ This function should only modify configuration layer settings."
           org-enable-roam-support t
           org-enable-roam-ui t
           org-enable-roam-protocol t
-          org-roam-directory (file-truename "~/org/home/roam")
+          org-roam-directory (let ((roam-dir (expand-file-name "~/org/home/roam")))
+                               (unless (file-directory-p roam-dir)
+                                 (make-directory roam-dir t))
+                               (file-truename roam-dir))
           org-enable-github-support t
           org-enable-hugo-support t
           org-enable-reveal-js-support t
