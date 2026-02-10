@@ -342,13 +342,15 @@ Use evil keybindings for selecting items in popup menus.
     (define-key copilot-completion-map (kbd "C-<tab>") 'copilot-accept-completion-by-word))
 
   ;; Enable copilot mode in programming modes, markdown-mode and org-mode
-  (add-hook 'prog-mode-hook 'copilot-mode)
-  (add-hook 'markdown-mode-hook 'copilot-mode)
-  (add-hook 'org-mode-hook 'copilot-mode)
+  ;; Only activate hooks if copilot is installed
+  (with-eval-after-load 'copilot
+    (add-hook 'prog-mode-hook 'copilot-mode)
+    (add-hook 'markdown-mode-hook 'copilot-mode)
+    (add-hook 'org-mode-hook 'copilot-mode)
 
-  ;; Disable the warning message
-  (add-hook 'copilot-mode-hook (lambda ()
-                                 (setq-local copilot--indent-warning-printed-p t)))
+    ;; Disable the warning message
+    (add-hook 'copilot-mode-hook (lambda ()
+                                   (setq-local copilot--indent-warning-printed-p t))))
 #+END_SRC
 *** tramp + clang-format
 clang-format does not work properly when editing a file on a remote host or in a docker container with tramp.
