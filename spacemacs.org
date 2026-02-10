@@ -549,8 +549,12 @@ E.g. when visiting a soft/hard link.
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (defun scan-new-agenda-files ()
     (interactive)
-    (message "Scanning new agenda files...")
-    (setq org-agenda-files (directory-files-recursively "~/org/" "\.org$" nil nil t)))
+    (let ((org-dir (expand-file-name "~/org/")))
+      (if (file-directory-p org-dir)
+          (progn
+            (message "Scanning new agenda files...")
+            (setq org-agenda-files (directory-files-recursively org-dir "\.org$" nil nil t)))
+        (message "Warning: ~/org/ directory does not exist. Skipping agenda files scan."))))
 
   (with-eval-after-load 'org-agenda
     (scan-new-agenda-files)
