@@ -788,6 +788,7 @@ E.g. when visiting a soft/hard link.
 *** ranger
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (with-eval-after-load 'ranger
+    (require 'hydra)
     (define-key ranger-mode-map (kbd "M-h") 'ranger-prev-tab)
     (define-key ranger-mode-map (kbd "M-l") 'ranger-next-tab)
     (define-key ranger-mode-map (kbd "M-n") 'ranger-new-tab))

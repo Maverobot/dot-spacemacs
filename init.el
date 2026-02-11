@@ -166,7 +166,8 @@ This function should only modify configuration layer settings."
      command-log
      pdf
      (ranger :variables
-             ranger-show-preview t)
+             ranger-show-preview t
+             ranger-use-hydra t)
      (spell-checking :variables
                      spell-checking-enable-by-default nil
                      spell-checking-enable-auto-dictionary t
