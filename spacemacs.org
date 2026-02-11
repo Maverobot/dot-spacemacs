@@ -506,6 +506,33 @@ E.g. when visiting a soft/hard link.
   (with-eval-after-load 'org
     (setq org-hide-macro-markers nil))
 #+END_SRC
+*** org-modern
+Modern visual styling for org-mode: clean TODO keywords, tables, timestamps, tags, priorities, and heading bullets.
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (use-package org-modern
+    :hook (org-mode . org-modern-mode)
+    :hook (org-agenda-finalize . org-modern-agenda)
+    :custom
+    ;; Disable org-modern TODO styling to preserve our custom keyword faces
+    (org-modern-todo nil)
+    (org-modern-done nil)
+    ;; Clean table styling
+    (org-modern-table t)
+    ;; Modern timestamps
+    (org-modern-timestamp t)
+    ;; Modern tag styling
+    (org-modern-tag t)
+    ;; Modern priority styling
+    (org-modern-priority t)
+    ;; Use pretty star bullets for headings
+    (org-modern-star '("◉" "○" "◈" "◇" "▸"))
+    ;; Hide leading stars (org-modern handles the display)
+    (org-modern-hide-stars t)
+    ;; Block styling
+    (org-modern-block-fringe nil)
+    ;; Horizontal rule
+    (org-modern-horizontal-rule t))
+#+END_SRC
 *** Export code blocks with current theme
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (defun my/org-inline-css-hook (exporter)

@@ -206,6 +206,7 @@ This function should only modify configuration layer settings."
                                       platformio-mode
                                       posframe
                                       ssh-agency
+                                      org-modern
                                       xclip
                                       )
    ;; A list of packages that cannot be updated.
