@@ -207,6 +207,7 @@ This function should only modify configuration layer settings."
                                       posframe
                                       ssh-agency
                                       org-modern
+                                      gcmh
                                       spacious-padding
                                       xclip
                                       )
@@ -275,7 +276,7 @@ It should only modify the values of Spacemacs settings."
    ;; Setting this >= 1 MB should increase performance for lsp servers
    ;; in emacs 27.
    ;; (default (* 1024 1024))
-   dotspacemacs-read-process-output-max (* 1024 1024)
+   dotspacemacs-read-process-output-max (* 10 1024 1024)
 
    ;; If non-nil then Spacelpa repository is the primary source to install
    ;; a locked version of packages. If nil then Spacemacs will install the
