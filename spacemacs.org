@@ -441,6 +441,23 @@ Toggle with =C-`=, cycle with =M-`=, promote/demote with =C-M-`=.
     (popper-mode +1)
     (popper-echo-mode +1))
 #+END_SRC
+*** which-key-posframe
+Show which-key popup as a floating frame centered on screen (GUI only).
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (use-package which-key-posframe
+    :after which-key
+    :config
+    (setq which-key-posframe-poshandler 'posframe-poshandler-frame-center
+          which-key-posframe-border-width 2)
+    (when (display-graphic-p)
+      (which-key-posframe-mode 1))
+    (add-hook 'after-make-frame-functions
+              (lambda (frame)
+                (with-selected-frame frame
+                  (if (display-graphic-p)
+                      (which-key-posframe-mode 1)
+                    (which-key-posframe-mode -1))))))
+#+END_SRC
 *** ultra-scroll
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (use-package ultra-scroll

@@ -209,6 +209,7 @@ This function should only modify configuration layer settings."
                                       gcmh
                                       popper
                                       spacious-padding
+                                      which-key-posframe
                                       xclip
                                       )
    ;; A list of packages that cannot be updated.
