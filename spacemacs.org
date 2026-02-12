@@ -855,19 +855,16 @@ The one and only one cheatsheet.
   (evil-declare-change-repeat 'company-complete)
 #+END_SRC
 
-*** Enable doom-modeline-icons in gui and disable them in terminal
+*** doom-modeline icons in GUI vs terminal
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  ;; Enable doom-modeline-icons in gui and disable them in terminal
-  ;; TODO: check if this is still working
-  (defun enable-doom-modeline-icons()
-    (setq doom-modeline-icon (display-graphic-p)))
-  (defun enable-doom-modeline-icons-weird (_frame)
-    ;; TODO: Don't know why this "not" is needed...
-    (setq doom-modeline-icon (not (display-graphic-p))))
-  (add-hook 'focus-in-hook
-            #'enable-doom-modeline-icons)
-  (add-hook 'after-make-frame-functions
-            #'enable-doom-modeline-icons-weird)
+  ;; Enable doom-modeline icons in GUI, disable in terminal
+  (with-eval-after-load 'doom-modeline
+    (setq doom-modeline-icon (display-graphic-p))
+    ;; When creating a new frame (e.g. emacsclient), re-check
+    (add-hook 'after-make-frame-functions
+              (lambda (frame)
+                (with-selected-frame frame
+                  (setq doom-modeline-icon (display-graphic-p))))))
 #+END_SRC
 
 *** Workaround for spammed false positive warning messages

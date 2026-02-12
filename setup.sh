@@ -12,6 +12,13 @@ sudo snap install shfmt
 # Install fonts
 curl -L https://github.com/hbin/top-programming-fonts/raw/master/install.sh | bash
 
+# Install Fira Code font
+mkdir -p ~/.local/share/fonts
+curl -fsSL -o /tmp/FiraCode.zip "https://github.com/tonsky/FiraCode/releases/latest/download/Fira_Code_v6.2.zip"
+unzip -o /tmp/FiraCode.zip -d /tmp/FiraCode
+cp /tmp/FiraCode/ttf/*.ttf ~/.local/share/fonts/
+fc-cache -f
+
 # Install nvm
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 

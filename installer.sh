@@ -49,6 +49,13 @@ function install_dependencies {
     # Install fonts
     curl -Ls https://github.com/hbin/top-programming-fonts/raw/master/install.sh | bash
 
+    # Install Fira Code font
+    mkdir -p ~/.local/share/fonts
+    curl -fsSL -o /tmp/FiraCode.zip "https://github.com/tonsky/FiraCode/releases/latest/download/Fira_Code_v6.2.zip"
+    unzip -o /tmp/FiraCode.zip -d /tmp/FiraCode
+    cp /tmp/FiraCode/ttf/*.ttf ~/.local/share/fonts/
+    fc-cache -f
+
     # Create ~/org folder if not yet present
     mkdir ~/org -p
 }
@@ -95,7 +102,7 @@ function update_spacemacs {
 #                                Install fonts                                #
 ###############################################################################
 function install_fonts {
-    /snap/bin/emacs -u $(id -un) --batch --eval '(all-the-icons-install-fonts t)'
+    /snap/bin/emacs -u $(id -un) --batch --eval '(nerd-icons-install-fonts t)'
 }
 
 ###############################################################################
