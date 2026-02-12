@@ -469,6 +469,9 @@ Show which-key popup as a floating frame centered on screen (GUI only).
 #+END_SRC
 *** spacious-padding
 Add breathing room around windows, mode lines, and frame borders.
+
+Note: The =:right-divider-width 20= setting works together with =window-divider-mode=.
+See [[*Window Divider Visibility][Window Divider Visibility]] section for divider color customization.
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (use-package spacious-padding
     :config
@@ -489,6 +492,44 @@ Add breathing room around windows, mode lines, and frame borders.
                   (if (display-graphic-p)
                       (spacious-padding-mode 1)
                     (spacious-padding-mode -1))))))
+#+END_SRC
+*** Window Divider Visibility
+Window dividers are enabled via =window-divider-mode= to show pixel-based separators
+between split windows. By default, =spacious-padding= makes these invisible (matching
+background color), but we override this to make them subtly visible.
+
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+;; Configure window-divider widths to match spacious-padding
+(setq window-divider-default-right-width 20
+      window-divider-default-bottom-width 1
+      window-divider-default-places 'right-only)
+
+;; Enable window-divider-mode in GUI frames
+(when (display-graphic-p)
+  (window-divider-mode 1))
+
+;; Make window dividers subtly visible (override spacious-padding's invisible style)
+;; Using #3f444a - a subtle gray approximately 10% lighter than doom-one background
+(defun my/set-visible-window-dividers ()
+  "Set window divider faces to be subtly visible."
+  (let ((divider-color "#3f444a"))
+    (set-face-foreground 'window-divider divider-color)
+    (set-face-foreground 'window-divider-first-pixel divider-color)
+    (set-face-foreground 'window-divider-last-pixel divider-color)))
+
+;; Apply after theme loads
+(add-hook 'spacemacs-post-theme-change-hook #'my/set-visible-window-dividers)
+
+;; Apply initially
+(my/set-visible-window-dividers)
+
+;; Re-apply for new frames (emacsclient)
+(add-hook 'after-make-frame-functions
+          (lambda (frame)
+            (with-selected-frame frame
+              (when (display-graphic-p)
+                (window-divider-mode 1)
+                (my/set-visible-window-dividers)))))
 #+END_SRC
 *** No title bar
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
