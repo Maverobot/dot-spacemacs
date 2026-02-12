@@ -207,6 +207,7 @@ This function should only modify configuration layer settings."
                                       posframe
                                       ssh-agency
                                       org-modern
+                                      spacious-padding
                                       xclip
                                       )
    ;; A list of packages that cannot be updated.
