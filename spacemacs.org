@@ -111,17 +111,18 @@ Collects garbage when Emacs is idle, keeping GC threshold high during active use
 *** copilot
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (with-eval-after-load 'copilot-chat
-    (setq copilot-chat-default-model "gpt-5-mini")
-    (spacemacs/declare-prefix "ai" "AI")
-    (spacemacs/set-leader-keys "aic" 'copilot-chat)
-    (spacemacs/set-leader-keys "aif" 'copilot-chat-fix)
-    (spacemacs/set-leader-keys "air" 'copilot-chat-review)
-    (spacemacs/set-leader-keys "aie" 'copilot-chat-explain)
-    (spacemacs/set-leader-keys "aio" 'copilot-chat-optimize)
-    (spacemacs/set-leader-keys "aid" 'copilot-chat-doc)
-    (spacemacs/set-leader-keys "ait" 'copilot-chat-test)
-    (spacemacs/set-leader-keys "aiq" 'copilot-chat-quotas)
-    )
+    (setq copilot-chat-default-model "gpt-5-mini"))
+
+  ;; Keybindings (available immediately, autoload copilot-chat when used)
+  (spacemacs/declare-prefix "ai" "AI")
+  (spacemacs/set-leader-keys "aic" 'copilot-chat)
+  (spacemacs/set-leader-keys "aif" 'copilot-chat-fix)
+  (spacemacs/set-leader-keys "air" 'copilot-chat-review)
+  (spacemacs/set-leader-keys "aie" 'copilot-chat-explain)
+  (spacemacs/set-leader-keys "aio" 'copilot-chat-optimize)
+  (spacemacs/set-leader-keys "aid" 'copilot-chat-doc)
+  (spacemacs/set-leader-keys "ait" 'copilot-chat-test)
+  (spacemacs/set-leader-keys "aiq" 'copilot-chat-quotas)
 #+END_SRC
 ** IDE config
 *** isort, compatible with black
@@ -594,10 +595,10 @@ Modern visual styling for org-mode: clean TODO keywords, tables, timestamps, tag
     :custom (org-ai-openai-api-token (auth-source-pick-first-password :host "api.openai.com"))
     :init
     (add-hook 'org-mode-hook #'org-ai-mode) ; enable org-ai in org-mode
-    (org-ai-global-mode) ; installs global keybindings on C-c M-a
     :config
+    (org-ai-global-mode) ; installs global keybindings on C-c M-a
     (setq org-ai-default-chat-model "gpt-4o")
-    (org-ai-install-yasnippets)) ; if you are using yasnippet and want `ai` snippets  (require 'org-ai-talk)
+    (org-ai-install-yasnippets)) ; if you are using yasnippet and want `ai` snippets
 #+END_SRC
 
 *** org-pomodora
