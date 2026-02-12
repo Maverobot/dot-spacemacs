@@ -207,6 +207,7 @@ This function should only modify configuration layer settings."
                                       ssh-agency
                                       org-modern
                                       gcmh
+                                      popper
                                       spacious-padding
                                       xclip
                                       )
