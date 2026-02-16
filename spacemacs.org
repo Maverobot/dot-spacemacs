@@ -234,6 +234,16 @@ Creates a new terminal each time; buffers are named with incrementing numbers."
   (put 'cmake-ide-dir 'safe-local-variable 'stringp)
   (put 'cmake-ide-make-command 'safe-local-variable 'stringp)
   (put 'cmake-ide-cmake-args 'safe-local-variable 'stringp)
+
+  ;; Configure neocmakelsp
+  (with-eval-after-load 'lsp-mode
+    ;; Note: 'stdio' should not have dashes
+    (lsp-register-client
+     (make-lsp-client :new-connection (lsp-stdio-connection '("neocmakelsp" "stdio"))
+                      :activation-fn (lsp-activate-on "cmake")
+                      :server-id 'neocmakelsp)))
+
+  (add-hook 'cmake-mode-hook #'lsp)
 #+END_SRC
 *** company
 #+BEGIN_SRC emacs-lisp :tangle user-config.el

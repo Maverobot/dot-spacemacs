@@ -33,8 +33,8 @@ function install_spacemacs {
 function install_dependencies {
     sudo apt update
     sudo apt install -y entr xclip build-essential cmake g++ gcc \
-        python3-dev python3-pip python3-wheel python3-venv python3-setuptools \
-        libz-dev libtinfo-dev libpq-dev sqlite3 cmake-format ripgrep fd-find
+         python3-dev python3-pip python3-wheel python3-venv python3-setuptools \
+         libz-dev libtinfo-dev libpq-dev sqlite3 cmake-format ripgrep fd-find
 
     # Install LLVM for ccls (Ubuntu 24.04 and newer)
     readonly SHORT_CODE=$(lsb_release -cs)
@@ -43,8 +43,11 @@ function install_dependencies {
     fi
 
     sudo snap install --channel=edge shellcheck
-    sudo snap install --channel=edge cmake-language-server
     sudo snap install shfmt
+
+    # Install cmake language server
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+    cargo install neocmakelsp
 
     # Install fonts
     curl -Ls https://github.com/hbin/top-programming-fonts/raw/master/install.sh | bash

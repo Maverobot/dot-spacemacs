@@ -6,8 +6,10 @@ git submodule update --init --recursive
 sudo apt install xclip build-essential cmake python3-dev python3-pip libz-dev libtinfo-dev sox cmake-format ripgrep fd-find
 
 sudo snap install --channel=edge shellcheck
-sudo snap install --channel=edge cmake-language-server
 sudo snap install shfmt
+
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+cargo install neocmakelsp
 
 # Install fonts
 curl -L https://github.com/hbin/top-programming-fonts/raw/master/install.sh | bash
