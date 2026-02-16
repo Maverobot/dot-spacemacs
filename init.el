@@ -188,6 +188,7 @@ This function should only modify configuration layer settings."
                                       beacon
                                       cheat-sh
                                       cmake-mode
+                                      devcontainer
                                       copilot-chat
                                       doom-themes
                                       emacs-everywhere

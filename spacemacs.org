@@ -180,6 +180,54 @@ Collects garbage when Emacs is idle, keeping GC threshold high during active use
     (when (file-exists-p "~/.spacemacs.d/ccls/Release/ccls")
       (setq ccls-executable (file-truename "~/.spacemacs.d/ccls/Release/ccls"))))
 #+END_SRC
+*** devcontainer
+Enable =devcontainer-mode= globally so that =M-x compile= (=SPC c c=) runs inside the devcontainer when the project has a =.devcontainer/devcontainer.json=.
+The devcontainer CLI is installed outside the default =PATH=, so we add its directory to =exec-path=.
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  ;; Make the devcontainer CLI discoverable
+  (let ((devcontainer-bin-dir (expand-file-name "~/.devcontainers/bin")))
+    (when (file-directory-p devcontainer-bin-dir)
+      (add-to-list 'exec-path devcontainer-bin-dir)))
+
+  ;; Enable devcontainer-mode globally — advises `compilation-start'
+  ;; to run inside the container when a devcontainer.json is present
+  (devcontainer-mode 1)
+
+  ;; Use vterm for devcontainer-term
+  (with-eval-after-load 'devcontainer
+    (defun devcontainer-vterm (command)
+      "Open a vterm buffer running COMMAND inside the devcontainer.
+Creates a new terminal each time; buffers are named with incrementing numbers."
+      (require 'vterm)
+      (let* ((base-name (format "*devcontainer-term: %s*"
+                                (project-name (project-current))))
+             (buf (generate-new-buffer base-name)))
+        (with-current-buffer buf
+          (let ((vterm-shell command))
+            (vterm-mode)))
+        (pop-to-buffer buf)))
+    (setq devcontainer-term-function #'devcontainer-vterm)
+
+    ;; Fix: devcontainer.el does not implement ${localEnv:VAR}
+    ;; interpolation, which causes errors when remoteEnv references
+    ;; host environment variables (e.g. DISPLAY).
+    (advice-add 'devcontainer--lookup-variable :around
+                (lambda (orig-fn match)
+                  "Add ${localEnv:VAR} support to devcontainer variable interpolation."
+                  (or (funcall orig-fn match)
+                      (save-match-data
+                        (when (string-match "\\${localEnv:\\([^}]+\\)}" match)
+                          (or (getenv (match-string 1 match)) "")))))))
+
+  ;; Keybindings under SPC d
+  (spacemacs/declare-prefix "DD" "devcontainer")
+  (spacemacs/set-leader-keys "DDu" 'devcontainer-up)
+  (spacemacs/set-leader-keys "DDr" 'devcontainer-restart)
+  (spacemacs/set-leader-keys "DDR" 'devcontainer-rebuild-and-restart)
+  (spacemacs/set-leader-keys "DDt" 'devcontainer-term)
+  (spacemacs/set-leader-keys "DDx" 'devcontainer-execute-command)
+  (spacemacs/set-leader-keys "DDk" 'devcontainer-kill-container)
+#+END_SRC
 *** cmake-ide
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   ;; C++ build dir setting
