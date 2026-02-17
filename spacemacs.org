@@ -578,8 +578,8 @@ background color), but we override this to make them subtly visible.
 ;; Apply after theme loads
 (add-hook 'spacemacs-post-theme-change-hook #'my/set-visible-window-dividers)
 
-;; Apply initially
-(my/set-visible-window-dividers)
+;; Apply when idle (runs after theme loads at startup)
+(run-with-idle-timer 0 nil #'my/set-visible-window-dividers)
 
 ;; Re-apply for new frames (emacsclient)
 (add-hook 'after-make-frame-functions
