@@ -964,19 +964,8 @@ Setup instructions (one-time, manual):
       (org-gcal--sync-unlock))
     (org-gcal-fetch))
 
-  ;; Auto-sync timer: schedule a fetch every 2 hours, but only execute when
-  ;; Emacs has been idle for at least 10 seconds to avoid blocking the UI.
-  (defvar my/org-gcal-timer nil
-    "Timer for periodic org-gcal auto-sync.")
-
-  (defun my/org-gcal-schedule-fetch ()
-    "Run org-gcal fetch when Emacs is next idle for 10+ seconds."
-    (run-with-idle-timer 10 nil #'my/org-gcal-fetch-safe))
-
-  ;; Start the repeating 2-hour timer after a 30-second initial delay.
-  ;; Each firing schedules an idle-time fetch rather than running inline.
-  (setq my/org-gcal-timer
-        (run-at-time "30 sec" (* 2 60 60) #'my/org-gcal-schedule-fetch))
+  ;; Manual sync only — no background timer.
+  ;; Use SPC a o s to fetch manually.
 
   ;; Manual sync keybinding: SPC a o s
   (spacemacs/set-leader-keys "aos" 'my/org-gcal-fetch-safe)
