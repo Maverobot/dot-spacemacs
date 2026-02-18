@@ -171,6 +171,11 @@ This function should only modify configuration layer settings."
                      spell-checking-enable-by-default nil
                      spell-checking-enable-auto-dictionary t
                      enable-flyspell-auto-completion t)
+     (mu4e :variables
+           mu4e-installation-path (car (file-expand-wildcards "/usr/share/emacs/site-lisp/elpa-src/mu4e-*"))
+           mu4e-use-fancy-chars t
+           mu4e-enable-notifications t
+           mu4e-enable-mode-line t)
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these

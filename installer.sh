@@ -34,7 +34,8 @@ function install_dependencies {
     sudo apt update
     sudo apt install -y entr xclip build-essential cmake g++ gcc \
          python3-dev python3-pip python3-wheel python3-venv python3-setuptools \
-         libz-dev libtinfo-dev libpq-dev sqlite3 cmake-format ripgrep fd-find
+         libz-dev libtinfo-dev libpq-dev sqlite3 cmake-format ripgrep fd-find \
+         isync maildir-utils mu4e w3m
 
     # Install LLVM for ccls (Ubuntu 24.04 and newer)
     readonly SHORT_CODE=$(lsb_release -cs)

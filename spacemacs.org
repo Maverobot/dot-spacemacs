@@ -866,6 +866,8 @@ Modern visual styling for org-mode: clean TODO keywords, tables, timestamps, tag
         (setq org-capture-templates '(
                                       ("t" "Task" entry (file+headline "~/org/home/tasks.org" "Tasks")
                                        "* TODO %?\n%U\n%i\n%a")
+                                      ("e" "Email" entry (file+headline "~/org/home/tasks.org" "Tasks")
+                                       "* TODO %? [[mu4e:msgid:%l][Email]]\n%U\n%i")
                                       ))
         (setq org-project-capture-capture-template capture-template))))
   (spacemacs/set-leader-keys
@@ -1121,6 +1123,113 @@ The one and only one cheatsheet.
   (setq chatgpt-shell-openai-key
         (auth-source-pick-first-password :host "api.openai.com"))
 #+END_SRC
+** mu4e
+Email client using =mu4e= (Spacemacs layer) + =mbsync= (isync) for IMAP sync.
+Two Gmail accounts: personal and work. Credentials stored in =~/.authinfo= (not committed).
+Requires: =apt install isync maildir-utils mu4e w3m=
+
+*** Setup instructions (one-time)
+Run these commands once after installing the system:
+#+BEGIN_SRC sh :tangle no
+  # Create maildir structure
+  mkdir -p ~/.mail/personal/{cur,new,tmp}
+  mkdir -p ~/.mail/work/{cur,new,tmp}
+
+  # Initial mail sync (after ~/.mbsyncrc is configured)
+  mbsync -a
+
+  # Index mail with mu (after initial sync)
+  mu init --maildir=~/.mail \
+      --my-address=$(pass show or cat ~/.authinfo | grep mu4e-email-personal ...) \
+      --my-address=$(...)
+  # Simpler: let mu4e run mu init on first launch via mu4e-update-mail-and-index
+#+END_SRC
+
+*** Configuration
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (with-eval-after-load 'mu4e
+    ;; Basic settings
+    (setq mu4e-maildir "~/.mail"
+          mu4e-get-mail-command "mbsync -a"
+          mu4e-update-interval (* 5 60)       ; sync every 5 minutes
+          mu4e-compose-signature-auto-include nil
+          mu4e-view-show-images t
+          mu4e-view-image-max-width 800
+          mu4e-headers-date-format "%Y-%m-%d"
+          mu4e-headers-time-format "%H:%M"
+          mu4e-change-filenames-when-moving t  ; avoid duplicate UID issues
+          mu4e-confirm-quit nil)
+
+    ;; Maildir shortcuts shown in the main view
+    (setq mu4e-maildir-shortcuts
+          '((:maildir "/personal/INBOX"             :key ?i :name "Personal Inbox")
+            (:maildir "/personal/[Gmail]/Sent Mail" :key ?s :name "Personal Sent")
+            (:maildir "/work/INBOX"                 :key ?I :name "Work Inbox")
+            (:maildir "/work/[Gmail]/Sent Mail"     :key ?S :name "Work Sent")))
+
+    ;; HTML rendering with w3m
+    (setq mu4e-html2text-command "w3m -T text/html")
+
+    ;; Read account identities from ~/.authinfo
+    (let* ((personal-email (auth-source-pick-first-password :host "mu4e-email-personal"))
+           (personal-name  (auth-source-pick-first-password :host "mu4e-name-personal"))
+           (work-email     (auth-source-pick-first-password :host "mu4e-email-work"))
+           (work-name      (auth-source-pick-first-password :host "mu4e-name-work")))
+
+      ;; Contexts: one per account
+      (setq mu4e-contexts
+            (list
+             (make-mu4e-context
+              :name "Personal"
+              :match-func
+              (lambda (msg)
+                (when msg
+                  (string-prefix-p "/personal" (mu4e-message-field msg :maildir))))
+              :vars `((user-mail-address       . ,personal-email)
+                      (user-full-name          . ,personal-name)
+                      (mu4e-sent-folder        . "/personal/[Gmail]/Sent Mail")
+                      (mu4e-drafts-folder      . "/personal/[Gmail]/Drafts")
+                      (mu4e-trash-folder       . "/personal/[Gmail]/Bin")
+                      (mu4e-refile-folder      . "/personal/INBOX")
+                      (smtpmail-smtp-user      . ,personal-email)
+                      (smtpmail-smtp-server    . "smtp.gmail.com")
+                      (smtpmail-smtp-service   . 587)
+                      (smtpmail-stream-type    . starttls)))
+             (make-mu4e-context
+              :name "Work"
+              :match-func
+              (lambda (msg)
+                (when msg
+                  (string-prefix-p "/work" (mu4e-message-field msg :maildir))))
+              :vars `((user-mail-address       . ,work-email)
+                      (user-full-name          . ,work-name)
+                      (mu4e-sent-folder        . "/work/[Gmail]/Sent Mail")
+                      (mu4e-drafts-folder      . "/work/[Gmail]/Drafts")
+                      (mu4e-trash-folder       . "/work/[Gmail]/Bin")
+                      (mu4e-refile-folder      . "/work/INBOX")
+                      (smtpmail-smtp-user      . ,work-email)
+                      (smtpmail-smtp-server    . "smtp.gmail.com")
+                      (smtpmail-smtp-service   . 587)
+                      (smtpmail-stream-type    . starttls)))))
+
+      ;; Policy: ask which context on ambiguous messages; default to Personal
+      (setq mu4e-context-policy 'pick-first
+            mu4e-compose-context-policy 'ask-if-none))
+
+    ;; SMTP via smtpmail — passwords come from ~/.authinfo automatically
+    (setq send-mail-function         'smtpmail-send-it
+          message-send-mail-function 'smtpmail-send-it
+          smtpmail-auth-credentials  "~/.authinfo")
+
+    ;; org-mu4e integration: store links to emails (mu4e-org replaces org-mu4e since mu 1.8)
+    (require 'mu4e-org)
+    (setq org-mu4e-link-query-in-headers-mode nil))
+
+  ;; Keybinding: open mu4e with SPC a m
+  (spacemacs/set-leader-keys "am" 'mu4e)
+  (spacemacs/declare-prefix "am" "mu4e-mail")
+#+END_SRC
+
 ** Workarounds
 *** Workaround for the [[https://github.com/company-mode/company-mode/issues/383][bug]] where company-mode and evil-mode are conflicting
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
