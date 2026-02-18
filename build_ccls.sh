@@ -11,8 +11,8 @@ if [ -d "ccls" ]; then
 
     # For Ubuntu 24.04 and newer, use system LLVM packages
     if [ "${SHORT_CODE}" == "noble" ]; then
-        # Ubuntu 24.04 - use system LLVM 18
-        cmake -H. -BRelease -DCMAKE_BUILD_TYPE=Release
+        # Ubuntu 24.04 - use system LLVM 18 explicitly
+        cmake -H. -BRelease -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/usr/lib/llvm-18
         cmake --build Release -- "-j$(nproc)"
     else
         # For older Ubuntu versions, download pre-built LLVM binaries
