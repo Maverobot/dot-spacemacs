@@ -964,8 +964,9 @@ Setup instructions (one-time, manual):
       (org-gcal--sync-unlock))
     (org-gcal-fetch))
 
-  ;; Manual sync only — no background timer.
-  ;; Use SPC a o s to fetch manually.
+  ;; One-shot async fetch on startup: fires once Emacs has been idle for 30s.
+  ;; org-gcal-fetch is non-blocking (async OAuth + HTTP), so it won't freeze UI.
+  (run-with-idle-timer 30 nil #'my/org-gcal-fetch-safe)
 
   ;; Manual sync keybinding: SPC a o s
   (spacemacs/set-leader-keys "aos" 'my/org-gcal-fetch-safe)
