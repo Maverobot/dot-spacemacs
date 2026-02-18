@@ -890,6 +890,96 @@ Modern visual styling for org-mode: clean TODO keywords, tables, timestamps, tag
     (interactive)
     (org-roam-migrate-v1-to-v2))
 #+END_SRC
+*** org-gcal
+Sync Google Calendar events into Org Agenda (read-only fetch).
+Credentials are stored in =~/.authinfo= and never committed to the repo.
+OAuth tokens are GPG-encrypted via =plstore=.
+
+Setup instructions (one-time, manual):
+1. Create a Google Cloud project, enable Calendar API, create a Desktop OAuth 2.0 client.
+2. In Google Calendar settings, share any secondary account's calendar with your primary Gmail address.
+3. Generate a dedicated GPG key: ~gpg --full-generate-key~ (RSA 4096, no expiry).
+4. Note the key ID: ~gpg --list-secret-keys --keyid-format=long~
+5. Add to =~/.authinfo=:
+   - ~machine org-gcal-client-id password <client-id>.apps.googleusercontent.com~
+   - ~machine org-gcal-client-secret password <client-secret>~
+   - ~machine org-gcal-calendar-id-personal password <personal@gmail.com>~
+   - ~machine org-gcal-calendar-id-work password <shared-work-calendar-id>~
+   - ~machine org-gcal-gpg-key-id password <GPG-long-key-id>~
+6. On first fetch, approve OAuth access in the browser. Tokens are saved and reused automatically.
+
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (use-package org-gcal
+    :defer t
+    :init
+    ;; Credentials must be set BEFORE org-gcal.el loads, because it calls
+    ;; org-gcal-reload-client-id-secret at load time to register the OAuth client.
+    (setq org-gcal-client-id     (auth-source-pick-first-password :host "org-gcal-client-id")
+          org-gcal-client-secret (auth-source-pick-first-password :host "org-gcal-client-secret"))
+    ;; Use asymmetric GPG key for encrypting the OAuth token store.
+    ;; Key ID is read from authinfo so it is never hardcoded in this repo.
+    (require 'plstore)
+    (let ((gpg-key-id (auth-source-pick-first-password :host "org-gcal-gpg-key-id")))
+      (when gpg-key-id
+        (add-to-list 'plstore-encrypt-to gpg-key-id)))
+    ;; Avoid hanging during token decryption by routing pinentry through Emacs minibuffer.
+    (setq epg-pinentry-mode 'loopback)
+    :config
+    ;; Map each calendar ID to its dedicated org file.
+    ;; Both files live in ~/org/home/ and are auto-discovered by scan-new-agenda-files.
+    (setq org-gcal-fetch-file-alist
+          `((,(auth-source-pick-first-password :host "org-gcal-calendar-id-personal")
+             . "~/org/home/gcal/gcal-personal.org")
+            (,(auth-source-pick-first-password :host "org-gcal-calendar-id-work")
+             . "~/org/home/gcal/gcal-work.org")))
+
+     ;; Fetch window: 7 days back, 30 days forward.
+    (setq org-gcal-up-days   7
+          org-gcal-down-days 30)
+
+    ;; Do not auto-archive old events outside the fetch window.
+    (setq org-gcal-auto-archive nil)
+
+    ;; Ask before removing events that appear cancelled/missing on Google's side.
+    ;; Avoids silent archiving of items that are simply outside the fetch window.
+    (setq org-gcal-update-cancelled-events-with-todo t
+          org-gcal-remove-api-cancelled-events       'ask)
+
+    ;; Collect recurring event instances under their parent headline.
+    (setq org-gcal-recurring-events-mode 'nested)
+
+    ;; Suppress popup notifications.
+    (setq org-gcal-notify-p nil))
+
+  ;; Safe fetch wrapper: clears stale sync lock before fetching.
+  ;; Uses org-gcal-fetch (read-only — never pushes local changes back to Google).
+  (defun my/org-gcal-fetch-safe ()
+    "Fetch Google Calendar events, clearing any stale sync lock first."
+    (interactive)
+     (require 'org-gcal)
+    (when (bound-and-true-p org-gcal--sync-lock)
+      (warn "org-gcal: stale sync lock detected, clearing it.")
+      (org-gcal--sync-unlock))
+    (org-gcal-fetch))
+
+  ;; Auto-sync timer: schedule a fetch every 2 hours, but only execute when
+  ;; Emacs has been idle for at least 10 seconds to avoid blocking the UI.
+  (defvar my/org-gcal-timer nil
+    "Timer for periodic org-gcal auto-sync.")
+
+  (defun my/org-gcal-schedule-fetch ()
+    "Run org-gcal fetch when Emacs is next idle for 10+ seconds."
+    (run-with-idle-timer 10 nil #'my/org-gcal-fetch-safe))
+
+  ;; Start the repeating 2-hour timer after a 30-second initial delay.
+  ;; Each firing schedules an idle-time fetch rather than running inline.
+  (setq my/org-gcal-timer
+        (run-at-time "30 sec" (* 2 60 60) #'my/org-gcal-schedule-fetch))
+
+  ;; Manual sync keybinding: SPC a o s
+  (spacemacs/set-leader-keys "aos" 'my/org-gcal-fetch-safe)
+#+END_SRC
+
 *** org-clock
 **** Save the clock history across Emacs sessions
 #+BEGIN_SRC emacs-lisp :tangle user-config.el

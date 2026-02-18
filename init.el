@@ -200,6 +200,7 @@ This function should only modify configuration layer settings."
                                       nvm
                                       ob-rust
                                       org-ai
+                                      org-gcal
                                       org-make-toc
                                       org-noter
                                       org-roam-ui
