@@ -630,10 +630,19 @@ Create binding to spacemacs.org file
   (define-key (current-global-map) (kbd "C-+") 'spacemacs/zoom-frm-in)
   (define-key (current-global-map) (kbd "C--") 'spacemacs/zoom-frm-out)
 #+END_SRC
-*** Kill frame when pressing ~SPC q q~
-The reason for this is that I mainly use emacs as a daemon and I don't want to close the daemon by accident.
+*** Smart quit when pressing ~SPC q q~
+If running as a daemon, kill the current frame. Otherwise, prompt to kill Emacs.
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (spacemacs/set-leader-keys "qq" 'spacemacs/frame-killer)
+  (defun my/smart-quit ()
+    "Quit Emacs smartly.
+  If running as a daemon, kill the current frame.
+  Otherwise, prompt to kill Emacs."
+    (interactive)
+    (if (daemonp)
+        (spacemacs/frame-killer)
+      (spacemacs/prompt-kill-emacs)))
+
+  (spacemacs/set-leader-keys "qq" 'my/smart-quit)
 #+END_SRC
 *** Make ~w~ in vim mode move to end of the word (not stopped by ~_~)
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
