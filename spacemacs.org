@@ -1239,6 +1239,7 @@ Run these commands once after installing the system:
   ;; Keybinding: open mu4e with SPC a m
   (spacemacs/set-leader-keys "am" 'mu4e)
   (spacemacs/declare-prefix "am" "mu4e-mail")
+  (mu4e t)
 #+END_SRC
 
 ** Workarounds
