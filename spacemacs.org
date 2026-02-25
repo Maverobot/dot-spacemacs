@@ -924,8 +924,8 @@ Setup instructions (one-time, manual):
     (let ((gpg-key-id (auth-source-pick-first-password :host "org-gcal-gpg-key-id")))
       (when gpg-key-id
         (add-to-list 'plstore-encrypt-to gpg-key-id)))
-    ;; Avoid hanging during token decryption by routing pinentry through Emacs minibuffer.
-    (setq epg-pinentry-mode 'loopback)
+    ;; Use default pinentry (GNOME3 GUI) now that gpg-agent is configured with pinentry-gnome3.
+    (setq epg-pinentry-mode 'default)
     :config
     ;; Map each calendar ID to its dedicated org file.
     ;; Both files live in ~/org/home/ and are auto-discovered by scan-new-agenda-files.
