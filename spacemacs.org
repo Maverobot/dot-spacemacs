@@ -1213,7 +1213,18 @@ Run these commands once after installing the system:
 
     ;; org-mu4e integration: store links to emails (mu4e-org replaces org-mu4e since mu 1.8)
     (require 'mu4e-org)
-    (setq org-mu4e-link-query-in-headers-mode nil))
+    (setq org-mu4e-link-query-in-headers-mode nil)
+
+    ;; Use 'Q' to truly quit mu4e
+    (define-key mu4e-main-mode-map (kbd "Q") 'mu4e-quit)
+    (define-key mu4e-headers-mode-map (kbd "Q") 'mu4e-quit)
+    (define-key mu4e-view-mode-map (kbd "Q") 'mu4e-quit)
+
+    ;; Use 'q' to just bury the buffer (background)
+    (define-key mu4e-main-mode-map (kbd "q") 'mu4e-view-quit)
+    (define-key mu4e-headers-mode-map (kbd "q") 'mu4e-view-quit)
+    (define-key mu4e-view-mode-map (kbd "q") 'mu4e-view-quit)
+    )
 
   ;; Keybinding: open mu4e with SPC a m
   (spacemacs/set-leader-keys "am" 'mu4e)
