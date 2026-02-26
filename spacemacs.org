@@ -973,10 +973,8 @@ Setup instructions (one-time, manual):
       (org-gcal--sync-unlock))
     (org-gcal-fetch))
 
-  ;; Repeating async fetch: fires when Emacs has been idle for 30s, then repeats
-  ;; every 30 minutes. org-gcal-fetch is non-blocking (async OAuth + HTTP).
-  ;; Using idle timer ensures sync never interrupts active editing.
-  (run-with-idle-timer 30 1800 #'my/org-gcal-fetch-safe)
+  ;; Auto-fetch every 30 minutes. Adjust the interval as needed.
+  (run-at-time "30 min" 1800 #'my/org-gcal-fetch-safe)
 
   ;; Manual sync keybinding: SPC a o s
   (spacemacs/set-leader-keys "aos" 'my/org-gcal-fetch-safe)
