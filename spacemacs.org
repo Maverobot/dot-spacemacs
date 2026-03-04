@@ -794,6 +794,8 @@ Modern visual styling for org-mode: clean TODO keywords, tables, timestamps, tag
   (setq org-agenda-custom-commands
         '(("d" "My Dashboard"
            ((agenda "" ((org-agenda-span 7)))      ;; Show 7 days of calendar
+            (todo "UNDER_REVIEW"                   ;; Show what's under review
+                  ((org-agenda-overriding-header "Under Review")))
             (todo "IN_PROGRESS"                    ;; Show what I'm working on NOW
                   ((org-agenda-overriding-header "Current Focus")))
             (todo "TODO"                           ;; Show the rest of the list
@@ -805,7 +807,7 @@ Modern visual styling for org-mode: clean TODO keywords, tables, timestamps, tag
         '(;; Standard Flow
           ("TODO"         . (:foreground "goldenrod" :weight bold))
           ("IN_PROGRESS"  . (:foreground "deep sky blue" :weight bold))
-          ("UNDER_REVEW"  . (:foreground "medium purple" :weight bold))
+          ("UNDER_REVIEW"  . (:foreground "medium purple" :weight bold))
 
           ;; Bug Tracking Flow
           ("REPORT"       . (:foreground "indian red" :weight bold))
@@ -869,7 +871,7 @@ Modern visual styling for org-mode: clean TODO keywords, tables, timestamps, tag
     (let ((capture-template  "* TODO %?\n%U\n%i\n%a"))
       (progn
         (setq org-todo-keywords
-              '((sequence "TODO(t)" "IN_PROGRESS" "UNDER_REVEW" "|" "DONE(d)")
+              '((sequence "TODO(t)" "IN_PROGRESS" "UNDER_REVIEW" "|" "DONE(d)")
                 (sequence "REPORT(r)" "BUG(b)" "KNOWNCAUSE(k)" "|" "FIXED(f)")
                 (sequence "|" "INACTIVE(i)" "INCOMPLETE(n)" "CANCELED(c)" "REPORTED(R)")))
         (setq org-capture-templates '(
