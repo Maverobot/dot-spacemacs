@@ -785,15 +785,18 @@ Modern visual styling for org-mode: clean TODO keywords, tables, timestamps, tag
 
   ;; Add category into the ~org-todo-list~ view
   (setq org-agenda-prefix-format
-        '((agenda . " %i %-12:c%?-12t% s")
-          (todo   . " %i %-12:c ") ;; Added a space here
-          (tags   . " %i %-12:c")
-          (search . " %i %-12:c")))
+        '((agenda . " %i %-16:c%?-12t% s")
+          (todo   . " %i %-16:c ") ;; Added a space here
+          (tags   . " %i %-16:c")
+          (search . " %i %-16:c")))
 
   ;; Add custom agenda view for my dashboard
   (setq org-agenda-custom-commands
         '(("d" "My Dashboard"
-           ((agenda "" ((org-agenda-span 7)))      ;; Show 7 days of calendar
+           ((agenda ""
+                    ((org-agenda-span 7)
+                     ;; This line fixes the column width (%-16c reserves 16 chars)
+                     (org-agenda-prefix-format "  %-16:c%?-12t% s")))
             (todo "UNDER_REVIEW"                   ;; Show what's under review
                   ((org-agenda-overriding-header "Under Review")))
             (todo "IN_PROGRESS"                    ;; Show what I'm working on NOW
