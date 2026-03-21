@@ -110,6 +110,14 @@ Collects garbage when Emacs is idle, keeping GC threshold high during active use
 #+END_SRC
 *** copilot
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
+  ;; copilot-20260316+ ships its own copilot-chat.el that (provide 'copilot-chat)
+  ;; but lacks functions from the separate copilot-chat package (cedric.chepied).
+  ;; Since copilot sorts before copilot-chat in load-path, it shadows the real
+  ;; package.  Move copilot-chat ahead so the correct feature is found first on
+  ;; any lazy load (safe to do here because copilot-chat is autoloaded, not eager).
+  (let ((cc (car (directory-files package-user-dir t "^copilot-chat-[0-9]"))))
+    (when cc (setq load-path (cons cc (remove cc load-path)))))
+
   (with-eval-after-load 'copilot-chat
     (setq copilot-chat-default-model "gpt-5-mini"))
 
