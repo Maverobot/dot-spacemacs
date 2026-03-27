@@ -946,8 +946,9 @@ Setup instructions (one-time, manual):
     (let ((gpg-key-id (auth-source-pick-first-password :host "org-gcal-gpg-key-id")))
       (when gpg-key-id
         (add-to-list 'plstore-encrypt-to gpg-key-id)))
-    ;; Use default pinentry (GNOME3 GUI) now that gpg-agent is configured with pinentry-gnome3.
-    (setq epg-pinentry-mode 'default)
+    ;; Use loopback pinentry so Emacs prompts for the passphrase in the minibuffer.
+    ;; Requires allow-loopback-pinentry in ~/.gnupg/gpg-agent.conf.
+    (setq epg-pinentry-mode 'loopback)
     :config
     ;; Map each calendar ID to its dedicated org file.
     ;; Both files live in ~/org/home/ and are auto-discovered by scan-new-agenda-files.
