@@ -133,6 +133,10 @@ Collects garbage when Emacs is idle, keeping GC threshold high during active use
   (spacemacs/set-leader-keys "aiq" 'copilot-chat-quotas)
 #+END_SRC
 ** IDE config
+*** Set fill column to 100
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (setq-default fill-column 100)
+#+END_SRC
 *** isort, compatible with black
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (setq py-isort-options '("--profile" "black" "--filename" buffer-file-name))
