@@ -133,6 +133,10 @@ Collects garbage when Emacs is idle, keeping GC threshold high during active use
   (spacemacs/set-leader-keys "aiq" 'copilot-chat-quotas)
 #+END_SRC
 ** IDE config
+*** Highlight LaTeX fragments in org-mode
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (setq org-highlight-latex-and-related '(native))
+#+END_SRC
 *** Set fill column to 100
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (setq-default fill-column 100)
