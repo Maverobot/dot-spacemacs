@@ -958,6 +958,10 @@ Setup instructions (one-time, manual):
         (add-to-list 'plstore-encrypt-to gpg-key-id)))
     ;; Use loopback pinentry so Emacs prompts for the passphrase in the minibuffer.
     ;; Requires allow-loopback-pinentry in ~/.gnupg/gpg-agent.conf.
+    ;; NOTE: loopback needs an interactive minibuffer; the periodic idle-timer
+    ;; sync (see org-gcal--prime-gpg-cache below) cannot prompt, so we proactively
+    ;; prime the gpg-agent cache once at startup. After that, the agent's TTL
+    ;; (configured for 1 week in gpg-agent.conf) covers subsequent timer syncs.
     (setq epg-pinentry-mode 'loopback)
     :config
     ;; Map each calendar ID to its dedicated org file.
@@ -996,6 +1000,33 @@ Setup instructions (one-time, manual):
       (warn "org-gcal: stale sync lock detected, clearing it.")
       (org-gcal--sync-unlock))
     (org-gcal-fetch))
+
+  (defun my/org-gcal--prime-gpg-cache ()
+    "Decrypt the org-gcal plstore once to prime the gpg-agent passphrase cache.
+
+Called interactively at Emacs startup so the loopback pinentry prompt has a
+minibuffer available. After the agent caches the passphrase (TTL configured in
+~/.gnupg/gpg-agent.conf), subsequent timer-driven org-gcal syncs decrypt without
+needing a prompt, avoiding the misleading
+  epg-error \"Decryption failed\" \"No secret key: <subkey>\"
+which gpg returns when no pinentry is reachable in a non-interactive context."
+    (let ((plstore-file (expand-file-name "oauth2-auto.plist" user-emacs-directory)))
+      (when (file-exists-p plstore-file)
+        (condition-case err
+            (let ((store (plstore-open plstore-file)))
+              (dolist (entry (plstore--get-entries store))
+                (plstore-get store (car entry)))
+              (plstore-close store))
+          (error
+           (message "org-gcal: failed to prime gpg-agent cache: %s"
+                    (error-message-string err)))))))
+
+  ;; Prime once after startup so the first decrypt happens with a minibuffer
+  ;; available (loopback pinentry needs it). Run slightly deferred so other
+  ;; startup activity doesn't compete for the minibuffer.
+  (add-hook 'emacs-startup-hook
+            (lambda ()
+              (run-with-idle-timer 2 nil #'my/org-gcal--prime-gpg-cache)))
 
   ;; Auto-fetch every 30 minutes. Adjust the interval as needed.
   (run-at-time "30 min" 1800 #'my/org-gcal-fetch-safe)
