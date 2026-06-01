@@ -98,40 +98,6 @@ Collects garbage when Emacs is idle, keeping GC threshold high during active use
           gcmh-high-cons-threshold (* 128 1024 1024))  ; 128MB during active use
     (gcmh-mode 1))
 #+END_SRC
-** AI assistant
-*** Aider
-#+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (spacemacs/set-leader-keys "aa" 'aidermacs-transient-menu)
-
-  (setq aidermacs-default-model "github_copilot/claude-sonnet-4.5")
-  (setq aidermacs-weak-model "github_copilot/gpt-5-mini")
-  (setq aidermacs-backend 'vterm)
-  (setq aidermacs-default-chat-mode 'code)
-#+END_SRC
-*** copilot
-#+BEGIN_SRC emacs-lisp :tangle user-config.el
-  ;; copilot-20260316+ ships its own copilot-chat.el that (provide 'copilot-chat)
-  ;; but lacks functions from the separate copilot-chat package (cedric.chepied).
-  ;; Since copilot sorts before copilot-chat in load-path, it shadows the real
-  ;; package.  Move copilot-chat ahead so the correct feature is found first on
-  ;; any lazy load (safe to do here because copilot-chat is autoloaded, not eager).
-  (let ((cc (car (directory-files package-user-dir t "^copilot-chat-[0-9]"))))
-    (when cc (setq load-path (cons cc (remove cc load-path)))))
-
-  (with-eval-after-load 'copilot-chat
-    (setq copilot-chat-default-model "gpt-5-mini"))
-
-  ;; Keybindings (available immediately, autoload copilot-chat when used)
-  (spacemacs/declare-prefix "ai" "AI")
-  (spacemacs/set-leader-keys "aic" 'copilot-chat)
-  (spacemacs/set-leader-keys "aif" 'copilot-chat-fix)
-  (spacemacs/set-leader-keys "air" 'copilot-chat-review)
-  (spacemacs/set-leader-keys "aie" 'copilot-chat-explain)
-  (spacemacs/set-leader-keys "aio" 'copilot-chat-optimize)
-  (spacemacs/set-leader-keys "aid" 'copilot-chat-doc)
-  (spacemacs/set-leader-keys "ait" 'copilot-chat-test)
-  (spacemacs/set-leader-keys "aiq" 'copilot-chat-quotas)
-#+END_SRC
 ** IDE config
 *** Highlight LaTeX fragments in org-mode
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
@@ -411,33 +377,6 @@ Use evil keybindings for selecting items in popup menus.
                   (setq show-trailing-whitespace t)
                   (c-set-style "linux-tabs-only")))))
 
-#+END_SRC
-
-*** copilot
-#+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (setq copilot-node-executable (executable-find "node"))
-
-  (with-eval-after-load 'company
-    ;; disable inline previews
-    (delq 'company-preview-if-just-one-frontend company-frontends))
-
-  ;; Keybindings
-  (with-eval-after-load 'copilot
-    (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
-    (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)
-    (define-key copilot-completion-map (kbd "C-TAB") 'copilot-accept-completion-by-word)
-    (define-key copilot-completion-map (kbd "C-<tab>") 'copilot-accept-completion-by-word))
-
-  ;; Enable copilot mode in programming modes, markdown-mode and org-mode
-  ;; Only activate hooks if copilot is installed
-  (with-eval-after-load 'copilot
-    (add-hook 'prog-mode-hook 'copilot-mode)
-    (add-hook 'markdown-mode-hook 'copilot-mode)
-    (add-hook 'org-mode-hook 'copilot-mode)
-
-    ;; Disable the warning message
-    (add-hook 'copilot-mode-hook (lambda ()
-                                   (setq-local copilot--indent-warning-printed-p t))))
 #+END_SRC
 *** tramp + clang-format
 clang-format does not work properly when editing a file on a remote host or in a docker container with tramp.
