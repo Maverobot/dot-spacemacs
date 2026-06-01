@@ -236,9 +236,9 @@ Creates a new terminal each time; buffers are named with incrementing numbers."
     (define-key company-active-map (kbd "C-k") 'company-select-previous))
 #+END_SRC
 *** minuet-ai
-Use Minuet with the local Qwen 3.6 27B =llama-server= instance. The server is expected to expose an OpenAI-compatible chat endpoint at =http://127.0.0.1:8080/v1/chat/completions= with model alias =qwen3.6-27b=.
+Use Minuet with an OpenAI-compatible completion endpoint. The default is the local Qwen 3.6 27B =llama-server= at =http://127.0.0.1:8080/v1/chat/completions= with model alias =qwen3.6-27b=.
 
-Override these defaults with =MINUET_QWEN_ENDPOINT=, =MINUET_QWEN_MODEL=, or =MINUET_QWEN_API_KEY= when needed.
+Override startup defaults with =MINUET_OPENAI_COMPATIBLE_ENDPOINT=, =MINUET_OPENAI_COMPATIBLE_MODEL=, or =MINUET_OPENAI_COMPATIBLE_API_KEY_SOURCE=. At runtime, use =SPC a i M= to select another endpoint/model; models are fetched automatically from the endpoint's =/models= API when available.
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (use-package minuet
     :commands (minuet-complete-with-minibuffer
@@ -256,35 +256,155 @@ Override these defaults with =MINUET_QWEN_ENDPOINT=, =MINUET_QWEN_MODEL=, or =MI
            ("M-a" . minuet-accept-suggestion-line)
            ("M-e" . minuet-dismiss-suggestion))
     :init
-    (defun my/minuet-qwen-api-key ()
-      "Return a placeholder API key for the local OpenAI-compatible Qwen server."
-      (or (getenv "MINUET_QWEN_API_KEY") "local"))
+    (defvar my/minuet-openai-compatible-endpoint
+      (or (getenv "MINUET_OPENAI_COMPATIBLE_ENDPOINT")
+          (getenv "MINUET_QWEN_ENDPOINT")
+          "http://127.0.0.1:8080/v1/chat/completions")
+      "OpenAI-compatible chat completion endpoint used by Minuet.")
+
+    (defvar my/minuet-openai-compatible-model
+      (or (getenv "MINUET_OPENAI_COMPATIBLE_MODEL")
+          (getenv "MINUET_QWEN_MODEL")
+          "qwen3.6-27b")
+      "OpenAI-compatible model used by Minuet.")
+
+    (defvar my/minuet-openai-compatible-api-key-source
+      (or (getenv "MINUET_OPENAI_COMPATIBLE_API_KEY_SOURCE")
+          (getenv "MINUET_QWEN_API_KEY_SOURCE")
+          "local")
+      "Environment variable name, placeholder, or runtime API key for Minuet.")
+
+    (defun my/minuet-openai-compatible-api-key ()
+      "Return the API key for Minuet's OpenAI-compatible provider."
+      (let ((source my/minuet-openai-compatible-api-key-source))
+        (or (and (stringp source) (getenv source))
+            (and (stringp source) (not (string= source "")) source)
+            "local")))
+
+    (defun my/minuet-openai-compatible-models-endpoint (endpoint)
+      "Return the OpenAI-compatible models endpoint for chat ENDPOINT."
+      (cond
+       ((string-match-p "/models\\(?:[?#].*\\)?\\'" endpoint) endpoint)
+       ((string-match "/chat/completions\\(?:[?#].*\\)?\\'" endpoint)
+        (replace-match "/models" t t endpoint))
+       ((string-match "/completions\\(?:[?#].*\\)?\\'" endpoint)
+        (replace-match "/models" t t endpoint))
+       ((string-match "/responses\\(?:[?#].*\\)?\\'" endpoint)
+        (replace-match "/models" t t endpoint))
+       ((string-match-p "/\\'" endpoint) (concat endpoint "models"))
+       (t (concat endpoint "/models"))))
+
+    (defun my/minuet-openai-compatible--model-name (entry)
+      "Return a model name from an OpenAI-compatible model ENTRY."
+      (cond
+       ((stringp entry) entry)
+       ((listp entry)
+        (or (plist-get entry :id)
+            (plist-get entry :model)
+            (plist-get entry :name)))))
+
+    (defun my/minuet-openai-compatible-fetch-models (endpoint api-key-source)
+      "Fetch model names from ENDPOINT using API-KEY-SOURCE."
+      (require 'json)
+      (require 'url)
+      (let* ((models-endpoint (my/minuet-openai-compatible-models-endpoint endpoint))
+             (api-key (let ((my/minuet-openai-compatible-api-key-source api-key-source))
+                        (my/minuet-openai-compatible-api-key)))
+             (url-request-extra-headers `(("Accept" . "application/json")
+                                          ("Authorization" . ,(concat "Bearer " api-key))))
+             (url-show-status nil)
+             (buffer (condition-case err
+                         (url-retrieve-synchronously models-endpoint t t 5)
+                       (error
+                        (message "Could not fetch Minuet models from %s: %s"
+                                 models-endpoint
+                                 (error-message-string err))
+                        nil))))
+        (if (not buffer)
+            (progn
+              (message "Could not fetch Minuet models from %s" models-endpoint)
+              nil)
+          (unwind-protect
+              (with-current-buffer buffer
+                (goto-char (point-min))
+                (if (not (re-search-forward "\r?\n\r?\n" nil t))
+                    (progn
+                      (message "Could not parse Minuet models response from %s" models-endpoint)
+                      nil)
+                  (condition-case err
+                      (let* ((json-object (json-parse-string
+                                           (buffer-substring-no-properties (point) (point-max))
+                                           :object-type 'plist
+                                           :array-type 'list
+                                           :false-object nil))
+                             (entries (or (plist-get json-object :data)
+                                          (plist-get json-object :models)))
+                             (models (delq nil
+                                           (mapcar #'my/minuet-openai-compatible--model-name
+                                                   entries))))
+                        (sort (delete-dups models) #'string-lessp))
+                    (error
+                     (message "Could not parse Minuet models from %s: %s"
+                              models-endpoint
+                              (error-message-string err))
+                     nil))))
+            (kill-buffer buffer)))))
+
+    (defun my/minuet-apply-openai-compatible-settings ()
+      "Apply OpenAI-compatible settings to Minuet."
+      (setq minuet-provider 'openai-compatible)
+      (plist-put minuet-openai-compatible-options
+                 :end-point
+                 my/minuet-openai-compatible-endpoint)
+      (plist-put minuet-openai-compatible-options
+                 :api-key
+                 #'my/minuet-openai-compatible-api-key)
+      (plist-put minuet-openai-compatible-options
+                 :model
+                 my/minuet-openai-compatible-model))
+
+    (defun my/minuet-set-openai-compatible-model (endpoint api-key-source model)
+      "Interactively set Minuet ENDPOINT, API-KEY-SOURCE, and MODEL."
+      (interactive
+       (progn
+         (require 'minuet)
+         (let* ((endpoint (read-string "Minuet endpoint: "
+                                       my/minuet-openai-compatible-endpoint))
+                (api-key-source (read-string
+                                 "API key env var or placeholder: "
+                                 my/minuet-openai-compatible-api-key-source))
+                (models (my/minuet-openai-compatible-fetch-models endpoint api-key-source))
+                (default-model (or (and (member my/minuet-openai-compatible-model models)
+                                        my/minuet-openai-compatible-model)
+                                   (car models)
+                                   my/minuet-openai-compatible-model))
+                (model (completing-read "Minuet model: " models nil nil nil nil default-model)))
+           (list endpoint api-key-source model))))
+      (require 'minuet)
+      (setq my/minuet-openai-compatible-endpoint endpoint
+            my/minuet-openai-compatible-api-key-source api-key-source
+            my/minuet-openai-compatible-model model)
+      (my/minuet-apply-openai-compatible-settings)
+      (message "Minuet model set to %s at %s" model endpoint))
 
     (add-hook 'prog-mode-hook #'minuet-auto-suggestion-mode)
     (add-hook 'git-commit-mode-hook #'minuet-auto-suggestion-mode)
 
-    (spacemacs/declare-prefix "ai" "AI completion")
+    (spacemacs/declare-prefix "ai" "AI tools")
     (spacemacs/set-leader-keys
       "ais" 'minuet-show-suggestion
       "aim" 'minuet-complete-with-minibuffer
+      "aiM" 'my/minuet-set-openai-compatible-model
       "aic" 'minuet-configure-provider
       "ait" 'minuet-auto-suggestion-mode)
     :config
-    (setq minuet-provider 'openai-compatible
-          minuet-n-completions 1
+    (setq minuet-n-completions 1
           minuet-context-window 4096
           minuet-request-timeout 12
           minuet-auto-suggestion-debounce-delay 0.8
           minuet-auto-suggestion-throttle-delay 1.5)
 
-    (plist-put minuet-openai-compatible-options
-               :end-point
-               (or (getenv "MINUET_QWEN_ENDPOINT")
-                   "http://127.0.0.1:8080/v1/chat/completions"))
-    (plist-put minuet-openai-compatible-options :api-key #'my/minuet-qwen-api-key)
-    (plist-put minuet-openai-compatible-options
-               :model
-               (or (getenv "MINUET_QWEN_MODEL") "qwen3.6-27b"))
+    (my/minuet-apply-openai-compatible-settings)
     (plist-put minuet-openai-compatible-options
                :optional
                '(:max_tokens 128
