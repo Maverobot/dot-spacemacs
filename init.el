@@ -197,6 +197,7 @@ This function should only modify configuration layer settings."
                                       flatbuffers-mode
                                       format-all
                                       greader
+                                      minuet
                                       nvm
                                       ob-rust
                                       org-ai

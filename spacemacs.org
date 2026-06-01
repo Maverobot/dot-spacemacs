@@ -235,6 +235,63 @@ Creates a new terminal each time; buffers are named with incrementing numbers."
     (define-key company-active-map (kbd "C-j") 'company-select-next)
     (define-key company-active-map (kbd "C-k") 'company-select-previous))
 #+END_SRC
+*** minuet-ai
+Use Minuet with the local Qwen 3.6 27B =llama-server= instance. The server is expected to expose an OpenAI-compatible chat endpoint at =http://127.0.0.1:8080/v1/chat/completions= with model alias =qwen3.6-27b=.
+
+Override these defaults with =MINUET_QWEN_ENDPOINT=, =MINUET_QWEN_MODEL=, or =MINUET_QWEN_API_KEY= when needed.
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (use-package minuet
+    :commands (minuet-complete-with-minibuffer
+               minuet-show-suggestion
+               minuet-configure-provider
+               minuet-auto-suggestion-mode)
+    :bind (("M-i" . minuet-show-suggestion)
+           ("C-c m" . minuet-configure-provider)
+           :map minuet-active-mode-map
+           ("M-p" . minuet-previous-suggestion)
+           ("M-n" . minuet-next-suggestion)
+           ("TAB" . minuet-accept-suggestion)
+           ("<tab>" . minuet-accept-suggestion)
+           ("M-A" . minuet-accept-suggestion)
+           ("M-a" . minuet-accept-suggestion-line)
+           ("M-e" . minuet-dismiss-suggestion))
+    :init
+    (defun my/minuet-qwen-api-key ()
+      "Return a placeholder API key for the local OpenAI-compatible Qwen server."
+      (or (getenv "MINUET_QWEN_API_KEY") "local"))
+
+    (add-hook 'prog-mode-hook #'minuet-auto-suggestion-mode)
+    (add-hook 'git-commit-mode-hook #'minuet-auto-suggestion-mode)
+
+    (spacemacs/declare-prefix "ai" "AI completion")
+    (spacemacs/set-leader-keys
+      "ais" 'minuet-show-suggestion
+      "aim" 'minuet-complete-with-minibuffer
+      "aic" 'minuet-configure-provider
+      "ait" 'minuet-auto-suggestion-mode)
+    :config
+    (setq minuet-provider 'openai-compatible
+          minuet-n-completions 1
+          minuet-context-window 4096
+          minuet-request-timeout 12
+          minuet-auto-suggestion-debounce-delay 0.8
+          minuet-auto-suggestion-throttle-delay 1.5)
+
+    (plist-put minuet-openai-compatible-options
+               :end-point
+               (or (getenv "MINUET_QWEN_ENDPOINT")
+                   "http://127.0.0.1:8080/v1/chat/completions"))
+    (plist-put minuet-openai-compatible-options :api-key #'my/minuet-qwen-api-key)
+    (plist-put minuet-openai-compatible-options
+               :model
+               (or (getenv "MINUET_QWEN_MODEL") "qwen3.6-27b"))
+    (plist-put minuet-openai-compatible-options
+               :optional
+               '(:max_tokens 128
+                 :temperature 0.2
+                 :top_p 0.9
+                 :chat_template_kwargs (:enable_thinking :false))))
+#+END_SRC
 *** lsp-ui
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
 (with-eval-after-load 'lsp-ui
