@@ -183,6 +183,7 @@ This function should only modify configuration layer settings."
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '((lean4-mode :location (recipe :fetcher github :repo "leanprover/lean4-mode" :files ("*.el" "data")))
+                                      (pi-coding-agent :location (recipe :fetcher github :repo "dnouri/pi-coding-agent" :files ("*.el")))
                                       (term-cursor :location (recipe :fetcher github :repo "h0d/term-cursor.el" ))
                                       (ultra-scroll :location (recipe :fetcher github :repo "jdtsmith/ultra-scroll"))
                                       arduino-mode

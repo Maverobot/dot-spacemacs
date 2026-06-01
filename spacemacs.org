@@ -412,6 +412,20 @@ Override startup defaults with =MINUET_OPENAI_COMPATIBLE_ENDPOINT=, =MINUET_OPEN
                  :top_p 0.9
                  :chat_template_kwargs (:enable_thinking :false))))
 #+END_SRC
+*** pi-coding-agent
+Emacs frontend for the [[https://pi.dev][pi coding agent]]. Requires the =pi= CLI to be installed, available in =PATH=, and authenticated with =pi --login= (or provider API keys configured).
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (use-package pi-coding-agent
+    :commands (pi-coding-agent
+               pi-coding-agent-toggle)
+    :init
+    (defalias 'pi 'pi-coding-agent)
+
+    (spacemacs/declare-prefix "ai" "AI tools")
+    (spacemacs/set-leader-keys
+      "aip" 'pi-coding-agent
+      "aiP" 'pi-coding-agent-toggle))
+#+END_SRC
 *** lsp-ui
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
 (with-eval-after-load 'lsp-ui
@@ -477,7 +491,7 @@ Use evil keybindings for selecting items in popup menus.
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   ;; TODO: use the default version instead of hard-coding the specific version
   (condition-case err
-      (nvm-use "20")
+      (nvm-use "22")
     (error (message "Could not initialize nvm for emacs. %s" (error-message-string err))))
 #+END_SRC
 *** conf-mode
