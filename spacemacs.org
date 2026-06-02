@@ -1222,7 +1222,7 @@ pre.src > code {
       (if (file-directory-p org-dir)
           (progn
             (message "Scanning new agenda files...")
-            (setq org-agenda-files (directory-files-recursively org-dir "\.org$" nil nil t)))
+            (setq org-agenda-files (directory-files-recursively org-dir "\\.org\\'" nil nil t)))
         (message "Warning: ~/org/ directory does not exist. Skipping agenda files scan."))))
 
   (with-eval-after-load 'org-agenda
