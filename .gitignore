@@ -1,5 +1,6 @@
 user-init.el
 user-config.el
+custom.el
 .spacemacs.env
 spacemacs.html
 groovy-language-server-all.jar

@@ -19,6 +19,13 @@ It is called immediately after
 useful for variables that need to be set before packages are loaded. If you are
 unsure, you should try in setting them in `dotspacemacs/user-config' first.
 #+end_quote
+** Custom variables
+#+BEGIN_SRC emacs-lisp :tangle user-init.el
+  ;; Keep Emacs Custom output out of tracked init.el. Spacemacs otherwise copies
+  ;; its internal Custom cache into `dotspacemacs/emacs-custom-settings`.
+  (setq custom-file (expand-file-name "custom.el" dotspacemacs-directory))
+  (load custom-file 'noerror 'nomessage)
+#+END_SRC
 ** Locale
 #+BEGIN_SRC emacs-lisp :tangle user-init.el
   (setq system-time-locale "C")
