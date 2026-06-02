@@ -1602,11 +1602,11 @@ The one and only one cheatsheet.
   (spacemacs/set-leader-keys "acr" 'cheat-sh-region)
 
   ;; Get a random page of cheatsheet
-  (spacemacs/set-leader-keys "acr"
+  (spacemacs/set-leader-keys "acR"
     (lambda ()
       (interactive)
       (cheat-sh ":random")))
-  (spacemacs/declare-prefix "acr" "cheat.sh/:random")
+  (spacemacs/declare-prefix "acR" "cheat.sh/:random")
 #+END_SRC
 *** chatgpt-shell
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
