@@ -707,10 +707,21 @@ Use evil keybindings for selecting items in popup menus.
 #+END_SRC
 *** dap
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (add-hook 'dap-stopped-hook
-            (lambda (arg) (call-interactively #'dap-hydra)))
-  (add-hook 'dap-stopped-hook
-            (lambda (arg) (call-interactively #'dap-hydra)))
+  (defun my/show-dap-hydra (_arg)
+    "Show `dap-hydra' when DAP stops at a breakpoint."
+    (call-interactively #'dap-hydra))
+
+  ;; Remove previous anonymous hook variants when reloading this config.
+  (require 'cl-lib)
+  (when (boundp 'dap-stopped-hook)
+    (setq dap-stopped-hook
+          (cl-remove-if
+           (lambda (hook)
+             (and (not (eq hook #'my/show-dap-hydra))
+                  (not (symbolp hook))
+                  (string-match-p "\\bdap-hydra\\b" (prin1-to-string hook))))
+           dap-stopped-hook)))
+  (add-hook 'dap-stopped-hook #'my/show-dap-hydra)
 #+END_SRC
 *** flycheck
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
