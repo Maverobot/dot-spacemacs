@@ -870,22 +870,33 @@ Modern visual styling for org-mode: clean TODO keywords, tables, timestamps, tag
     ;; Horizontal rule
     (org-modern-horizontal-rule t))
 #+END_SRC
-*** Export code blocks with current theme
+*** Export code blocks with stylesheet CSS
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (defun my/org-inline-css-hook (exporter)
-    "Insert custom inline css to automatically set the
-  background of code to whatever theme I'm using's background"
-    (when (eq exporter 'html)
-      (let* ((my-pre-bg (face-background 'default))
-             (my-pre-fg (face-foreground 'default)))
-        (setq
-         org-html-head-extra
-         (concat
-          org-html-head-extra
-          (format "<style type=\"text/css\">\n pre.src {background-color: %s; color: %s;}</style>\n"
-                  my-pre-bg my-pre-fg))))))
+  ;; Keep Org HTML exports independent of the active Emacs theme.
+  ;; Theme-provided inline colors can clash with document themes such as
+  ;; ReadTheOrg, which already includes a matching htmlize.css stylesheet.
+  (defconst my/org-html-src-code-css
+    "<style type=\"text/css\">
+pre.src > code {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  display: block;
+  font-size: inherit;
+  max-width: none;
+  overflow: visible;
+  padding: 0;
+  white-space: inherit;
+  word-wrap: normal;
+}
+</style>")
 
-  (add-hook 'org-export-before-processing-hook 'my/org-inline-css-hook)
+  (with-eval-after-load 'ox-html
+    (setq org-html-htmlize-output-type 'css)
+    (unless (string-match-p (regexp-quote my/org-html-src-code-css)
+                            (or org-html-head-extra ""))
+      (setq org-html-head-extra
+            (concat org-html-head-extra my/org-html-src-code-css))))
 #+END_SRC
 *** org-ai
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
