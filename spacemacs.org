@@ -1316,7 +1316,7 @@ pre.src > code {
 #+END_SRC
 *** org-table
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (with-eval-after-load 'org-mode
+  (with-eval-after-load 'org
     (define-key org-mode-map (kbd "C-<tab>") 'org-table-previous-field))
 #+END_SRC
 *** org-todo
