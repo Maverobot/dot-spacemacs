@@ -281,6 +281,28 @@ Override startup defaults with =MINUET_OPENAI_COMPATIBLE_ENDPOINT=, =MINUET_OPEN
             (and (stringp source) (not (string= source "")) source)
             "local")))
 
+    (defvar my/minuet-conventional-commit-prompt
+      "When completing a Git commit message, prefer Conventional Commits:
+- Use `type(scope): summary` for the subject, e.g. `feat(minuet): add model selector`.
+- Choose a lowercase type such as `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `build`, `ci`, `chore`, `perf`, or `revert`.
+- Keep the subject concise, imperative, and ideally under 72 characters.
+- If a body is useful, leave one blank line after the subject and explain why, not what.
+- Return only commit message text, without commentary or markdown fences."
+      "Additional Minuet guidance for `git-commit-mode'.")
+
+    (defun my/minuet-openai-compatible-system-prompt ()
+      "Return a mode-aware system prompt for Minuet's OpenAI-compatible provider."
+      (if (derived-mode-p 'git-commit-mode)
+          (concat minuet-default-prompt-prefix-first
+                  "\n"
+                  my/minuet-conventional-commit-prompt)
+        minuet-default-prompt-prefix-first))
+
+    (defun my/minuet-openai-compatible-fewshots ()
+      "Return mode-aware few-shot examples for Minuet's OpenAI-compatible provider."
+      (unless (derived-mode-p 'git-commit-mode)
+        minuet-default-fewshots-prefix-first))
+
     (defun my/minuet-openai-compatible-models-endpoint (endpoint)
       "Return the OpenAI-compatible models endpoint for chat ENDPOINT."
       (cond
@@ -361,7 +383,12 @@ Override startup defaults with =MINUET_OPENAI_COMPATIBLE_ENDPOINT=, =MINUET_OPEN
                  #'my/minuet-openai-compatible-api-key)
       (plist-put minuet-openai-compatible-options
                  :model
-                 my/minuet-openai-compatible-model))
+                 my/minuet-openai-compatible-model)
+      (setf (plist-get (plist-get minuet-openai-compatible-options :system) :prompt)
+            #'my/minuet-openai-compatible-system-prompt)
+      (plist-put minuet-openai-compatible-options
+                 :fewshots
+                 #'my/minuet-openai-compatible-fewshots))
 
     (defun my/minuet-set-openai-compatible-model (endpoint api-key-source model)
       "Interactively set Minuet ENDPOINT, API-KEY-SOURCE, and MODEL."
