@@ -334,10 +334,12 @@ Switch profiles at runtime with =SPC a i C= for Codex proxy, =SPC a i Q= for loc
 
     (defvar my/minuet-conventional-commit-prompt
       "When completing a Git commit message, you MUST produce a Conventional Commit:
+- Use the staged diff as the source of truth when it is present in the prompt.
 - Use `type(scope): summary` for the subject, e.g. `feat(minuet): add model selector`.
 - Choose a lowercase type such as `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `build`, `ci`, `chore`, `perf`, or `revert`.
 - Keep the subject concise, imperative, and ideally under 72 characters.
-- If a body is useful, leave one blank line after the subject and explain why, not what.
+- For non-trivial staged changes, include a body after one blank line.
+- Body lines should explain why and summarize important areas changed; prefer 1-3 concise bullet points.
 - Return only commit message text, without commentary or markdown fences."
       "Additional Minuet guidance for `git-commit-mode'.")
 
@@ -345,6 +347,71 @@ Switch profiles at runtime with =SPC a i C= for Codex proxy, =SPC a i Q= for loc
       "Return non-nil when the current buffer is a Git commit message buffer."
       (or (bound-and-true-p git-commit-mode)
           (derived-mode-p 'git-commit-elisp-text-mode)))
+
+    (defvar my/minuet-git-staged-diff-max-chars 12000
+      "Maximum number of staged diff characters to include in Minuet prompts.")
+
+    (defun my/minuet-git-root ()
+      "Return the current Git repository root, or nil outside a Git repo."
+      (locate-dominating-file default-directory ".git"))
+
+    (defun my/minuet-git-command-output (&rest args)
+      "Return output from git ARGS in the current repository, or nil on failure."
+      (require 'subr-x)
+      (when-let* ((root (my/minuet-git-root)))
+        (with-temp-buffer
+          (let ((default-directory root))
+            (when (zerop (apply #'process-file "git" nil t nil args))
+              (string-trim-right (buffer-string)))))))
+
+    (defun my/minuet-truncate-for-prompt (text max-chars)
+      "Return TEXT truncated to MAX-CHARS for prompt inclusion."
+      (if (and text (> (length text) max-chars))
+          (concat (substring text 0 max-chars)
+                  "\n\n[staged diff truncated for prompt]")
+        text))
+
+    (defun my/minuet-git-staged-diff-for-prompt (_context)
+      "Return staged Git changes formatted for Minuet commit prompts."
+      (when (my/minuet-git-commit-buffer-p)
+        (let* ((stat (my/minuet-git-command-output "diff" "--cached" "--stat"))
+               (diff (my/minuet-git-command-output "diff" "--cached" "--"))
+               (diff (my/minuet-truncate-for-prompt
+                      diff
+                      my/minuet-git-staged-diff-max-chars)))
+          (mapconcat #'identity
+                     (delq nil
+                           (list (unless (string= (or stat "") "")
+                                   (concat "Staged diffstat:\n" stat))
+                                 (unless (string= (or diff "") "")
+                                   (concat "Staged diff:\n" diff))))
+                     "\n\n"))))
+
+    (defun my/minuet-openai-compatible-chat-template ()
+      "Return a mode-aware chat input template for Minuet."
+      (if (my/minuet-git-commit-buffer-p)
+          "{{{:language-and-tab}}}
+<contextBeforeCursor>
+{{{:context-before-cursor}}}<cursorPosition>
+<contextAfterCursor>
+{{{:context-after-cursor}}}
+<stagedChanges>
+{{{:staged-diff}}}
+</stagedChanges>"
+        minuet-default-chat-input-template-prefix-first))
+
+    (defun my/minuet-openai-compatible-guidelines ()
+      "Return mode-aware generation guidelines for Minuet."
+      (if (my/minuet-git-commit-buffer-p)
+          "Guidelines:
+1. Complete text after the `<cursorPosition>` marker.
+2. Produce one complete Conventional Commit message.
+3. The subject line is required and must be `type(scope): summary` or `type: summary`.
+4. For non-trivial staged changes, include a blank line followed by a body.
+5. Body lines should be concise bullets or short wrapped paragraphs; explain why, not every mechanical detail.
+6. Use the staged diff as source of truth. Do not invent changes.
+7. Return only commit message text. If multiple alternatives are provided, separate them with <endCompletion>."
+        minuet-default-guidelines))
 
     (defun my/minuet-openai-compatible-system-prompt ()
       "Return a mode-aware system prompt for Minuet's OpenAI-compatible provider."
@@ -442,6 +509,12 @@ Switch profiles at runtime with =SPC a i C= for Codex proxy, =SPC a i Q= for loc
                  my/minuet-openai-compatible-model)
       (setf (plist-get (plist-get minuet-openai-compatible-options :system) :prompt)
             #'my/minuet-openai-compatible-system-prompt)
+      (setf (plist-get (plist-get minuet-openai-compatible-options :system) :guidelines)
+            #'my/minuet-openai-compatible-guidelines)
+      (setf (plist-get (plist-get minuet-openai-compatible-options :chat-input) :template)
+            #'my/minuet-openai-compatible-chat-template)
+      (setf (plist-get (plist-get minuet-openai-compatible-options :chat-input) :staged-diff)
+            #'my/minuet-git-staged-diff-for-prompt)
       (plist-put minuet-openai-compatible-options
                  :fewshots
                  #'my/minuet-openai-compatible-fewshots))
@@ -534,6 +607,67 @@ Switch profiles at runtime with =SPC a i C= for Codex proxy, =SPC a i Q= for loc
                  :temperature 0.2
                  :top_p 0.9
                  :chat_template_kwargs (:enable_thinking :false))))
+#+END_SRC
+*** codex-proxy
+Manage the local IceBear =codex-proxy= Docker Compose service used by Minuet's Codex profile. The service lives in =~/.local/share/codex-proxy= and exposes the dashboard/API at =http://127.0.0.1:8787=.
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (defvar my/codex-proxy-directory "~/.local/share/codex-proxy"
+    "Directory containing the local codex-proxy Docker Compose setup.")
+
+  (defvar my/codex-proxy-dashboard-url "http://127.0.0.1:8787"
+    "Dashboard URL for the local codex-proxy service.")
+
+  (defun my/codex-proxy--default-directory ()
+    "Return the codex-proxy Compose directory or signal a user error."
+    (let ((directory (file-name-as-directory
+                      (expand-file-name my/codex-proxy-directory))))
+      (unless (file-directory-p directory)
+        (user-error "codex-proxy directory does not exist: %s" directory))
+      directory))
+
+  (defun my/codex-proxy--run-docker-compose (arguments)
+    "Run docker compose with ARGUMENTS in `my/codex-proxy-directory'."
+    (let ((default-directory (my/codex-proxy--default-directory)))
+      (async-shell-command (concat "docker compose " arguments) "*codex-proxy*")))
+
+  (defun my/codex-proxy-docker-up ()
+    "Start the local codex-proxy Docker Compose service."
+    (interactive)
+    (my/codex-proxy--run-docker-compose "up -d"))
+
+  (defun my/codex-proxy-docker-down ()
+    "Stop and remove the local codex-proxy Docker Compose service."
+    (interactive)
+    (my/codex-proxy--run-docker-compose "down"))
+
+  (defun my/codex-proxy-docker-restart ()
+    "Restart the local codex-proxy container."
+    (interactive)
+    (my/codex-proxy--run-docker-compose "restart codex-proxy"))
+
+  (defun my/codex-proxy-docker-status ()
+    "Show the local codex-proxy Docker Compose status."
+    (interactive)
+    (my/codex-proxy--run-docker-compose "ps"))
+
+  (defun my/codex-proxy-docker-logs ()
+    "Follow recent logs for the local codex-proxy container."
+    (interactive)
+    (my/codex-proxy--run-docker-compose "logs --tail=200 -f codex-proxy"))
+
+  (defun my/codex-proxy-open-dashboard ()
+    "Open the local codex-proxy dashboard."
+    (interactive)
+    (browse-url my/codex-proxy-dashboard-url))
+
+  (spacemacs/declare-prefix "aid" "codex-proxy")
+  (spacemacs/set-leader-keys
+    "aidu" 'my/codex-proxy-docker-up
+    "aidd" 'my/codex-proxy-docker-down
+    "aidr" 'my/codex-proxy-docker-restart
+    "aids" 'my/codex-proxy-docker-status
+    "aidl" 'my/codex-proxy-docker-logs
+    "aido" 'my/codex-proxy-open-dashboard)
 #+END_SRC
 *** pi-coding-agent
 Emacs frontend for the [[https://pi.dev][pi coding agent]]. Requires the =pi= CLI to be installed, available in =PATH=, and authenticated with =pi --login= (or provider API keys configured).
