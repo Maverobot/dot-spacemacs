@@ -1443,13 +1443,19 @@ minibuffer available. After the agent caches the passphrase (TTL configured in
 needing a prompt, avoiding the misleading
   epg-error \"Decryption failed\" \"No secret key: <subkey>\"
 which gpg returns when no pinentry is reachable in a non-interactive context."
-    (let ((plstore-file (expand-file-name "oauth2-auto.plist" user-emacs-directory)))
+    (let ((plstore-file (expand-file-name "oauth2-auto.plist" user-emacs-directory))
+          store)
       (when (file-exists-p plstore-file)
         (condition-case err
-            (let ((store (plstore-open plstore-file)))
-              (dolist (entry (plstore--get-entries store))
-                (plstore-get store (car entry)))
-              (plstore-close store))
+            (unwind-protect
+                (progn
+                  (setq store (plstore-open plstore-file))
+                  ;; `plstore-find' consults/decrypts secret entries through the
+                  ;; public plstore API, which is stable across Emacs versions.
+                  (dolist (entry (plstore-find store nil))
+                    (plstore-get store (car entry))))
+              (when store
+                (plstore-close store)))
           (error
            (message "org-gcal: failed to prime gpg-agent cache: %s"
                     (error-message-string err)))))))
