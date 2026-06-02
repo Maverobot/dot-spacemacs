@@ -1082,8 +1082,25 @@ If running as a daemon, kill the current frame. Otherwise, prompt to kill Emacs.
 #+END_SRC
 *** Transparency settings
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (defun my/enable-transparency (&optional frame)
+    "Apply configured Spacemacs transparency to FRAME."
+    (let* ((frame (or frame (selected-frame)))
+           (active (max frame-alpha-lower-limit
+                        (min 100
+                             (or (bound-and-true-p dotspacemacs-active-transparency)
+                                 90))))
+           (inactive (max frame-alpha-lower-limit
+                          (min 100
+                               (or (bound-and-true-p dotspacemacs-inactive-transparency)
+                                   active)))))
+      (if (fboundp 'spacemacs//frame-alpha-set-pair)
+          (spacemacs//frame-alpha-set-pair frame active inactive)
+        (set-frame-parameter frame 'alpha (cons active inactive)))))
+
   (spacemacs/set-leader-keys "tt" 'spacemacs/toggle-transparency)
-  (add-hook 'after-make-frame-functions 'spacemacs/enable-transparency)
+  ;; Remove the old undefined hook if this config is reloaded in a live session.
+  (remove-hook 'after-make-frame-functions 'spacemacs/enable-transparency)
+  (add-hook 'after-make-frame-functions #'my/enable-transparency)
 #+END_SRC
 *** Turn on xclip-mode
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
