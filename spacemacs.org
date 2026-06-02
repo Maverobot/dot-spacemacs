@@ -236,9 +236,9 @@ Creates a new terminal each time; buffers are named with incrementing numbers."
     (define-key company-active-map (kbd "C-k") 'company-select-previous))
 #+END_SRC
 *** minuet-ai
-Use Minuet with an OpenAI-compatible completion endpoint. The default is the local Qwen 3.6 27B =llama-server= at =http://127.0.0.1:8080/v1/chat/completions= with model alias =qwen3.6-27b=.
+Use Minuet with an OpenAI-compatible completion endpoint. The default profile is IceBear =codex-proxy= at =http://127.0.0.1:8787/v1/chat/completions= with model =gpt-5.4-mini=, using Codex Pro/ChatGPT quota through the local proxy. Run the proxy locally, log in through its dashboard, and export =CODEX_PROXY_API_KEY= with the dashboard API key.
 
-Override startup defaults with =MINUET_OPENAI_COMPATIBLE_ENDPOINT=, =MINUET_OPENAI_COMPATIBLE_MODEL=, or =MINUET_OPENAI_COMPATIBLE_API_KEY_SOURCE=. At runtime, use =SPC a i M= to select another endpoint/model; models are fetched automatically from the endpoint's =/models= API when available.
+Switch profiles at runtime with =SPC a i C= for Codex proxy, =SPC a i Q= for local Qwen, or =SPC a i R= to choose a named profile. Override startup defaults with =MINUET_OPENAI_COMPATIBLE_PROFILE= (=codex-proxy= or =local-qwen=), =MINUET_OPENAI_COMPATIBLE_ENDPOINT=, =MINUET_OPENAI_COMPATIBLE_MODEL=, or =MINUET_OPENAI_COMPATIBLE_API_KEY_SOURCE=. At runtime, use =SPC a i M= to select another endpoint/model; models are fetched automatically from the endpoint's =/models= API when available.
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (use-package minuet
     :commands (minuet-complete-with-minibuffer
@@ -256,33 +256,84 @@ Override startup defaults with =MINUET_OPENAI_COMPATIBLE_ENDPOINT=, =MINUET_OPEN
            ("M-a" . minuet-accept-suggestion-line)
            ("M-e" . minuet-dismiss-suggestion))
     :init
+    (defconst my/minuet-openai-compatible-default-profile "codex-proxy"
+      "Default named OpenAI-compatible profile for Minuet.")
+
+    (defun my/minuet-openai-compatible-profile-names ()
+      "Return known Minuet OpenAI-compatible profile names."
+      '("codex-proxy" "local-qwen"))
+
+    (defvar my/minuet-openai-compatible-profile
+      (or (getenv "MINUET_OPENAI_COMPATIBLE_PROFILE")
+          my/minuet-openai-compatible-default-profile)
+      "Current named OpenAI-compatible profile for Minuet.")
+
+    (defun my/minuet-openai-compatible-profile-defaults (profile)
+      "Return default settings for Minuet OpenAI-compatible PROFILE."
+      (pcase profile
+        ("local-qwen"
+         (list :end-point (or (getenv "MINUET_QWEN_ENDPOINT")
+                              "http://127.0.0.1:8080/v1/chat/completions")
+               :model (or (getenv "MINUET_QWEN_MODEL")
+                          "qwen3.6-27b")
+               :api-key-source (or (getenv "MINUET_QWEN_API_KEY_SOURCE")
+                                   "local")))
+        ("codex-proxy"
+         (list :end-point "http://127.0.0.1:8787/v1/chat/completions"
+               :model "gpt-5.4-mini"
+               :api-key-source "CODEX_PROXY_API_KEY"))
+        (_
+         (my/minuet-openai-compatible-profile-defaults
+          my/minuet-openai-compatible-default-profile))))
+
     (defvar my/minuet-openai-compatible-endpoint
       (or (getenv "MINUET_OPENAI_COMPATIBLE_ENDPOINT")
-          (getenv "MINUET_QWEN_ENDPOINT")
-          "http://127.0.0.1:8080/v1/chat/completions")
+          (plist-get (my/minuet-openai-compatible-profile-defaults
+                      my/minuet-openai-compatible-profile)
+                     :end-point))
       "OpenAI-compatible chat completion endpoint used by Minuet.")
 
     (defvar my/minuet-openai-compatible-model
       (or (getenv "MINUET_OPENAI_COMPATIBLE_MODEL")
-          (getenv "MINUET_QWEN_MODEL")
-          "qwen3.6-27b")
+          (plist-get (my/minuet-openai-compatible-profile-defaults
+                      my/minuet-openai-compatible-profile)
+                     :model))
       "OpenAI-compatible model used by Minuet.")
 
     (defvar my/minuet-openai-compatible-api-key-source
       (or (getenv "MINUET_OPENAI_COMPATIBLE_API_KEY_SOURCE")
-          (getenv "MINUET_QWEN_API_KEY_SOURCE")
-          "local")
+          (plist-get (my/minuet-openai-compatible-profile-defaults
+                      my/minuet-openai-compatible-profile)
+                     :api-key-source))
       "Environment variable name, placeholder, or runtime API key for Minuet.")
+
+    (defun my/minuet-codex-proxy-api-key-from-config ()
+      "Return the local codex-proxy API key from its generated config file."
+      (let ((config-file (expand-file-name "~/.local/share/codex-proxy/data/local.yaml")))
+        (when (file-readable-p config-file)
+          (with-temp-buffer
+            (insert-file-contents config-file)
+            (goto-char (point-min))
+            (when (re-search-forward
+                   "^[[:space:]]*proxy_api_key:[[:space:]]*\\(?:\"\\([^\"]+\\)\"\\|'\\([^']+\\)'\\|\\([^[:space:]#]+\\)\\)"
+                   nil
+                   t)
+              (or (match-string 1)
+                  (match-string 2)
+                  (match-string 3)))))))
 
     (defun my/minuet-openai-compatible-api-key ()
       "Return the API key for Minuet's OpenAI-compatible provider."
       (let ((source my/minuet-openai-compatible-api-key-source))
         (or (and (stringp source) (getenv source))
+            (and (stringp source)
+                 (string= source "CODEX_PROXY_API_KEY")
+                 (my/minuet-codex-proxy-api-key-from-config))
             (and (stringp source) (not (string= source "")) source)
             "local")))
 
     (defvar my/minuet-conventional-commit-prompt
-      "When completing a Git commit message, prefer Conventional Commits:
+      "When completing a Git commit message, you MUST produce a Conventional Commit:
 - Use `type(scope): summary` for the subject, e.g. `feat(minuet): add model selector`.
 - Choose a lowercase type such as `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `build`, `ci`, `chore`, `perf`, or `revert`.
 - Keep the subject concise, imperative, and ideally under 72 characters.
@@ -290,9 +341,14 @@ Override startup defaults with =MINUET_OPENAI_COMPATIBLE_ENDPOINT=, =MINUET_OPEN
 - Return only commit message text, without commentary or markdown fences."
       "Additional Minuet guidance for `git-commit-mode'.")
 
+    (defun my/minuet-git-commit-buffer-p ()
+      "Return non-nil when the current buffer is a Git commit message buffer."
+      (or (bound-and-true-p git-commit-mode)
+          (derived-mode-p 'git-commit-elisp-text-mode)))
+
     (defun my/minuet-openai-compatible-system-prompt ()
       "Return a mode-aware system prompt for Minuet's OpenAI-compatible provider."
-      (if (derived-mode-p 'git-commit-mode)
+      (if (my/minuet-git-commit-buffer-p)
           (concat minuet-default-prompt-prefix-first
                   "\n"
                   my/minuet-conventional-commit-prompt)
@@ -300,7 +356,7 @@ Override startup defaults with =MINUET_OPENAI_COMPATIBLE_ENDPOINT=, =MINUET_OPEN
 
     (defun my/minuet-openai-compatible-fewshots ()
       "Return mode-aware few-shot examples for Minuet's OpenAI-compatible provider."
-      (unless (derived-mode-p 'git-commit-mode)
+      (unless (my/minuet-git-commit-buffer-p)
         minuet-default-fewshots-prefix-first))
 
     (defun my/minuet-openai-compatible-models-endpoint (endpoint)
@@ -414,14 +470,54 @@ Override startup defaults with =MINUET_OPENAI_COMPATIBLE_ENDPOINT=, =MINUET_OPEN
       (my/minuet-apply-openai-compatible-settings)
       (message "Minuet model set to %s at %s" model endpoint))
 
+    (defun my/minuet-set-openai-compatible-profile (profile)
+      "Switch Minuet to named OpenAI-compatible PROFILE."
+      (interactive
+       (list (completing-read "Minuet profile: "
+                              (my/minuet-openai-compatible-profile-names)
+                              nil
+                              t
+                              nil
+                              nil
+                              my/minuet-openai-compatible-profile)))
+      (let* ((profile (if (member profile (my/minuet-openai-compatible-profile-names))
+                          profile
+                        my/minuet-openai-compatible-default-profile))
+             (defaults (my/minuet-openai-compatible-profile-defaults profile))
+             (endpoint (plist-get defaults :end-point))
+             (model (plist-get defaults :model))
+             (api-key-source (plist-get defaults :api-key-source)))
+        (require 'minuet)
+        (setq my/minuet-openai-compatible-profile profile
+              my/minuet-openai-compatible-endpoint endpoint
+              my/minuet-openai-compatible-api-key-source api-key-source
+              my/minuet-openai-compatible-model model)
+        (my/minuet-apply-openai-compatible-settings)
+        (message "Minuet profile set to %s (%s at %s)" profile model endpoint)))
+
+    (defun my/minuet-use-codex-proxy ()
+      "Switch Minuet to the Codex proxy profile."
+      (interactive)
+      (my/minuet-set-openai-compatible-profile "codex-proxy"))
+
+    (defun my/minuet-use-local-qwen ()
+      "Switch Minuet to the local Qwen profile."
+      (interactive)
+      (my/minuet-set-openai-compatible-profile "local-qwen"))
+
     (add-hook 'prog-mode-hook #'minuet-auto-suggestion-mode)
     (add-hook 'git-commit-mode-hook #'minuet-auto-suggestion-mode)
+    (add-hook 'markdown-mode-hook #'minuet-auto-suggestion-mode)
+    (add-hook 'org-mode-hook #'minuet-auto-suggestion-mode)
 
     (spacemacs/declare-prefix "ai" "AI tools")
     (spacemacs/set-leader-keys
       "ais" 'minuet-show-suggestion
       "aim" 'minuet-complete-with-minibuffer
       "aiM" 'my/minuet-set-openai-compatible-model
+      "aiR" 'my/minuet-set-openai-compatible-profile
+      "aiC" 'my/minuet-use-codex-proxy
+      "aiQ" 'my/minuet-use-local-qwen
       "aic" 'minuet-configure-provider
       "ait" 'minuet-auto-suggestion-mode)
     :config
