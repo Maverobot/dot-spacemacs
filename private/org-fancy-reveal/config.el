@@ -1,15 +1,31 @@
 ;;; config.el --- org-fancy-reveal layer config -*- lexical-binding: t; -*-
 
 ;;; Commentary:
-;; Load the local org-fancy-reveal helpers and enable the CSS integration.
+;; Register org-fancy-reveal lazily.  Do not require Org/ox here: Spacemacs
+;; must finish selecting its packaged Org before any Org feature is loaded.
 
 ;;; Code:
 
 (let ((layer-dir (file-name-directory (or load-file-name buffer-file-name))))
   (add-to-list 'load-path (expand-file-name "local/org-fancy-reveal" layer-dir)))
 
-(require 'org-fancy-reveal)
-(org-fancy-reveal-enable)
+(autoload 'org-fancy-reveal-export-to-html "org-fancy-reveal"
+  "Export the current Org file to standalone fancy HTML." t)
+(autoload 'org-fancy-reveal-export-to-html-and-browse "org-fancy-reveal"
+  "Export the current Org file to standalone fancy HTML and browse it." t)
+(autoload 'org-fancy-reveal-insert-metric-cards "org-fancy-reveal"
+  "Insert a semantic metric card block." t)
+(autoload 'org-fancy-reveal-insert-cards "org-fancy-reveal"
+  "Insert a semantic cards block." t)
+(autoload 'org-fancy-reveal-insert-columns "org-fancy-reveal"
+  "Insert semantic two-column special blocks." t)
+
+(with-eval-after-load 'ox
+  (require 'org-fancy-reveal))
+
+(with-eval-after-load 'org-re-reveal
+  (require 'org-fancy-reveal)
+  (org-fancy-reveal-enable))
 
 (with-eval-after-load 'org
   (define-key org-mode-map (kbd "C-c r f") #'org-fancy-reveal-export-to-html)

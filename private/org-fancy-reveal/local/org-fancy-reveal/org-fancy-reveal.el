@@ -21,8 +21,9 @@
 
 ;;; Code:
 
-(require 'ox)
 (require 'subr-x)
+
+(declare-function org-export-define-backend "ox")
 
 (defgroup org-fancy-reveal nil
   "Semantic layout helpers for org-re-reveal presentations."
@@ -132,15 +133,24 @@ Arguments are accepted for Org export dispatcher compatibility; see
     (browse-url-of-file target-file)
     target-file))
 
+(defvar org-fancy-reveal--backend-defined nil
+  "Non-nil when the `fancy-reveal' Org export backend has been registered.")
+
 (defun org-fancy-reveal--define-export-backend ()
   "Register an Org export dispatcher entry for standalone fancy decks."
-  (org-export-define-backend 'fancy-reveal nil
-    :menu-entry
-    '(?F "Export to standalone fancy HTML"
-         ((?f "To file" org-fancy-reveal-export-to-html)
-          (?b "To file and browse" org-fancy-reveal-export-to-html-and-browse)))))
+  (unless org-fancy-reveal--backend-defined
+    (org-export-define-backend 'fancy-reveal nil
+      :menu-entry
+      '(?F "Export to standalone fancy HTML"
+           ((?f "To file" org-fancy-reveal-export-to-html)
+            (?b "To file and browse" org-fancy-reveal-export-to-html-and-browse))))
+    (setq org-fancy-reveal--backend-defined t)))
 
-(org-fancy-reveal--define-export-backend)
+(when (featurep 'ox)
+  (org-fancy-reveal--define-export-backend))
+
+(with-eval-after-load 'ox
+  (org-fancy-reveal--define-export-backend))
 
 ;;;###autoload
 (defun org-fancy-reveal-insert-metric-cards ()
