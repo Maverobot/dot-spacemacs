@@ -1,5 +1,35 @@
 # Architecture & Implementation Decisions
 
+## org-fancy-reveal: reusable semantic Reveal layouts
+
+**Date:** 2026-06-04
+**Status:** Prototype implemented as private Spacemacs layer
+
+### Problem
+Org reveal decks are easy to write, but polished layouts often require raw HTML blocks. That makes talks harder to maintain and reuse.
+
+### Decision
+Add a reusable private layer named `org-fancy-reveal` under `~/.spacemacs.d/private/`. The layer does not reference AutoIK or inverse kinematics. It keeps the existing `org-re-reveal` workflow and injects CSS that styles semantic Org special blocks such as `metric_cards`, `cards`, `columns`, and `callout`.
+
+### Rationale
+- Keeps normal Org/reveal headings, fragments, notes, source blocks, and export commands.
+- Avoids raw HTML in presentation source files.
+- Avoids creating a separate GitHub repo before the extension stabilizes.
+- Uses standard Org special blocks and description lists, so the source remains readable even without the extension.
+
+### Implementation
+- Layer: `private/org-fancy-reveal/`
+- Elisp: `private/org-fancy-reveal/local/org-fancy-reveal/org-fancy-reveal.el`
+- CSS: `private/org-fancy-reveal/assets/org-fancy-reveal.css`
+- Standalone semantic exporter: `private/org-fancy-reveal/scripts/build_interactive_deck.py`
+- Standalone template: `private/org-fancy-reveal/templates/interactive_deck.html`
+- Tests: `private/org-fancy-reveal/test/org-fancy-reveal-test.el`
+- Layer enabled in `init.el` via `org-fancy-reveal` in `dotspacemacs-configuration-layers`.
+- Org export dispatcher entry: `C-c C-e F f` / `C-c C-e F b` for standalone fancy HTML.
+
+### Future
+If the layer proves useful across talks, extract it into a separate private GitHub repository or package recipe.
+
 ## org-gcal: Passphrase-free GPG token decryption
 
 **Date:** 2026-02-25

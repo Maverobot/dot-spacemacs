@@ -147,6 +147,7 @@ This function should only modify configuration layer settings."
           org-format-latex-options '(:foreground default :background default :scale 2.0
                                                  :html-foreground "Black" :html-background "Transparent" :html-scale 3.0
                                                  :matchers ("begin" "$1" "$" "$$" "\\(" "\\[")))
+     org-fancy-reveal
 
      ;; Utils
      (plantuml :variables

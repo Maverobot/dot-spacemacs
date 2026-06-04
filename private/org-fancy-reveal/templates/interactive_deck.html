@@ -1,0 +1,829 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{HTML_TITLE}}</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111c33;
+      --panel-2: #17213a;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --line: #334155;
+      --accent: #38bdf8;
+      --accent-2: #a78bfa;
+      --good: #34d399;
+      --warn: #fbbf24;
+      --bad: #fb7185;
+      --card: rgba(255, 255, 255, 0.055);
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+      --radius: 22px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(56, 189, 248, 0.20), transparent 28%),
+        radial-gradient(circle at 82% 12%, rgba(167, 139, 250, 0.18), transparent 24%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    body { overflow: hidden; }
+
+    button, input { font: inherit; }
+
+    a { color: var(--accent); }
+
+    .app {
+      display: grid;
+      grid-template-columns: 290px minmax(0, 1fr);
+      height: 100vh;
+    }
+
+    .sidebar {
+      background: rgba(15, 23, 42, 0.82);
+      border-right: 1px solid rgba(148, 163, 184, 0.18);
+      padding: 22px;
+      overflow: auto;
+      backdrop-filter: blur(18px);
+    }
+
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      color: #04111d;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      box-shadow: 0 10px 30px rgba(56, 189, 248, 0.25);
+    }
+
+    .brand h1 {
+      font-size: 1rem;
+      line-height: 1.15;
+      margin: 0;
+    }
+
+    .brand p {
+      margin: 3px 0 0;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .nav-list {
+      display: grid;
+      gap: 8px;
+      margin: 16px 0 24px;
+    }
+
+    .nav-item {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid transparent;
+      border-radius: 14px;
+      padding: 10px;
+      background: transparent;
+      color: var(--muted);
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.045);
+    }
+
+    .nav-item.active {
+      color: var(--text);
+      background: rgba(56, 189, 248, 0.10);
+      border-color: rgba(56, 189, 248, 0.30);
+    }
+
+    .nav-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: rgba(148, 163, 184, 0.12);
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .nav-title {
+      font-size: 0.88rem;
+      line-height: 1.15;
+    }
+
+    .sidebar-card {
+      padding: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.45;
+    }
+
+    .deck-wrap {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      height: 100vh;
+      min-width: 0;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 24px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+      background: rgba(15, 23, 42, 0.44);
+      backdrop-filter: blur(14px);
+    }
+
+    .progress-shell {
+      height: 8px;
+      width: min(42vw, 560px);
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.16);
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      border-radius: inherit;
+      transition: width 240ms ease;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .btn {
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 999px;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.06);
+      padding: 9px 13px;
+      cursor: pointer;
+      transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      background: rgba(255, 255, 255, 0.10);
+      border-color: rgba(56, 189, 248, 0.45);
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.22), rgba(167, 139, 250, 0.22));
+      border-color: rgba(56, 189, 248, 0.38);
+    }
+
+    .slide-area {
+      position: relative;
+      min-height: 0;
+      overflow: hidden;
+      padding: 28px;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 28px;
+      display: none;
+      overflow: auto;
+      padding: clamp(20px, 3vw, 44px);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(17, 28, 51, 0.94), rgba(17, 28, 51, 0.78));
+      box-shadow: var(--shadow);
+    }
+
+    .slide.active {
+      display: block;
+      animation: fadeSlide 180ms ease-out;
+    }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .slide h2 {
+      margin: 0 0 10px;
+      font-size: clamp(2rem, 5vw, 4.25rem);
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+    }
+
+    .slide h3 {
+      margin: 0 0 12px;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 14px;
+      color: var(--accent);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      font-size: 0.76rem;
+    }
+
+    .lead {
+      max-width: 980px;
+      margin: 0 0 22px;
+      color: #cbd5e1;
+      font-size: clamp(1.05rem, 2.2vw, 1.55rem);
+      line-height: 1.35;
+    }
+
+    .muted { color: var(--muted); }
+    .accent { color: var(--accent); }
+    .good { color: var(--good); }
+    .warn { color: var(--warn); }
+    .bad { color: var(--bad); }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 18px;
+      background: var(--card);
+      padding: 18px;
+      min-width: 0;
+    }
+
+    .card.emphasis {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.13), rgba(167, 139, 250, 0.11));
+      border-color: rgba(56, 189, 248, 0.24);
+    }
+
+    .big-number {
+      display: block;
+      font-size: clamp(2.3rem, 5vw, 5rem);
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -0.08em;
+      color: var(--text);
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin: 16px 0;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 11px;
+      border-radius: 999px;
+      color: #dbeafe;
+      border: 1px solid rgba(56, 189, 248, 0.22);
+      background: rgba(56, 189, 248, 0.09);
+      font-size: 0.88rem;
+    }
+
+    .pipeline {
+      display: grid;
+      gap: 12px;
+      margin: 24px 0;
+    }
+
+    .pipeline-row {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(110px, 1fr));
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .pipe-node {
+      min-height: 90px;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.045);
+      color: var(--text);
+      text-align: left;
+      padding: 13px;
+      cursor: pointer;
+    }
+
+    .pipe-node:hover,
+    .pipe-node.active {
+      border-color: rgba(56, 189, 248, 0.52);
+      background: rgba(56, 189, 248, 0.11);
+    }
+
+    .pipe-node strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.98rem;
+    }
+
+    .pipe-node span {
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.3;
+    }
+
+    .detail-panel {
+      border-left: 4px solid var(--accent);
+      background: rgba(56, 189, 248, 0.08);
+      padding: 16px 18px;
+      border-radius: 14px;
+      color: #dbeafe;
+    }
+
+    .formula {
+      margin: 14px 0;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: rgba(2, 6, 23, 0.48);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      color: #e0f2fe;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .mini-diagram {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin: 18px 0;
+    }
+
+    .block {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      min-width: 74px;
+      min-height: 52px;
+      border-radius: 14px;
+      padding: 10px 12px;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      background: rgba(255, 255, 255, 0.055);
+      font-weight: 800;
+    }
+
+    .block.variable { border-color: rgba(56, 189, 248, 0.42); color: #bae6fd; }
+    .block.constant { border-color: rgba(52, 211, 153, 0.42); color: #bbf7d0; }
+    .arrow { color: var(--muted); font-size: 1.4rem; }
+
+    .ordering-buttons, .choice-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0;
+    }
+
+    .choice {
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 13px;
+      background: rgba(255, 255, 255, 0.045);
+      color: var(--text);
+      padding: 9px 12px;
+      cursor: pointer;
+    }
+
+    .choice.active {
+      border-color: rgba(56, 189, 248, 0.52);
+      background: rgba(56, 189, 248, 0.13);
+    }
+
+    .matrix {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 14px;
+      margin-top: 12px;
+      font-size: 0.92rem;
+    }
+
+    .matrix th, .matrix td {
+      border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .matrix th {
+      color: #bae6fd;
+      background: rgba(56, 189, 248, 0.08);
+      font-weight: 800;
+    }
+
+    .matrix tr:last-child td { border-bottom: 0; }
+
+    .notes {
+      display: none;
+      margin-top: 18px;
+      border: 1px dashed rgba(251, 191, 36, 0.45);
+      border-radius: 16px;
+      padding: 15px 17px;
+      background: rgba(251, 191, 36, 0.08);
+      color: #fde68a;
+    }
+
+    .notes.show { display: block; }
+
+    .two-column-list {
+      columns: 2 280px;
+      column-gap: 28px;
+      padding-left: 18px;
+    }
+
+    li { margin: 0.42rem 0; }
+
+    .demo-box {
+      border: 1px solid rgba(56, 189, 248, 0.24);
+      border-radius: 18px;
+      background: rgba(2, 6, 23, 0.35);
+      padding: 18px;
+    }
+
+    .slider-row {
+      display: grid;
+      grid-template-columns: 110px minmax(0, 1fr) 120px;
+      gap: 12px;
+      align-items: center;
+      margin: 12px 0;
+    }
+
+    input[type="range"] { width: 100%; accent-color: var(--accent); }
+
+    .meter {
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.18);
+      overflow: hidden;
+    }
+
+    .meter > span {
+      display: block;
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--good), var(--warn), var(--bad));
+    }
+
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 24px;
+      border-top: 1px solid rgba(148, 163, 184, 0.14);
+      background: rgba(15, 23, 42, 0.50);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .footer kbd {
+      border: 1px solid rgba(148, 163, 184, 0.26);
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 6px;
+      padding: 2px 6px;
+      color: var(--text);
+    }
+
+    .print-hint { display: none; }
+
+    @media (max-width: 980px) {
+      body { overflow: auto; }
+      .app { display: block; height: auto; }
+      .sidebar { position: static; height: auto; }
+      .deck-wrap { height: auto; }
+      .slide-area { height: auto; overflow: visible; padding: 14px; }
+      .slide { position: static; display: none; inset: auto; margin-bottom: 16px; }
+      .slide.active { display: block; }
+      .grid-2, .grid-3, .pipeline-row { grid-template-columns: 1fr; }
+      .topbar, .footer { position: sticky; z-index: 5; }
+      .topbar { top: 0; }
+      .footer { bottom: 0; }
+    }
+
+    @media print {
+      body { overflow: visible; background: white; color: #111827; }
+      .app { display: block; height: auto; }
+      .sidebar, .topbar, .footer { display: none; }
+      .slide-area { padding: 0; overflow: visible; }
+      .slide, .slide.active {
+        display: block;
+        position: static;
+        inset: auto;
+        page-break-after: always;
+        box-shadow: none;
+        border: 1px solid #ddd;
+        background: white;
+        color: #111827;
+        margin: 0 0 18px;
+      }
+      .muted, .lead { color: #374151; }
+      .card, .formula, .demo-box, .detail-panel { background: #f8fafc; color: #111827; }
+      .print-hint { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" aria-label="Slide navigation">
+      <div class="brand">
+        <div class="logo">FR</div>
+        <div>
+          <h1>{{DECK_TITLE}}</h1>
+          <p>{{DECK_SUBTITLE}}</p>
+        </div>
+      </div>
+      <div id="navList" class="nav-list"></div>
+      <div class="sidebar-card">
+        <strong>How to use this:</strong><br />
+        Read the headline, click the interactive widget, then open speaker notes if you want a script.
+        Use <strong>←/→</strong> or the buttons below.
+      </div>
+    </aside>
+
+    <main class="deck-wrap">
+      <header class="topbar">
+        <div class="progress-shell" aria-label="Progress"><div id="progressBar" class="progress-bar"></div></div>
+        <div class="top-actions">
+          <button id="notesToggle" class="btn" type="button">Show speaker notes</button>
+          <button id="overviewBtn" class="btn" type="button">Pipeline</button>
+          <button id="printBtn" class="btn" type="button">Print/export</button>
+        </div>
+      </header>
+
+      <section class="slide-area" aria-live="polite">
+{{SLIDES}}
+      </section>
+
+      <footer class="footer">
+        <div><button id="prevBtn" class="btn" type="button">← Previous</button> <button id="nextBtn" class="btn primary" type="button">Next →</button></div>
+        <div><span id="slideCounter">1 / {{SLIDE_COUNT}}</span> · keyboard <kbd>←</kbd><kbd>→</kbd> · <span class="muted">Source: {{SOURCE_LABEL}}</span></div>
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const navList = document.getElementById('navList');
+    const progressBar = document.getElementById('progressBar');
+    const slideCounter = document.getElementById('slideCounter');
+    const notesToggle = document.getElementById('notesToggle');
+    let currentSlide = 0;
+    let notesVisible = false;
+
+    function makeNav() {
+      slides.forEach((slide, index) => {
+        const button = document.createElement('button');
+        button.className = 'nav-item';
+        button.type = 'button';
+        button.innerHTML = `<span class="nav-num">${index + 1}</span><span class="nav-title">${slide.dataset.title}</span>`;
+        button.addEventListener('click', () => showSlide(index));
+        navList.appendChild(button);
+      });
+    }
+
+    function showSlide(index) {
+      currentSlide = Math.max(0, Math.min(index, slides.length - 1));
+      slides.forEach((slide, i) => slide.classList.toggle('active', i === currentSlide));
+      Array.from(navList.children).forEach((button, i) => button.classList.toggle('active', i === currentSlide));
+      progressBar.style.width = `${((currentSlide + 1) / slides.length) * 100}%`;
+      slideCounter.textContent = `${currentSlide + 1} / ${slides.length}`;
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => showSlide(currentSlide - 1));
+    document.getElementById('nextBtn').addEventListener('click', () => showSlide(currentSlide + 1));
+    document.getElementById('overviewBtn').addEventListener('click', () => showSlide(2));
+    document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight' || event.key === 'PageDown') showSlide(currentSlide + 1);
+      if (event.key === 'ArrowLeft' || event.key === 'PageUp') showSlide(currentSlide - 1);
+      if (event.key.toLowerCase() === 'n') toggleNotes();
+    });
+
+    function toggleNotes() {
+      notesVisible = !notesVisible;
+      document.querySelectorAll('.notes').forEach(note => note.classList.toggle('show', notesVisible));
+      notesToggle.textContent = notesVisible ? 'Hide speaker notes' : 'Show speaker notes';
+    }
+    notesToggle.addEventListener('click', toggleNotes);
+
+    document.querySelectorAll('.pipe-node').forEach(node => {
+      node.addEventListener('click', () => {
+        document.querySelectorAll('.pipe-node').forEach(n => n.classList.remove('active'));
+        node.classList.add('active');
+        const detail = document.getElementById('pipelineDetail');
+        if (detail) detail.textContent = node.dataset.detail;
+      });
+    });
+
+    const orderings = [
+      { id: 0, lhs: [4, 5, 6], rhs: [3, 2], removed: 1 },
+      { id: 1, lhs: [5, 6, 1], rhs: [4, 3], removed: 2 },
+      { id: 2, lhs: [6, 1, 2], rhs: [5, 4], removed: 3 },
+      { id: 3, lhs: [1, 2, 3], rhs: [6, 5], removed: 4 },
+      { id: 4, lhs: [2, 3, 4], rhs: [1, 6], removed: 5 },
+      { id: 5, lhs: [3, 4, 5], rhs: [2, 1], removed: 6 },
+    ];
+
+    function renderOrderingButtons() {
+      const container = document.getElementById('orderingButtons');
+      if (!container) return;
+      orderings.forEach(ordering => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'choice';
+        button.textContent = `Ordering ${ordering.id}`;
+        button.addEventListener('click', () => setOrdering(ordering.id));
+        container.appendChild(button);
+      });
+      setOrdering(0);
+    }
+
+    function setOrdering(id) {
+      const ordering = orderings.find(item => item.id === id);
+      const title = document.getElementById('orderingTitle');
+      const lhs = document.getElementById('lhsBlock');
+      const rhs = document.getElementById('rhsBlock');
+      const removed = document.getElementById('removedBlock');
+      const buttons = document.getElementById('orderingButtons');
+      if (!ordering || !title || !lhs || !rhs || !removed || !buttons) return;
+      title.textContent = `Ordering ${ordering.id}`;
+      lhs.textContent = `LHS: ${ordering.lhs.join(', ')}`;
+      rhs.textContent = `RHS: ${ordering.rhs.join(', ')}`;
+      removed.textContent = `${ordering.removed}`;
+      Array.from(buttons.children).forEach((button, index) => {
+        button.classList.toggle('active', index === id);
+      });
+    }
+
+    const sampleSets = [
+      { label: 'Samples -1, 0, 1', xs: [-1, 0, 1] },
+      { label: 'Samples 0, 1, 2', xs: [0, 1, 2] },
+      { label: 'Samples -2, 1, 3', xs: [-2, 1, 3] },
+    ];
+    const hidden = { a: 0.75, b: -1.20, c: 2.00 };
+
+    function yValue(x) {
+      return hidden.a * x * x + hidden.b * x + hidden.c;
+    }
+
+    function solveQuadratic(samples) {
+      const [[x1, y1], [x2, y2], [x3, y3]] = samples;
+      const denom = (x1 - x2) * (x1 - x3) * (x2 - x3);
+      const a = (x3 * (y2 - y1) + x2 * (y1 - y3) + x1 * (y3 - y2)) / denom;
+      const b = (x3 * x3 * (y1 - y2) + x2 * x2 * (y3 - y1) + x1 * x1 * (y2 - y3)) / denom;
+      const c = (x2 * x3 * (x2 - x3) * y1 + x3 * x1 * (x3 - x1) * y2 + x1 * x2 * (x1 - x2) * y3) / denom;
+      return { a, b, c };
+    }
+
+    function renderSamples(index) {
+      const table = document.getElementById('sampleTable');
+      const output = document.getElementById('coefOut');
+      const buttons = document.getElementById('sampleButtons');
+      if (!table || !output || !buttons) return;
+      const set = sampleSets[index];
+      const samples = set.xs.map(x => [x, yValue(x)]);
+      const coef = solveQuadratic(samples);
+      table.innerHTML = '';
+      samples.forEach(([x, y]) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${x.toFixed(1)}</td><td>${y.toFixed(3)}</td>`;
+        table.appendChild(row);
+      });
+      output.textContent = `Recovered: a=${coef.a.toFixed(2)}, b=${coef.b.toFixed(2)}, c=${coef.c.toFixed(2)}`;
+      Array.from(buttons.children).forEach((button, i) => button.classList.toggle('active', i === index));
+    }
+
+    function renderSampleButtons() {
+      const container = document.getElementById('sampleButtons');
+      if (!container) return;
+      sampleSets.forEach((set, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'choice';
+        button.textContent = set.label;
+        button.addEventListener('click', () => renderSamples(index));
+        container.appendChild(button);
+      });
+      renderSamples(0);
+    }
+
+    const thetaSlider = document.getElementById('thetaSlider');
+    function updateTheta() {
+      const thetaLabel = document.getElementById('thetaLabel');
+      const sinOut = document.getElementById('sinOut');
+      const cosOut = document.getElementById('cosOut');
+      const tanOut = document.getElementById('tanOut');
+      const piMeter = document.getElementById('piMeter');
+      const piHint = document.getElementById('piHint');
+      if (!thetaSlider || !thetaLabel || !sinOut || !cosOut || !tanOut || !piMeter || !piHint) return;
+      const deg = Number(thetaSlider.value);
+      const rad = deg * Math.PI / 180;
+      const x = Math.tan(rad / 2);
+      thetaLabel.textContent = `${deg}°`;
+      sinOut.textContent = Math.sin(rad).toFixed(5);
+      cosOut.textContent = Math.cos(rad).toFixed(5);
+      tanOut.textContent = Math.abs(x) > 1000 ? x.toExponential(3) : x.toFixed(5);
+      const nearness = Math.min(1, Math.abs(deg) / 179);
+      piMeter.style.width = `${nearness * 100}%`;
+      piHint.textContent = Math.abs(deg) > 155
+        ? 'Near ±π: half-angle values are large, so generalized eigenvalues and atan2 extraction matter.'
+        : 'Away from ±π: half-angle values are modest and easier numerically.';
+    }
+    if (thetaSlider) thetaSlider.addEventListener('input', updateTheta);
+
+    const filterStates = [
+      [
+        ['24', 'Eigenpairs', 'The 24×24 generalized eigenproblem can return up to 24 candidate eigenpairs.'],
+        ['≤16', 'Physical branches', 'Only real, physically meaningful candidates can survive.'],
+        ['all', 'Still candidates', 'They must still pass extraction, back-substitution, and FK checks.'],
+      ],
+      [
+        ['real', 'Filter complex', 'Discard eigenvalues with significant imaginary part.'],
+        ['FK', 'Forward check', 'Run FK and compare against the target pose.'],
+        ['dedupe', 'Merge repeats', 'Remove numerically duplicate joint vectors.'],
+      ],
+      [
+        ['pre', 'Relaxed pre-gate', 'Let near-π candidates through if they are close enough.'],
+        ['3×', 'Newton iterations', 'Polish the candidate with the robot Jacobian.'],
+        ['1e-6', 'Final FK gate', 'Accept only candidates that pass the strict final threshold.'],
+      ],
+    ];
+
+    function renderFilter(index) {
+      const panel = document.getElementById('filterPanel');
+      if (!panel) return;
+      panel.innerHTML = '';
+      filterStates[index].forEach(([big, title, text]) => {
+        const card = document.createElement('div');
+        card.className = 'card emphasis';
+        card.innerHTML = `<span class="big-number">${big}</span><p><strong>${title}.</strong> ${text}</p>`;
+        panel.appendChild(card);
+      });
+      document.querySelectorAll('[data-filter-step]').forEach(button => {
+        button.classList.toggle('active', Number(button.dataset.filterStep) === index);
+      });
+    }
+
+    document.querySelectorAll('[data-filter-step]').forEach(button => {
+      button.addEventListener('click', () => renderFilter(Number(button.dataset.filterStep)));
+    });
+
+    makeNav();
+    renderOrderingButtons();
+    renderSampleButtons();
+    updateTheta();
+    renderFilter(0);
+    showSlide(0);
+  </script>
+</body>
+</html>

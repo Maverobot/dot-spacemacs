@@ -1,0 +1,128 @@
+/* org-fancy-reveal: semantic layout helpers for org-re-reveal. */
+
+.reveal {
+  --ofr-accent: #38bdf8;
+  --ofr-accent-2: #a78bfa;
+  --ofr-card-bg: rgba(255, 255, 255, 0.07);
+  --ofr-card-border: rgba(148, 163, 184, 0.24);
+  --ofr-muted: #94a3b8;
+}
+
+.reveal .slides section {
+  text-align: left;
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3 {
+  letter-spacing: -0.04em;
+}
+
+.reveal blockquote {
+  width: auto;
+  border-left: 0.22em solid var(--ofr-accent);
+  border-radius: 0.45em;
+  padding: 0.7em 0.9em;
+  background: rgba(56, 189, 248, 0.10);
+  box-shadow: none;
+}
+
+.reveal .metric_cards dl,
+.reveal .metric-cards dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10em, 1fr));
+  gap: 0.55em;
+  margin: 0.8em 0;
+}
+
+.reveal .metric_cards dt,
+.reveal .metric-cards dt {
+  margin: 0;
+  padding: 0.38em 0.42em 0;
+  border: 1px solid var(--ofr-card-border);
+  border-bottom: 0;
+  border-radius: 0.55em 0.55em 0 0;
+  color: white;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.18), rgba(167, 139, 250, 0.16));
+  font-size: 2.2em;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.07em;
+}
+
+.reveal .metric_cards dd,
+.reveal .metric-cards dd {
+  margin: 0;
+  min-height: 4.2em;
+  padding: 0.2em 0.8em 0.75em;
+  border: 1px solid var(--ofr-card-border);
+  border-top: 0;
+  border-radius: 0 0 0.55em 0.55em;
+  background: var(--ofr-card-bg);
+  font-size: 0.72em;
+}
+
+.reveal .cards dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12em, 1fr));
+  gap: 0.65em;
+  margin: 0.8em 0;
+}
+
+.reveal .cards dt {
+  margin: 0;
+  padding: 0.65em 0.75em 0.25em;
+  border: 1px solid var(--ofr-card-border);
+  border-bottom: 0;
+  border-radius: 0.55em 0.55em 0 0;
+  color: #bae6fd;
+  background: rgba(255, 255, 255, 0.065);
+  font-size: 0.95em;
+  font-weight: 800;
+}
+
+.reveal .cards dd {
+  margin: 0;
+  min-height: 5.2em;
+  padding: 0.2em 0.85em 0.75em;
+  border: 1px solid var(--ofr-card-border);
+  border-top: 0;
+  border-radius: 0 0 0.55em 0.55em;
+  background: var(--ofr-card-bg);
+  font-size: 0.68em;
+}
+
+.reveal .cards dd ul,
+.reveal .metric_cards dd ul,
+.reveal .metric-cards dd ul {
+  margin: 0.2em 0 0 1.1em;
+}
+
+.reveal .columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12em, 1fr));
+  gap: 0.75em;
+  align-items: start;
+}
+
+.reveal .column,
+.reveal .callout,
+.reveal .pipeline {
+  padding: 0.75em 0.9em;
+  border: 1px solid var(--ofr-card-border);
+  border-radius: 0.55em;
+  background: var(--ofr-card-bg);
+}
+
+.reveal .callout {
+  border-left: 0.22em solid var(--ofr-accent-2);
+}
+
+.reveal pre {
+  border-radius: 0.5em;
+  box-shadow: none;
+}
+
+.reveal code {
+  border-radius: 0.22em;
+}

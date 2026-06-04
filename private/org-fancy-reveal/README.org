@@ -1,0 +1,70 @@
+#+TITLE: org-fancy-reveal
+
+Reusable semantic layout helpers for =org-re-reveal= presentations.
+
+This layer keeps Org files clean: use normal Org special blocks and description lists,
+then let CSS make them look like polished cards/columns.
+
+* Blocks
+
+** Metric cards
+
+#+begin_src org
+#+begin_metric_cards
+- 6R :: *Six revolute joints.* Works for any six-axis arm.
+- ≤16 :: *All branches.* Classical degree bound.
+#+end_metric_cards
+#+end_src
+
+** Cards
+
+#+begin_src org
+#+begin_cards
+- Numerical solver ::
+  - Starts from an initial guess.
+  - Usually returns one branch.
+- Analytical solver ::
+  - Enumerates candidates.
+  - Verifies with FK.
+#+end_cards
+#+end_src
+
+** Columns
+
+#+begin_src org
+#+begin_columns
+#+begin_column
+Left content.
+#+end_column
+#+begin_column
+Right content.
+#+end_column
+#+end_columns
+#+end_src
+
+** Callout
+
+#+begin_src org
+#+begin_callout
+Important takeaway here.
+#+end_callout
+#+end_src
+
+* Keybindings
+
+In =org-mode=:
+
+- =C-c r f=: export current Org file to standalone fancy HTML
+- =C-c r b=: export current Org file to standalone fancy HTML and browse
+- =C-c r m=: insert metric cards
+- =C-c r c=: insert cards
+- =C-c r 2=: insert two columns
+
+The Org export dispatcher also gets a =F= entry:
+
+- =C-c C-e F f=: export to standalone fancy HTML
+- =C-c C-e F b=: export to standalone fancy HTML and browse
+
+Do not use =C-c C-e v b= when you want the standalone fancy deck: =v= is the
+existing org-re-reveal backend and will overwrite the same =.html= file with a
+normal reveal.js page.
