@@ -185,6 +185,72 @@ Collects garbage when Emacs is idle, keeping GC threshold high during active use
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (setq use-dialog-box nil)
 #+END_SRC
+*** Prune deleted LSP workspace folders
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (require 'cl-lib)
+
+  (defun my/lsp-existing-local-or-remote-directory-p (directory)
+    "Return non-nil when DIRECTORY should remain in the LSP workspace cache."
+    (and (stringp directory)
+         (or (file-remote-p directory)
+             (file-directory-p directory))))
+
+  ;; Safety: this only mutates `lsp-mode' session metadata and rewrites the
+  ;; `.lsp-session-v1' cache file. It never deletes workspace directories/files.
+  (defun my/lsp-prune-missing-workspace-folders (&rest _)
+    "Remove missing local directories from `lsp-mode' workspace session cache."
+    (interactive)
+    (when (and (fboundp 'lsp-session)
+               (fboundp 'lsp--persist-session))
+      (let* ((session (lsp-session))
+             (changed nil))
+        (cl-labels
+            ((keep-directory-p
+              (directory)
+              (if (my/lsp-existing-local-or-remote-directory-p directory)
+                  t
+                (setq changed t)
+                (message "Pruned missing LSP workspace folder: %s" directory)
+                nil))
+             (prune-folders
+              (folders)
+              (let (kept)
+                (dolist (directory folders (nreverse kept))
+                  (cond
+                   ((not (keep-directory-p directory)))
+                   ((member directory kept)
+                    (setq changed t))
+                   (t
+                    (push directory kept)))))))
+          (setf (lsp-session-folders session)
+                (prune-folders (lsp-session-folders session)))
+          (let (empty-server-ids)
+            (maphash
+             (lambda (server-id folders)
+               (let ((pruned-folders (prune-folders folders)))
+                 (if pruned-folders
+                     (puthash server-id pruned-folders
+                              (lsp-session-server-id->folders session))
+                   (push server-id empty-server-ids))))
+             (lsp-session-server-id->folders session))
+            (dolist (server-id empty-server-ids)
+              (remhash server-id (lsp-session-server-id->folders session))))
+          (let (dead-folder-keys)
+            (maphash
+             (lambda (directory _workspaces)
+               (unless (keep-directory-p directory)
+                 (push directory dead-folder-keys)))
+             (lsp-session-folder->servers session))
+            (dolist (directory dead-folder-keys)
+              (remhash directory (lsp-session-folder->servers session))))
+          (when changed
+            (lsp--persist-session session))))))
+
+  (with-eval-after-load 'lsp-mode
+    (unless (advice-member-p #'my/lsp-prune-missing-workspace-folders 'lsp)
+      (advice-add 'lsp :before #'my/lsp-prune-missing-workspace-folders))
+    (my/lsp-prune-missing-workspace-folders))
+#+END_SRC
 *** ccls
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (with-eval-after-load 'ccls
