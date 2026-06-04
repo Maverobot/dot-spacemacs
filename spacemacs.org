@@ -114,9 +114,37 @@ Collects garbage when Emacs is idle, keeping GC threshold high during active use
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (setq-default fill-column 100)
 #+END_SRC
-*** isort, compatible with black
+*** Sort Python imports with Ruff
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (setq py-isort-options '("--profile" "black"))
+  (defvar my/python-ruff-sort-imports-on-save t
+    "If non-nil, sort Python imports on save via Ruff's isort rules.")
+  (put 'my/python-ruff-sort-imports-on-save 'safe-local-variable #'booleanp)
+
+  (defun my/python-ruff-sort-imports ()
+    "Sort imports in the current Python buffer using Ruff's `I' rules."
+    (interactive)
+    (when (and my/python-ruff-sort-imports-on-save
+               (derived-mode-p 'python-mode 'python-ts-mode))
+      (unless (executable-find "ruff")
+        (user-error "Cannot sort imports: ruff executable not found"))
+      (let ((stdin-filename (or buffer-file-name
+                                (expand-file-name "stdin.py" default-directory)))
+            (output-buffer (generate-new-buffer " *ruff-import-sort*")))
+        (unwind-protect
+            (let ((exit-code
+                   (call-process-region
+                    (point-min) (point-max)
+                    "ruff" nil output-buffer nil
+                    "check" "--fix-only" "--select" "I"
+                    "--stdin-filename" stdin-filename "--silent" "-")))
+              (unless (zerop exit-code)
+                (user-error "Ruff import sorting failed with exit code %s" exit-code))
+              (unless (string= (buffer-string)
+                               (with-current-buffer output-buffer (buffer-string)))
+                (replace-buffer-contents output-buffer)))
+          (kill-buffer output-buffer)))))
+
+  (add-hook 'before-save-hook #'my/python-ruff-sort-imports)
 #+END_SRC
 *** Add new line when a file is about to be saved
 #+BEGIN_SRC emacs-lisp :tangle user-config.el

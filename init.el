@@ -53,8 +53,8 @@ This function should only modify configuration layer settings."
      (python :variables
              python-backend 'lsp
              python-lsp-server 'pylsp
-             python-formatter 'black
-             python-sort-imports-on-save t
+             python-formatter 'ruff
+             python-sort-imports-on-save nil
              python-format-on-save t)
      (c-c++ :variables
             c-c++-backend 'lsp-ccls
@@ -103,7 +103,7 @@ This function should only modify configuration layer settings."
           lsp-file-watch-threshold nil
           lsp-lens-enable nil
           lsp-prefer-flymake nil
-          lsp-pylsp-plugins-isort-enabled t
+          lsp-pylsp-plugins-isort-enabled nil
           lsp-ui-doc-border (face-foreground 'default)
           lsp-ui-doc-delay 0
           lsp-ui-doc-enable nil
