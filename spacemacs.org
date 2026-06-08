@@ -93,6 +93,37 @@ Stable.
           ("nongnu"       . 2)
           ("gnu"          . 1)))
 #+END_SRC
+*** Prevent lsp-mode org-element detection from running Org hooks
+~lsp-mode~ 10.0.0 probes the ~org-element~ API by opening a temporary
+~org-mode~ buffer during package load. That probe does not need user Org hooks;
+if one of those hooks errors, Emacs 30 can corrupt ~seq-empty-p~'s generic
+dispatch and later break unrelated commands such as ~SPC s p~ / ~consult-ripgrep~.
+
+Github issue: https://github.com/emacs-lsp/lsp-mode/issues/4898
+
+#+BEGIN_SRC emacs-lisp :tangle user-init.el
+  (defun my/lsp-org-element-detection-call-stack-p ()
+    "Return non-nil when `org-mode' is called by lsp-mode's org-element probe."
+    (let ((index 0)
+          frame
+          found)
+      (while (and (not found)
+                  (setq frame (backtrace-frame index)))
+        (when (eq (nth 1 frame) 'lsp--detect-org-element-api)
+          (setq found t))
+        (setq index (1+ index)))
+      found))
+
+  (defun my/org-mode-without-hooks-during-lsp-detection (orig-fn &rest args)
+    "Skip user Org hooks only while lsp-mode probes the org-element API."
+    (if (my/lsp-org-element-detection-call-stack-p)
+        (delay-mode-hooks (apply orig-fn args))
+      (apply orig-fn args)))
+
+  (with-eval-after-load 'org
+    (unless (advice-member-p #'my/org-mode-without-hooks-during-lsp-detection 'org-mode)
+      (advice-add 'org-mode :around #'my/org-mode-without-hooks-during-lsp-detection)))
+#+END_SRC
 *** Workaround for unsigned packages
 #+BEGIN_SRC emacs-lisp :tangle user-init.el
   (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
