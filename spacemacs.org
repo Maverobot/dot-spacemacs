@@ -75,6 +75,24 @@ Set shell to be ~bash~ explicitly because my default shell ~fish~ does not work 
     (message (concat default-groovy-lsp-jar-path " does not exist")))
 #+END_SRC
 ** Workarounds
+*** Prefer MELPA Stable for shared packages
+MELPA occasionally updates ~archive-contents~ before all referenced rolling
+build tarballs are available.  Giving MELPA Stable a higher priority lets
+~package.el~ use stable releases for packages that exist in both archives while
+still falling back to rolling MELPA for packages that are not released on MELPA
+Stable.
+#+BEGIN_SRC emacs-lisp :tangle user-init.el
+  (setq configuration-layer-elpa-archives
+        '(("melpa-stable" . "stable.melpa.org/packages/")
+          ("melpa"        . "melpa.org/packages/")
+          ("gnu"          . "elpa.gnu.org/packages/")
+          ("nongnu"       . "elpa.nongnu.org/nongnu/")))
+  (setq package-archive-priorities
+        '(("melpa-stable" . 20)
+          ("melpa"        . 4)
+          ("nongnu"       . 2)
+          ("gnu"          . 1)))
+#+END_SRC
 *** Workaround for unsigned packages
 #+BEGIN_SRC emacs-lisp :tangle user-init.el
   (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
