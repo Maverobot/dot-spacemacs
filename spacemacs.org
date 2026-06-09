@@ -93,36 +93,41 @@ Stable.
           ("nongnu"       . 2)
           ("gnu"          . 1)))
 #+END_SRC
-*** Prevent lsp-mode org-element detection from running Org hooks
+*** Prevent lsp-mode org-element detection from calling Org mode
 ~lsp-mode~ 10.0.0 probes the ~org-element~ API by opening a temporary
-~org-mode~ buffer during package load. That probe does not need user Org hooks;
-if one of those hooks errors, Emacs 30 can corrupt ~seq-empty-p~'s generic
-dispatch and later break unrelated commands such as ~SPC s p~ / ~consult-ripgrep~.
+~org-mode~ buffer during package load. If that ~org-mode~ setup errors before
+~lsp-mode~ finishes loading, Emacs 30 can corrupt cl-generic dispatch: later
+~seq-empty-p~ calls can lose their list method and reloading ~lsp-mode~ can fail
+with ~lsp-execute-command is already defined as something else than a generic
+function~.
+
+This config uses Org 9.7+ (currently 9.8.x), so answer the API-version question
+directly and avoid the temporary ~org-mode~ buffer entirely. The advice is
+installed in ~user-init~ before ~lsp-mode~ loads; advising after ~lsp-mode~ is too
+late when ~org-element~ is already loaded.
 
 Github issue: https://github.com/emacs-lsp/lsp-mode/issues/4898
 
 #+BEGIN_SRC emacs-lisp :tangle user-init.el
-  (defun my/lsp-org-element-detection-call-stack-p ()
-    "Return non-nil when `org-mode' is called by lsp-mode's org-element probe."
-    (let ((index 0)
-          frame
-          found)
-      (while (and (not found)
-                  (setq frame (backtrace-frame index)))
-        (when (eq (nth 1 frame) 'lsp--detect-org-element-api)
-          (setq found t))
-        (setq index (1+ index)))
-      found))
+  (defun my/lsp-org-element-new-api-p ()
+    "Return non-nil when Org uses the 9.7+ property-based element API."
+    (let ((version (and (fboundp 'org-version)
+                        (ignore-errors (org-version)))))
+      (if version
+          (version<= "9.7" version)
+        ;; This Spacemacs config installs a modern Org.  Defaulting to the new
+        ;; API keeps lsp-mode from opening an org-mode buffer during startup.
+        t)))
 
-  (defun my/org-mode-without-hooks-during-lsp-detection (orig-fn &rest args)
-    "Skip user Org hooks only while lsp-mode probes the org-element API."
-    (if (my/lsp-org-element-detection-call-stack-p)
-        (delay-mode-hooks (apply orig-fn args))
-      (apply orig-fn args)))
+  (defun my/lsp-detect-org-element-api-without-org-mode (_orig-fn &rest _args)
+    "Detect lsp-mode's Org element API support without calling `org-mode'."
+    (my/lsp-org-element-new-api-p))
 
-  (with-eval-after-load 'org
-    (unless (advice-member-p #'my/org-mode-without-hooks-during-lsp-detection 'org-mode)
-      (advice-add 'org-mode :around #'my/org-mode-without-hooks-during-lsp-detection)))
+  (advice-add 'lsp--detect-org-element-api
+              :around #'my/lsp-detect-org-element-api-without-org-mode)
+
+  (with-eval-after-load 'lsp-mode
+    (setq lsp--org-element-use-new-api (my/lsp-org-element-new-api-p)))
 #+END_SRC
 *** Workaround for unsigned packages
 #+BEGIN_SRC emacs-lisp :tangle user-init.el
@@ -244,6 +249,18 @@ Collects garbage when Emacs is idle, keeping GC threshold high during active use
          (or (file-remote-p directory)
              (file-directory-p directory))))
 
+  (defvar my/lsp--session-for-folder-update nil)
+  (defvar my/lsp--folders-for-session-update nil)
+
+  (defun my/lsp-set-session-folders (session folders)
+    "Set SESSION's folder list after lsp-mode has defined its struct setter.
+Keep the `setf' form quoted so byte-compiling this config before lsp-mode loads
+cannot compile against an unknown `lsp-session-folders' setter."
+    (let ((my/lsp--session-for-folder-update session)
+          (my/lsp--folders-for-session-update folders))
+      (eval '(setf (lsp-session-folders my/lsp--session-for-folder-update)
+                   my/lsp--folders-for-session-update))))
+
   ;; Safety: this only mutates `lsp-mode' session metadata and rewrites the
   ;; `.lsp-session-v1' cache file. It never deletes workspace directories/files.
   (defun my/lsp-prune-missing-workspace-folders (&rest _)
@@ -271,8 +288,8 @@ Collects garbage when Emacs is idle, keeping GC threshold high during active use
                     (setq changed t))
                    (t
                     (push directory kept)))))))
-          (setf (lsp-session-folders session)
-                (prune-folders (lsp-session-folders session)))
+          (my/lsp-set-session-folders
+           session (prune-folders (lsp-session-folders session)))
           (let (empty-server-ids)
             (maphash
              (lambda (server-id folders)
@@ -295,10 +312,19 @@ Collects garbage when Emacs is idle, keeping GC threshold high during active use
           (when changed
             (lsp--persist-session session))))))
 
+  (defun my/lsp-prune-missing-workspace-folders-safely (&rest args)
+    "Prune stale LSP folders without aborting lsp-mode loading."
+    (condition-case err
+        (apply #'my/lsp-prune-missing-workspace-folders args)
+      (error
+       (message "Skipping LSP workspace folder pruning after error: %S" err))))
+
   (with-eval-after-load 'lsp-mode
-    (unless (advice-member-p #'my/lsp-prune-missing-workspace-folders 'lsp)
-      (advice-add 'lsp :before #'my/lsp-prune-missing-workspace-folders))
-    (my/lsp-prune-missing-workspace-folders))
+    (when (advice-member-p #'my/lsp-prune-missing-workspace-folders 'lsp)
+      (advice-remove 'lsp #'my/lsp-prune-missing-workspace-folders))
+    (unless (advice-member-p #'my/lsp-prune-missing-workspace-folders-safely 'lsp)
+      (advice-add 'lsp :before #'my/lsp-prune-missing-workspace-folders-safely))
+    (my/lsp-prune-missing-workspace-folders-safely))
 #+END_SRC
 *** ccls
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
