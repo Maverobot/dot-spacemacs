@@ -1515,6 +1515,176 @@ pre.src > code {
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (spacemacs/set-leader-keys-for-major-mode 'org-mode "Th" 'org-hugo-auto-export-mode)
 #+END_SRC
+*** org-pandoc PDF export
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (defconst my/org-pandoc-eisvogel-unicode-header
+    "\\usepackage{newunicodechar}
+\\newunicodechar{→}{$\\to$}
+\\newunicodechar{×}{$\\times$}
+\\newunicodechar{≈}{$\\approx$}
+\\newunicodechar{ε}{$\\epsilon$}
+\\lstset{literate={→}{{$\\to$}}1 {×}{{$\\times$}}1 {≈}{{$\\approx$}}1 {ε}{{$\\epsilon$}}1}")
+
+  (defun my/org-pandoc-eisvogel--trim-whitespace (value)
+    "Trim whitespace from VALUE."
+    (replace-regexp-in-string "^[[:space:]]+\\|[[:space:]]+$" "" value))
+
+  (defun my/org-pandoc-eisvogel--font-available-p (font)
+    "Return non-nil when FONT is available via `fc-match`."
+    (when (executable-find "fc-match")
+      (with-temp-buffer
+        (when (zerop (call-process "fc-match" nil (current-buffer) nil
+                                   "-f" "%{family}\n" font))
+          (let* ((families (split-string
+                            (replace-regexp-in-string "[\n\r]+" "," (buffer-string))
+                            "," t)))
+            (member font (mapcar #'my/org-pandoc-eisvogel--trim-whitespace families)))))))
+
+  (defun my/org-pandoc-eisvogel--choose-font (candidates)
+    "Return the first available font in CANDIDATES, or the first entry."
+    (let ((selected nil)
+          (remaining candidates))
+      (while (and remaining (not selected))
+        (when (my/org-pandoc-eisvogel--font-available-p (car remaining))
+          (setq selected (car remaining)))
+        (setq remaining (cdr remaining)))
+      (or selected (car candidates))))
+
+  (defun my/org-pandoc-eisvogel--ensure-pdf-extension (path)
+    "Ensure PATH ends with `.pdf`."
+    (if (string-match-p "\\.pdf\\'" path)
+        path
+      (concat path ".pdf")))
+
+  (defun my/org-pandoc-eisvogel--default-output-path ()
+    "Return `<basename>.pdf` for the current Org file."
+    (unless (buffer-file-name)
+      (user-error "Current Org buffer is not visiting a file"))
+    (concat (file-name-sans-extension (buffer-file-name)) ".pdf"))
+
+  (defun my/org-pandoc-eisvogel-export (&optional output-file)
+    "Export current Org file to a Pandoc + Eisvogel PDF.
+
+If OUTPUT-FILE is nil, export to `<basename>.pdf` in the current file's
+directory."
+    (interactive)
+    (unless (derived-mode-p 'org-mode)
+      (user-error "Not in an Org buffer"))
+    (unless (executable-find "pandoc")
+      (user-error "Pandoc not found in PATH"))
+    (let ((input-file (or (buffer-file-name)
+                          (user-error "Current Org buffer is not visiting a file")))
+          (output-file (my/org-pandoc-eisvogel--ensure-pdf-extension
+                        (or output-file
+                            (my/org-pandoc-eisvogel--default-output-path))))
+          (main-font (or (getenv "PDF_MAINFONT")
+                         (my/org-pandoc-eisvogel--choose-font
+                          '("TeX Gyre Pagella" "Noto Serif" "DejaVu Serif"))))
+          (sans-font (or (getenv "PDF_SANSFONT")
+                         (my/org-pandoc-eisvogel--choose-font
+                          '("Noto Sans" "DejaVu Sans"))))
+          (mono-font (or (getenv "PDF_MONOFONT")
+                         (my/org-pandoc-eisvogel--choose-font
+                          '("Fira Code" "Noto Sans Mono" "DejaVu Sans Mono"))))
+          (math-font (or (getenv "PDF_MATHFONT")
+                         (my/org-pandoc-eisvogel--choose-font
+                          '("TeX Gyre Pagella Math" "Latin Modern Math"))))
+          (mono-font-options (or (getenv "PDF_MONOFONT_OPTIONS") "Scale=0.88"))
+          (header-file (make-temp-file "org-pandoc-eisvogel" nil ".tex"))
+          (output-buffer (get-buffer-create " *org-pandoc-eisvogel*")))
+      (with-current-buffer output-buffer (erase-buffer))
+      (with-temp-file header-file
+        (insert my/org-pandoc-eisvogel-unicode-header))
+      (unwind-protect
+          (let ((exit-code
+                 (apply #'call-process
+                        "pandoc"
+                        input-file
+                        output-buffer
+                        nil
+                        (list "--from" "org"
+                              "--output" output-file
+                              "--pdf-engine=xelatex"
+                              "--template" "eisvogel"
+                              "--listings"
+                              "--toc"
+                              "--number-sections"
+                              "--include-in-header" header-file
+                              "--variable" "geometry:margin=0.8in"
+                              "--variable" (format "mainfont=%s" main-font)
+                              "--variable" (format "sansfont=%s" sans-font)
+                              "--variable" (format "monofont=%s" mono-font)
+                              "--variable" (format "mathfont=%s" math-font)
+                              "--variable" "mainfontoptions=Ligatures=TeX"
+                              "--variable" (format "monofontoptions=%s" mono-font-options)
+                              "--variable" "code-block-font-size=\\small"))))
+            (if (zerop exit-code)
+                (progn
+                  (message "Exported Org to PDF: %s" output-file)
+                  output-file)
+              (with-current-buffer output-buffer
+                (user-error "Pandoc export failed (exit %s):
+%s"
+                            exit-code
+                            (buffer-string)))))
+        (delete-file header-file))
+      output-file))
+
+  (defun my/org-pandoc-eisvogel-export-and-open ()
+    "Export current Org buffer to `<basename>.pdf` and open it."
+    (interactive)
+    (let ((output (my/org-pandoc-eisvogel-export)))
+      (browse-url-of-file output)
+      output))
+
+  (defun my/org-pandoc-eisvogel-export-to-file (output-file)
+    "Export current Org buffer to a chosen PDF output path."
+    (interactive
+     (list
+      (let ((default (my/org-pandoc-eisvogel--default-output-path)))
+        (read-file-name "Export PDF to: "
+                       (file-name-directory default)
+                       default
+                       nil
+                       (file-name-nondirectory default)))))
+    (my/org-pandoc-eisvogel-export
+     (my/org-pandoc-eisvogel--ensure-pdf-extension output-file)))
+
+  (defun my/org-pandoc-eisvogel--reject-dispatch-options
+      (async subtreep visible-only body-only)
+    "Reject Org export dispatcher options not supported by this Pandoc path."
+    (when (or async subtreep visible-only body-only)
+      (user-error "Pandoc/Eisvogel export only supports synchronous whole-file PDF export")))
+
+  (defun my/org-pandoc-eisvogel-export-dispatch
+      (async subtreep visible-only body-only)
+    "Org export-dispatch entry for `my/org-pandoc-eisvogel-export`."
+    (my/org-pandoc-eisvogel--reject-dispatch-options
+     async subtreep visible-only body-only)
+    (my/org-pandoc-eisvogel-export))
+
+  (defun my/org-pandoc-eisvogel-export-and-open-dispatch
+      (async subtreep visible-only body-only)
+    "Org export-dispatch entry for `my/org-pandoc-eisvogel-export-and-open`."
+    (my/org-pandoc-eisvogel--reject-dispatch-options
+     async subtreep visible-only body-only)
+    (my/org-pandoc-eisvogel-export-and-open))
+
+  (defun my/org-pandoc-eisvogel-export-to-file-dispatch
+      (async subtreep visible-only body-only)
+    "Org export-dispatch entry for `my/org-pandoc-eisvogel-export-to-file`."
+    (my/org-pandoc-eisvogel--reject-dispatch-options
+     async subtreep visible-only body-only)
+    (call-interactively #'my/org-pandoc-eisvogel-export-to-file))
+
+  (with-eval-after-load 'ox
+    (org-export-define-backend 'pandoc-eisvogel nil
+      :menu-entry
+      '(?E "Export to Pandoc/Eisvogel PDF"
+           ((?p "As PDF file" my/org-pandoc-eisvogel-export-dispatch)
+            (?o "As PDF file and open" my/org-pandoc-eisvogel-export-and-open-dispatch)
+            (?f "To chosen PDF file" my/org-pandoc-eisvogel-export-to-file-dispatch)))))
+#+END_SRC
 *** org-roam
 **** Automatically sync the database
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
