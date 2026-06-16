@@ -1728,12 +1728,11 @@ Setup instructions (one-time, manual):
     (let ((gpg-key-id (auth-source-pick-first-password :host "org-gcal-gpg-key-id")))
       (when gpg-key-id
         (add-to-list 'plstore-encrypt-to gpg-key-id)))
-    ;; Use loopback pinentry so Emacs prompts for the passphrase in the minibuffer.
+    ;; Use loopback pinentry so Emacs prompts for GPG passphrases in the minibuffer.
     ;; Requires allow-loopback-pinentry in ~/.gnupg/gpg-agent.conf.
-    ;; NOTE: loopback needs an interactive minibuffer; the periodic idle-timer
-    ;; sync (see org-gcal--prime-gpg-cache below) cannot prompt, so we proactively
-    ;; prime the gpg-agent cache once at startup. After that, the agent's TTL
-    ;; (configured for 1 week in gpg-agent.conf) covers subsequent timer syncs.
+    ;; NOTE: loopback needs an interactive minibuffer; timer-driven syncs cannot
+    ;; prompt reliably, so every fetch primes the gpg-agent cache first and aborts
+    ;; before org-gcal starts if the OAuth token store cannot be decrypted.
     (setq epg-pinentry-mode 'loopback)
     :config
     ;; Map each calendar ID to its dedicated org file.
@@ -1762,49 +1761,77 @@ Setup instructions (one-time, manual):
     ;; Suppress popup notifications.
     (setq org-gcal-notify-p nil))
 
-  ;; Safe fetch wrapper: clears stale sync lock before fetching.
+  ;; Safe fetch wrapper: primes GPG and clears stale sync lock before fetching.
   ;; Uses org-gcal-fetch (read-only — never pushes local changes back to Google).
   (defun my/org-gcal-fetch-safe ()
-    "Fetch Google Calendar events, clearing any stale sync lock first."
+    "Fetch Google Calendar events after verifying the OAuth token store decrypts."
     (interactive)
-     (require 'org-gcal)
-    (when (bound-and-true-p org-gcal--sync-lock)
-      (warn "org-gcal: stale sync lock detected, clearing it.")
-      (org-gcal--sync-unlock))
-    (org-gcal-fetch))
+    (let ((interactive-call (called-interactively-p 'interactive)))
+      (condition-case err
+          (progn
+            (my/org-gcal--prime-gpg-cache)
+            (require 'org-gcal)
+            (when (bound-and-true-p org-gcal--sync-lock)
+              (warn "org-gcal: stale sync lock detected, clearing it.")
+              (org-gcal--sync-unlock))
+            (org-gcal-fetch))
+        (error
+         (if interactive-call
+             (signal (car err) (cdr err))
+           (message "org-gcal: fetch skipped: %s"
+                    (error-message-string err)))))))
 
-  (defun my/org-gcal--prime-gpg-cache ()
+  (defun my/org-gcal--prime-gpg-cache (&optional noerror)
     "Decrypt the org-gcal plstore once to prime the gpg-agent passphrase cache.
 
-Called interactively at Emacs startup so the loopback pinentry prompt has a
-minibuffer available. After the agent caches the passphrase (TTL configured in
-~/.gnupg/gpg-agent.conf), subsequent timer-driven org-gcal syncs decrypt without
-needing a prompt, avoiding the misleading
-  epg-error \"Decryption failed\" \"No secret key: <subkey>\"
-which gpg returns when no pinentry is reachable in a non-interactive context."
+Return non-nil when there is no token store yet or decryption succeeds. If
+NOERROR is non-nil, report failures as messages and return nil. Otherwise signal
+`user-error' so manual and timer-driven fetches stop before org-gcal enters its
+deferred OAuth path and reports a later, less useful GPG error."
     (let ((plstore-file (expand-file-name "oauth2-auto.plist" user-emacs-directory))
           store)
-      (when (file-exists-p plstore-file)
+      (if (not (file-exists-p plstore-file))
+          t
         (condition-case err
             (unwind-protect
                 (progn
                   (setq store (plstore-open plstore-file))
                   ;; `plstore-find' consults/decrypts secret entries through the
                   ;; public plstore API, which is stable across Emacs versions.
+                  ;; The plaintext values are intentionally discarded.
                   (dolist (entry (plstore-find store nil))
-                    (plstore-get store (car entry))))
+                    (plstore-get store (car entry)))
+                  t)
               (when store
                 (plstore-close store)))
           (error
-           (message "org-gcal: failed to prime gpg-agent cache: %s"
-                    (error-message-string err)))))))
+           (if noerror
+               (progn
+                 (message "org-gcal: failed to prime gpg-agent cache: %s"
+                          (error-message-string err))
+                 nil)
+             (user-error
+              "org-gcal: cannot decrypt %s; fetch aborted before reading OAuth tokens (%s)"
+              (file-name-nondirectory plstore-file)
+              (error-message-string err))))))))
+
+  (defun my/org-gcal--prime-gpg-cache-before-sync (&rest _)
+    "Prime GPG before any direct `org-gcal-sync' or `org-gcal-fetch' call."
+    (my/org-gcal--prime-gpg-cache))
+
+  (with-eval-after-load 'org-gcal
+    (unless (advice-member-p #'my/org-gcal--prime-gpg-cache-before-sync
+                             'org-gcal-sync)
+      (advice-add 'org-gcal-sync :before
+                  #'my/org-gcal--prime-gpg-cache-before-sync)))
 
   ;; Prime once after startup so the first decrypt happens with a minibuffer
   ;; available (loopback pinentry needs it). Run slightly deferred so other
-  ;; startup activity doesn't compete for the minibuffer.
+  ;; startup activity doesn't compete for the minibuffer. Fetches still prime
+  ;; again and abort safely if this startup attempt fails.
   (add-hook 'emacs-startup-hook
             (lambda ()
-              (run-with-idle-timer 2 nil #'my/org-gcal--prime-gpg-cache)))
+              (run-with-idle-timer 2 nil #'my/org-gcal--prime-gpg-cache :noerror)))
 
   ;; Auto-fetch every 30 minutes. Adjust the interval as needed.
   (run-at-time "30 min" 1800 #'my/org-gcal-fetch-safe)
