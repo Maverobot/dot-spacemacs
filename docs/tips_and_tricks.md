@@ -9,6 +9,22 @@ mkdir build && cd build
 cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
 ```
 
+## Python xref with Pyright and uv
+Pyright can resolve third-party definitions only when it can see the project's
+Python environment. With `lsp-pyright`, a project-local `.venv` is enough: it
+searches upward from the Python buffer for `.venv/` and sends that
+`.venv/bin/python` to Pyright as `python.pythonPath`.
+
+```sh
+cd /path/to/python/project
+uv venv .venv
+uv pip install -r requirements/dev.txt
+```
+
+Then restart the LSP workspace or reopen the buffer. If `uv` rejects pip-only
+requirement syntax, use `uv venv --seed .venv` and install with
+`.venv/bin/python -m pip install -r requirements/dev.txt`.
+
 ## Markdown live preview
 Call `M-x start_glow_viewer` in a markdown buffer. See [here][start-glow-viewer] for details.
 
