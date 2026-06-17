@@ -52,7 +52,7 @@ This function should only modify configuration layer settings."
            rust-format-on-save t)
      (python :variables
              python-backend 'lsp
-             python-lsp-server 'pylsp
+             python-lsp-server 'pyright
              python-formatter 'ruff
              python-sort-imports-on-save nil
              python-format-on-save t)
