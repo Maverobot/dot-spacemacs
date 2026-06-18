@@ -449,7 +449,7 @@ Switch profiles at runtime with =SPC a i C= for Codex proxy, =SPC a i Q= for loc
       (pcase profile
         ("local-qwen"
          (list :end-point (or (getenv "MINUET_QWEN_ENDPOINT")
-                              "http://127.0.0.1:8080/v1/chat/completions")
+                              "http://127.0.0.1:13636/v1/chat/completions")
                :model (or (getenv "MINUET_QWEN_MODEL")
                           "qwen3.6-27b")
                :api-key-source (or (getenv "MINUET_QWEN_API_KEY_SOURCE")
