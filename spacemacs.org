@@ -1361,20 +1361,6 @@ pre.src > code {
       (setq org-html-head-extra
             (concat org-html-head-extra my/org-html-src-code-css))))
 #+END_SRC
-*** org-ai
-#+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (use-package org-ai
-    :ensure t
-    :commands (org-ai-mode
-               org-ai-global-mode)
-    :custom (org-ai-openai-api-token (auth-source-pick-first-password :host "api.openai.com"))
-    :init
-    (add-hook 'org-mode-hook #'org-ai-mode) ; enable org-ai in org-mode
-    :config
-    (org-ai-global-mode) ; installs global keybindings on C-c M-a
-    (setq org-ai-default-chat-model "gpt-4o")
-    (org-ai-install-yasnippets)) ; if you are using yasnippet and want `ai` snippets
-#+END_SRC
 
 *** org-pomodora
 #+BEGIN_SRC emacs-lisp :tangle user-config.el

@@ -201,7 +201,6 @@ This function should only modify configuration layer settings."
                                       minuet
                                       nvm
                                       ob-rust
-                                      org-ai
                                       org-gcal
                                       org-make-toc
                                       org-noter
