@@ -847,6 +847,27 @@ Manage the local IceBear =codex-proxy= Docker Compose service used by Minuet's C
     "aidl" 'my/codex-proxy-docker-logs
     "aido" 'my/codex-proxy-open-dashboard)
 #+END_SRC
+*** gptel
+Use gptel's direct OpenAI OAuth backend for the ChatGPT Plus/Pro Codex subscription.
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (spacemacs/declare-prefix "aig" "gptel")
+  (spacemacs/set-leader-keys
+    "aigg" 'gptel
+    "aigs" 'spacemacs//gptel-send-wrapper
+    "aigq" 'spacemacs//gptel-abort-wrapper
+    "aigm" 'gptel-menu
+    "aigc" 'gptel-add
+    "aigf" 'gptel-add-file
+    "aigr" 'gptel-rewrite)
+
+  (with-eval-after-load 'gptel
+    (require 'gptel-openai-oauth)
+    (setq gptel-default-mode 'org-mode
+          gptel-model 'gpt-5.5
+          gptel-backend (gptel-make-openai-oauth
+                          "OpenAI-sub"
+                          :request-params '(:reasoning (:effort "xhigh")))))
+#+END_SRC
 *** pi-coding-agent
 Emacs frontend for the [[https://pi.dev][pi coding agent]]. Requires the =pi= CLI to be installed, available in =PATH=, and authenticated with =pi --login= (or provider API keys configured).
 #+BEGIN_SRC emacs-lisp :tangle user-config.el

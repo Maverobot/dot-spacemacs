@@ -162,6 +162,10 @@ This function should only modify configuration layer settings."
             shell-default-shell 'multi-vterm
             shell-default-term-shell "/usr/bin/fish")
      search-engine
+     (llm-client :variables
+                 llm-client-enable-gptel t
+                 llm-client-enable-gptel-agent nil
+                 llm-client-enable-ellama nil)
      command-log
      pdf
      (ranger :variables
@@ -183,6 +187,7 @@ This function should only modify configuration layer settings."
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '((lean4-mode :location (recipe :fetcher github :repo "leanprover/lean4-mode" :files ("*.el" "data")))
+                                      (gptel :location (recipe :fetcher github :repo "karthink/gptel" :files ("*.el")))
                                       (pi-coding-agent :location (recipe :fetcher github :repo "dnouri/pi-coding-agent" :files ("*.el")))
                                       (term-cursor :location (recipe :fetcher github :repo "h0d/term-cursor.el" ))
                                       (ultra-scroll :location (recipe :fetcher github :repo "jdtsmith/ultra-scroll"))
