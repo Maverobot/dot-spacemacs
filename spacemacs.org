@@ -412,7 +412,7 @@ Creates a new terminal each time; buffers are named with incrementing numbers."
     (define-key company-active-map (kbd "C-k") 'company-select-previous))
 #+END_SRC
 *** minuet-ai
-Use Minuet with an OpenAI-compatible completion endpoint. The default profile is IceBear =codex-proxy= at =http://127.0.0.1:8787/v1/chat/completions= with model =gpt-5.4-mini=, using Codex Pro/ChatGPT quota through the local proxy. Run the proxy locally, log in through its dashboard, and export =CODEX_PROXY_API_KEY= with the dashboard API key.
+Use Minuet with an OpenAI-compatible completion endpoint. The default profile is IceBear =codex-proxy= at =http://127.0.0.1:8787/v1/chat/completions= with model =gpt-5.5= and low reasoning effort, using Codex Pro/ChatGPT quota through the local proxy. Run the proxy locally, log in through its dashboard, and export =CODEX_PROXY_API_KEY= with the dashboard API key.
 
 Switch profiles at runtime with =SPC a i C= for Codex proxy, =SPC a i Q= for local Qwen, or =SPC a i R= to choose a named profile. Override startup defaults with =MINUET_OPENAI_COMPATIBLE_PROFILE= (=codex-proxy= or =local-qwen=), =MINUET_OPENAI_COMPATIBLE_ENDPOINT=, =MINUET_OPENAI_COMPATIBLE_MODEL=, or =MINUET_OPENAI_COMPATIBLE_API_KEY_SOURCE=. At runtime, use =SPC a i M= to select another endpoint/model; models are fetched automatically from the endpoint's =/models= API when available.
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
@@ -456,7 +456,7 @@ Switch profiles at runtime with =SPC a i C= for Codex proxy, =SPC a i Q= for loc
                                    "local")))
         ("codex-proxy"
          (list :end-point "http://127.0.0.1:8787/v1/chat/completions"
-               :model "gpt-5.4-mini"
+               :model "gpt-5.5"
                :api-key-source "CODEX_PROXY_API_KEY"))
         (_
          (my/minuet-openai-compatible-profile-defaults
@@ -604,6 +604,16 @@ Switch profiles at runtime with =SPC a i C= for Codex proxy, =SPC a i Q= for loc
       (unless (my/minuet-git-commit-buffer-p)
         minuet-default-fewshots-prefix-first))
 
+    (defun my/minuet-openai-compatible-optional-params ()
+      "Return optional request params for Minuet's current profile."
+      (append
+       '(:max_tokens 128
+         :temperature 0.2
+         :top_p 0.9)
+       (pcase my/minuet-openai-compatible-profile
+         ("codex-proxy" '(:reasoning_effort "low"))
+         ("local-qwen" '(:chat_template_kwargs (:enable_thinking :false))))))
+
     (defun my/minuet-openai-compatible-models-endpoint (endpoint)
       "Return the OpenAI-compatible models endpoint for chat ENDPOINT."
       (cond
@@ -695,7 +705,10 @@ Switch profiles at runtime with =SPC a i C= for Codex proxy, =SPC a i Q= for loc
             #'my/minuet-git-staged-diff-for-prompt)
       (plist-put minuet-openai-compatible-options
                  :fewshots
-                 #'my/minuet-openai-compatible-fewshots))
+                 #'my/minuet-openai-compatible-fewshots)
+      (plist-put minuet-openai-compatible-options
+                 :optional
+                 (my/minuet-openai-compatible-optional-params)))
 
     (defun my/minuet-set-openai-compatible-model (endpoint api-key-source model)
       "Interactively set Minuet ENDPOINT, API-KEY-SOURCE, and MODEL."
@@ -778,13 +791,7 @@ Switch profiles at runtime with =SPC a i C= for Codex proxy, =SPC a i Q= for loc
           minuet-auto-suggestion-debounce-delay 0.8
           minuet-auto-suggestion-throttle-delay 1.5)
 
-    (my/minuet-apply-openai-compatible-settings)
-    (plist-put minuet-openai-compatible-options
-               :optional
-               '(:max_tokens 128
-                 :temperature 0.2
-                 :top_p 0.9
-                 :chat_template_kwargs (:enable_thinking :false))))
+    (my/minuet-apply-openai-compatible-settings))
 #+END_SRC
 *** codex-proxy
 Manage the local IceBear =codex-proxy= Docker Compose service used by Minuet's Codex profile. The service lives in =~/.local/share/codex-proxy= and exposes the dashboard/API at =http://127.0.0.1:8787=.
