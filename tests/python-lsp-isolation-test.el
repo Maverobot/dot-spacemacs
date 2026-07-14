@@ -108,19 +108,75 @@
                 (unless (equal (lsp-session-folders-blocklist (lsp-session))
                                (list ,existing-directory))
                   (error "Blocklist changed"))
-                (dolist (server-id '(pyright pyright-remote ruff))
-                  (when (gethash server-id
-                                 (lsp-session-server-id->folders (lsp-session)))
-                    (error "Target mapping survived: %S" server-id)))
+                (let ((missing-key (make-symbol "missing-key"))
+                      (server-map
+                       (lsp-session-server-id->folders (lsp-session))))
+                  (dolist (server-id '(pyright pyright-remote ruff))
+                    (unless (eq (gethash server-id server-map missing-key)
+                                missing-key)
+                      (error "Target mapping key survived: %S" server-id))))
                 (unless (equal
                          (gethash 'clangd
                                   (lsp-session-server-id->folders (lsp-session)))
                          (list ,existing-directory))
-                  (error "Unrelated mapping changed")))))))
+                  (error "Unrelated mapping changed"))
+                (let ((persisted-session
+                       (lsp--read-from-file lsp-session-file)))
+                  (unless persisted-session
+                    (error "Sanitized session was not persisted"))
+                  (unless (equal (lsp-session-folders persisted-session)
+                                 (list ,existing-directory))
+                    (error "Unexpected persisted folders: %S"
+                           (lsp-session-folders persisted-session)))
+                  (unless (equal
+                           (lsp-session-folders-blocklist persisted-session)
+                           (list ,existing-directory))
+                    (error "Persisted blocklist changed"))
+                  (let ((missing-key (make-symbol "missing-key"))
+                        (server-map
+                         (lsp-session-server-id->folders persisted-session)))
+                    (dolist (server-id '(pyright pyright-remote ruff))
+                      (unless (eq (gethash server-id server-map missing-key)
+                                  missing-key)
+                        (error "Persisted target key survived: %S"
+                               server-id))))
+                  (unless (equal
+                           (gethash
+                            'clangd
+                            (lsp-session-server-id->folders persisted-session))
+                           (list ,existing-directory))
+                    (error "Persisted unrelated mapping changed"))))))))
     (unwind-protect
         (ert-info ((cdr result))
           (should (= 0 (car result))))
       (delete-directory temporary-directory t))))
+
+(ert-deftest my/python-lsp-watcher-ignores-update-global-default-from-local-load ()
+  "Early LSP loading must update global watcher defaults, not a local binding."
+  (let* ((block (my/python-lsp-test-org-block
+                 "Isolate Python LSP servers by project"))
+         (result
+          (my/python-lsp-test-run-child
+           `(progn
+              (require 'package)
+              (setq package-user-dir ,(my/python-lsp-test-package-dir))
+              (package-initialize)
+              (with-temp-buffer
+                (setq-local lsp-file-watch-ignored-directories '("LOCAL"))
+                (insert ,block)
+                (eval-buffer)
+                (require 'lsp-mode)
+                (dolist (regexp my/lsp-generated-directory-watch-ignores)
+                  (unless (member regexp
+                                  (default-value
+                                   'lsp-file-watch-ignored-directories))
+                    (error "Watcher ignore missing from global default: %s"
+                           regexp)))
+                (unless (equal lsp-file-watch-ignored-directories '("LOCAL"))
+                  (error "Local watcher override changed: %S"
+                         lsp-file-watch-ignored-directories)))))))
+    (ert-info ((cdr result))
+      (should (= 0 (car result))))))
 
 (ert-deftest my/python-lsp-watchers-skip-generated-hidden-trees ()
   "Generated hidden trees must be skipped without hiding normal source."

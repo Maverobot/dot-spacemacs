@@ -96,7 +96,7 @@ Stable.
 *** Isolate Python LSP servers by project
 Pyright and Ruff copy their multi-root variables when their lsp-mode clients
 register. Set them during user-init so each Python project gets its own process
-and project-local interpreter.
+and selects its project-local interpreter when present.
 
 #+BEGIN_SRC emacs-lisp :tangle user-init.el
   (setq lsp-pyright-multi-root nil
@@ -112,7 +112,10 @@ and project-local interpreter.
 
   (with-eval-after-load 'lsp-mode
     (dolist (regexp my/lsp-generated-directory-watch-ignores)
-      (add-to-list 'lsp-file-watch-ignored-directories regexp)))
+      (unless (member regexp (default-value 'lsp-file-watch-ignored-directories))
+        (set-default 'lsp-file-watch-ignored-directories
+                     (cons regexp
+                           (default-value 'lsp-file-watch-ignored-directories))))))
 #+END_SRC
 *** Prevent lsp-mode org-element detection from calling Org mode
 ~lsp-mode~ 10.0.0 probes the ~org-element~ API by opening a temporary
