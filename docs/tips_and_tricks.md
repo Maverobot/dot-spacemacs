@@ -32,7 +32,10 @@ keeps each project's `.venv`, analysis scope, and file watches isolated. Use
 During an explicit restart, lsp-mode can report that the old process "has
 exited (killed)" and that a queued send reached a killed process. This is
 expected when the replacement process initializes and responds normally; it is
-not by itself an out-of-memory failure.
+not by itself an out-of-memory failure. In single-root mode Pyright 1.1.408 can
+log an empty service name; confirm the workspace root, project `.venv`,
+project-only file count, and successful requests instead of treating that label
+alone as a failure.
 
 Use `M-x lsp-workspace-folders-remove` to remove an accidentally imported
 folder. Do not delete `.lsp-session-v1` wholesale because it also stores roots
