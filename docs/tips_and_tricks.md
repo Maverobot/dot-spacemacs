@@ -25,6 +25,21 @@ Then restart the LSP workspace or reopen the buffer. If `uv` rejects pip-only
 requirement syntax, use `uv venv --seed .venv` and install with
 `.venv/bin/python -m pip install -r requirements/dev.txt`.
 
+Pyright and Ruff run as separate LSP processes for each Python project. This
+keeps each project's `.venv`, analysis scope, and file watches isolated. Use
+`M-x lsp-workspace-restart` after creating or changing an environment.
+
+During an explicit restart, lsp-mode can report that the old process "has
+exited (killed)" and that a queued send reached a killed process. This is
+expected when the replacement process initializes and responds normally; it is
+not by itself an out-of-memory failure.
+
+Use `M-x lsp-workspace-folders-remove` to remove an accidentally imported
+folder. Do not delete `.lsp-session-v1` wholesale because it also stores roots
+for unrelated language servers. Generated `.ros2_ws` trees are excluded from
+recursive LSP watching, so restart Pyright and Ruff after rebuilding generated
+ROS Python interfaces.
+
 ## Markdown live preview
 Call `M-x start_glow_viewer` in a markdown buffer. See [here][start-glow-viewer] for details.
 
