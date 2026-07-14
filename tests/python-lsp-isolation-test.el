@@ -65,4 +65,61 @@
     (ert-info ((cdr result))
       (should (= 0 (car result))))))
 
+(ert-deftest my/python-lsp-session-sanitizer-preserves-unrelated-state ()
+  "Sanitation must remove Python multi-root maps and preserve other state."
+  (let* ((block (my/python-lsp-test-org-block
+                 "Prune deleted LSP workspace folders"))
+         (temporary-directory (make-temp-file "python-lsp-session-" t))
+         (existing-directory (expand-file-name "existing" temporary-directory))
+         (missing-directory (expand-file-name "missing" temporary-directory))
+         (session-file (expand-file-name "session.el" temporary-directory))
+         (block-file (expand-file-name "session-sanitizer.el" temporary-directory))
+         (result
+          (progn
+            (make-directory existing-directory t)
+            (my/python-lsp-test-run-child
+             `(progn
+                (require 'package)
+                (setq package-user-dir ,(my/python-lsp-test-package-dir))
+                (package-initialize)
+                (setq lsp-session-file ,session-file)
+                (write-region ,block nil ,block-file)
+                (byte-compile-file ,block-file)
+                (load (concat ,block-file "c") nil 'nomessage)
+                (require 'lsp-mode)
+                (let ((server-map (make-hash-table :test 'equal)))
+                  (puthash 'pyright (list ,existing-directory) server-map)
+                  (puthash 'pyright-remote (list ,existing-directory) server-map)
+                  (puthash 'ruff (list ,existing-directory) server-map)
+                  (puthash 'clangd (list ,existing-directory) server-map)
+                  (setq lsp--session
+                        (make-lsp-session
+                         :folders (list ,existing-directory
+                                        ,missing-directory
+                                        ,existing-directory)
+                         :folders-blocklist (list ,existing-directory)
+                         :server-id->folders server-map)))
+                (my/lsp-prune-missing-workspace-folders)
+                (my/lsp-prune-missing-workspace-folders)
+                (unless (equal (lsp-session-folders (lsp-session))
+                               (list ,existing-directory))
+                  (error "Unexpected global folders: %S"
+                         (lsp-session-folders (lsp-session))))
+                (unless (equal (lsp-session-folders-blocklist (lsp-session))
+                               (list ,existing-directory))
+                  (error "Blocklist changed"))
+                (dolist (server-id '(pyright pyright-remote ruff))
+                  (when (gethash server-id
+                                 (lsp-session-server-id->folders (lsp-session)))
+                    (error "Target mapping survived: %S" server-id)))
+                (unless (equal
+                         (gethash 'clangd
+                                  (lsp-session-server-id->folders (lsp-session)))
+                         (list ,existing-directory))
+                  (error "Unrelated mapping changed")))))))
+    (unwind-protect
+        (ert-info ((cdr result))
+          (should (= 0 (car result))))
+      (delete-directory temporary-directory t))))
+
 ;;; python-lsp-isolation-test.el ends here

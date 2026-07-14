@@ -252,6 +252,10 @@ Collects garbage when Emacs is idle, keeping GC threshold high during active use
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (require 'cl-lib)
 
+  (defconst my/lsp-single-root-server-ids
+    '(pyright pyright-remote ruff)
+    "Server IDs whose obsolete persisted multi-root maps must be removed.")
+
   (defun my/lsp-existing-local-or-remote-directory-p (directory)
     "Return non-nil when DIRECTORY should remain in the LSP workspace cache."
     (and (stringp directory)
@@ -270,10 +274,11 @@ cannot compile against an unknown `lsp-session-folders' setter."
       (eval '(setf (lsp-session-folders my/lsp--session-for-folder-update)
                    my/lsp--folders-for-session-update))))
 
-  ;; Safety: this only mutates `lsp-mode' session metadata and rewrites the
-  ;; `.lsp-session-v1' cache file. It never deletes workspace directories/files.
+  ;; Safety: this only removes missing folders and obsolete single-root server
+  ;; maps from `lsp-mode' session metadata, then rewrites `.lsp-session-v1'. It
+  ;; never deletes workspace directories or files.
   (defun my/lsp-prune-missing-workspace-folders (&rest _)
-    "Remove missing local directories from `lsp-mode' workspace session cache."
+    "Remove missing folders and obsolete multi-root maps from the LSP session."
     (interactive)
     (when (and (fboundp 'lsp-session)
                (fboundp 'lsp--persist-session))
@@ -299,16 +304,20 @@ cannot compile against an unknown `lsp-session-folders' setter."
                     (push directory kept)))))))
           (my/lsp-set-session-folders
            session (prune-folders (lsp-session-folders session)))
-          (let (empty-server-ids)
+          (let (server-ids-to-remove)
             (maphash
              (lambda (server-id folders)
-               (let ((pruned-folders (prune-folders folders)))
-                 (if pruned-folders
-                     (puthash server-id pruned-folders
-                              (lsp-session-server-id->folders session))
-                   (push server-id empty-server-ids))))
+               (if (memq server-id my/lsp-single-root-server-ids)
+                   (progn
+                     (setq changed t)
+                     (push server-id server-ids-to-remove))
+                 (let ((pruned-folders (prune-folders folders)))
+                   (if pruned-folders
+                       (puthash server-id pruned-folders
+                                (lsp-session-server-id->folders session))
+                     (push server-id server-ids-to-remove)))))
              (lsp-session-server-id->folders session))
-            (dolist (server-id empty-server-ids)
+            (dolist (server-id server-ids-to-remove)
               (remhash server-id (lsp-session-server-id->folders session))))
           (let (dead-folder-keys)
             (maphash
@@ -322,7 +331,7 @@ cannot compile against an unknown `lsp-session-folders' setter."
             (lsp--persist-session session))))))
 
   (defun my/lsp-prune-missing-workspace-folders-safely (&rest args)
-    "Prune stale LSP folders without aborting lsp-mode loading."
+    "Sanitize stale LSP session metadata without aborting lsp-mode loading."
     (condition-case err
         (apply #'my/lsp-prune-missing-workspace-folders args)
       (error
