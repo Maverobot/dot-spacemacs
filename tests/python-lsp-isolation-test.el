@@ -41,6 +41,15 @@
             (cons status (buffer-string))))
       (delete-file script))))
 
+(defun my/python-lsp-test-write-executable (path output)
+  "Write an executable at PATH that consumes stdin and prints OUTPUT."
+  (make-directory (file-name-directory path) t)
+  (write-region
+   (format "#!/bin/sh\nwhile IFS= read -r line; do :; done\nprintf '%%s\\n' %S\n"
+           output)
+   nil path)
+  (set-file-modes path #o755))
+
 (ert-deftest my/python-lsp-clients-register-as-single-root ()
   "The early configuration must disable multi-root before registration."
   (let* ((block (my/python-lsp-test-org-block
@@ -264,4 +273,41 @@
     (ert-info ((cdr result))
       (should (= 0 (car result))))))
 
+(ert-deftest my/python-ruff-sort-imports-uses-buffer-local-executable ()
+  "Import sorting must use each buffer's configured Ruff executable."
+  (let* ((block (my/python-lsp-test-org-block
+                 "Sort Python imports with Ruff"))
+         (temporary-directory (make-temp-file "python-ruff-command-" t))
+         (global-directory (expand-file-name "global/bin" temporary-directory))
+         (global-ruff (expand-file-name "ruff" global-directory))
+         (local-a (expand-file-name "project-a/bin/ruff" temporary-directory))
+         (local-b (expand-file-name "project-b/bin/ruff" temporary-directory)))
+    (unwind-protect
+        (progn
+          (my/python-lsp-test-write-executable global-ruff "import global_ruff")
+          (my/python-lsp-test-write-executable local-a "import project_a")
+          (my/python-lsp-test-write-executable local-b "import project_b")
+          (let ((result
+                 (my/python-lsp-test-run-child
+                  `(progn
+                     (with-temp-buffer
+                       (insert ,block)
+                       (eval-buffer))
+                     (let ((exec-path (list ,global-directory))
+                           (process-environment
+                            (copy-sequence process-environment)))
+                       (setenv "PATH" ,global-directory)
+                       (dolist (case (list (cons ,local-a "import project_a\n")
+                                           (cons ,local-b "import project_b\n")))
+                         (with-temp-buffer
+                           (python-mode)
+                           (setq-local ruff-format-command (car case))
+                           (insert "import unsorted\n")
+                           (my/python-ruff-sort-imports)
+                           (unless (string= (buffer-string) (cdr case))
+                             (error "Wrong Ruff output for %s: %S"
+                                    (car case) (buffer-string))))))))))
+            (ert-info ((cdr result))
+              (should (= 0 (car result))))))
+      (delete-directory temporary-directory t))))
 ;;; python-lsp-isolation-test.el ends here
