@@ -122,4 +122,90 @@
           (should (= 0 (car result))))
       (delete-directory temporary-directory t))))
 
+(ert-deftest my/python-lsp-watchers-skip-generated-hidden-trees ()
+  "Generated hidden trees must be skipped without hiding normal source."
+  (let* ((block (my/python-lsp-test-org-block
+                 "Isolate Python LSP servers by project"))
+         (result
+          (my/python-lsp-test-run-child
+           `(progn
+              (require 'package)
+              (setq package-user-dir ,(my/python-lsp-test-package-dir))
+              (package-initialize)
+              (with-temp-buffer
+                (insert ,block)
+                (eval-buffer))
+              (require 'lsp-mode)
+              (let* ((root (make-temp-file "python-lsp-watch-" t))
+                     (generated
+                      (mapcar (lambda (name)
+                                (let ((directory (expand-file-name name root)))
+                                  (make-directory
+                                   (expand-file-name "nested" directory) t)
+                                  directory))
+                              '(".pi-subagents" ".pi" ".ros2_ws"
+                                ".superpowers" ".ruff_cache")))
+                     (source (expand-file-name "src" root)))
+                (unwind-protect
+                    (progn
+                      (make-directory source t)
+                      (let ((watched
+                             (mapcar #'file-truename
+                                     (lsp--all-watchable-directories
+                                      root lsp-file-watch-ignored-directories))))
+                        (unless (member (file-truename source) watched)
+                          (error "Normal source directory was not watched"))
+                        (dolist (directory generated)
+                          (when (member (file-truename directory) watched)
+                            (error "Generated directory was watched: %s"
+                                   directory)))))
+                  (delete-directory root t)))))))
+    (ert-info ((cdr result))
+      (should (= 0 (car result))))))
+
+(ert-deftest my/python-lsp-pyright-finds-each-project-venv ()
+  "Pyright must resolve the interpreter relative to each project root."
+  (let* ((block (my/python-lsp-test-org-block
+                 "Isolate Python LSP servers by project"))
+         (result
+          (my/python-lsp-test-run-child
+           `(progn
+              (require 'package)
+              (setq package-user-dir ,(my/python-lsp-test-package-dir))
+              (package-initialize)
+              (with-temp-buffer
+                (insert ,block)
+                (eval-buffer))
+              (require 'lsp-pyright)
+              (let ((root-a (make-temp-file "pyright-project-a-" t))
+                    (root-b (make-temp-file "pyright-project-b-" t)))
+                (unwind-protect
+                    (let (expected-a expected-b actual-a actual-b)
+                      (dolist (root (list root-a root-b))
+                        (let ((python (expand-file-name ".venv/bin/python" root)))
+                          (make-directory (file-name-directory python) t)
+                          (write-region "#!/bin/sh\nexit 0\n" nil python)
+                          (set-file-modes python #o755)))
+                      (setq expected-a
+                            (file-truename
+                             (expand-file-name ".venv/bin/python" root-a))
+                            expected-b
+                            (file-truename
+                             (expand-file-name ".venv/bin/python" root-b)))
+                      (let ((default-directory root-a))
+                        (setq actual-a (file-truename
+                                        (lsp-pyright-locate-python))))
+                      (let ((default-directory root-b))
+                        (setq actual-b (file-truename
+                                        (lsp-pyright-locate-python))))
+                      (unless (and (equal actual-a expected-a)
+                                   (equal actual-b expected-b)
+                                   (not (equal actual-a actual-b)))
+                        (error "Wrong project interpreters: %S %S"
+                               actual-a actual-b)))
+                  (delete-directory root-a t)
+                  (delete-directory root-b t)))))))
+    (ert-info ((cdr result))
+      (should (= 0 (car result))))))
+
 ;;; python-lsp-isolation-test.el ends here

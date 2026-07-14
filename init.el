@@ -100,7 +100,7 @@ This function should only modify configuration layer settings."
           lsp-enable-indentation nil
           lsp-enable-on-type-formatting nil
           lsp-enable-symbol-highlighting nil
-          lsp-file-watch-threshold nil
+          lsp-file-watch-threshold 1000
           lsp-lens-enable nil
           lsp-prefer-flymake nil
           lsp-pylsp-plugins-isort-enabled nil

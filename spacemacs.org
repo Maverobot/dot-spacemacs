@@ -101,6 +101,18 @@ and project-local interpreter.
 #+BEGIN_SRC emacs-lisp :tangle user-init.el
   (setq lsp-pyright-multi-root nil
         lsp-ruff-multi-root nil)
+
+  (defconst my/lsp-generated-directory-watch-ignores
+    '("[/\\\\]\\.pi-subagents\\'"
+      "[/\\\\]\\.pi\\'"
+      "[/\\\\]\\.ros2_ws\\'"
+      "[/\\\\]\\.superpowers\\'"
+      "[/\\\\]\\.ruff_cache\\'")
+    "Generated directory regexps excluded from recursive LSP watching.")
+
+  (with-eval-after-load 'lsp-mode
+    (dolist (regexp my/lsp-generated-directory-watch-ignores)
+      (add-to-list 'lsp-file-watch-ignored-directories regexp)))
 #+END_SRC
 *** Prevent lsp-mode org-element detection from calling Org mode
 ~lsp-mode~ 10.0.0 probes the ~org-element~ API by opening a temporary
