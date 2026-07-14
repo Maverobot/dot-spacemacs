@@ -93,6 +93,15 @@ Stable.
           ("nongnu"       . 2)
           ("gnu"          . 1)))
 #+END_SRC
+*** Isolate Python LSP servers by project
+Pyright and Ruff copy their multi-root variables when their lsp-mode clients
+register. Set them during user-init so each Python project gets its own process
+and project-local interpreter.
+
+#+BEGIN_SRC emacs-lisp :tangle user-init.el
+  (setq lsp-pyright-multi-root nil
+        lsp-ruff-multi-root nil)
+#+END_SRC
 *** Prevent lsp-mode org-element detection from calling Org mode
 ~lsp-mode~ 10.0.0 probes the ~org-element~ API by opening a temporary
 ~org-mode~ buffer during package load. If that ~org-mode~ setup errors before
