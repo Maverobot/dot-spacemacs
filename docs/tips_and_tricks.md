@@ -26,9 +26,13 @@ requirement syntax, use `uv venv --seed .venv` and install with
 `.venv/bin/python -m pip install -r requirements/dev.txt`.
 
 Pyright and Ruff run as separate LSP processes for each Python project. This
-isolates analysis scope and file watches, and selects each project's `.venv`
-when present. Without a local `.venv`, Pyright falls back to Emacs' current
-Python. Use `M-x lsp-workspace-restart` after changing an environment.
+isolates analysis scope and file watches. Pet resolves Python tools to absolute,
+buffer-local paths: it searches a project `.venv` first for each executable,
+then uses the clean global fallback when that tool or virtualenv is absent. Use
+`M-x pet-verify-setup` in a Python buffer to inspect the selected
+paths. Reopen the buffer after creating or changing its environment, and use
+`M-x lsp-workspace-restart` when the running language server must pick up that
+change.
 
 During an explicit restart, lsp-mode can report that the old process "has
 exited (killed)" and that a queued send reached a killed process. This is

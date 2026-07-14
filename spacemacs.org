@@ -116,6 +116,16 @@ and selects its project-local interpreter when present.
         (set-default 'lsp-file-watch-ignored-directories
                      (cons regexp
                            (default-value 'lsp-file-watch-ignored-directories))))))
+
+  (defun my/python-pet-finalize-buffer-tools ()
+    "Finalize order-sensitive Python tool variables after Pet setup."
+    (setq-local lsp-pyright-langserver-command "pyright")
+    (when (bound-and-true-p flycheck-mode)
+      (pet-flycheck-toggle-local-vars)))
+
+  (with-eval-after-load 'pet
+    (add-hook 'pet-after-buffer-local-vars-setup
+              #'my/python-pet-finalize-buffer-tools))
 #+END_SRC
 *** Prevent lsp-mode org-element detection from calling Org mode
 ~lsp-mode~ 10.0.0 probes the ~org-element~ API by opening a temporary

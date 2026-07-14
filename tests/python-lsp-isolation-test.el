@@ -310,4 +310,86 @@
             (ert-info ((cdr result))
               (should (= 0 (car result))))))
       (delete-directory temporary-directory t))))
+
+(ert-deftest my/python-pet-finalizes-order-sensitive-tools ()
+  "Pet must finalize Pyright naming and already-active Flycheck locals."
+  (let* ((block (my/python-lsp-test-org-block
+                 "Isolate Python LSP servers by project"))
+         (result
+          (my/python-lsp-test-run-child
+           `(progn
+              (require 'package)
+              (setq package-user-dir ,(my/python-lsp-test-package-dir))
+              (package-initialize)
+              (with-temp-buffer
+                (insert ,block)
+                (eval-buffer))
+              (with-temp-buffer
+                (setq-local lsp-pyright-langserver-command
+                            "/tmp/project/.venv/bin/pyright")
+                (setq-local lsp-pyright-python-executable-cmd
+                            "/tmp/project/.venv/bin/python")
+                (setq-local flycheck-mode t)
+                (unless (fboundp 'my/python-pet-finalize-buffer-tools)
+                  (error "Pet finalizer function is missing"))
+                (cl-letf
+                    (((symbol-function 'pet-flycheck-toggle-local-vars)
+                      (lambda ()
+                        (setq-local flycheck-python-ruff-executable
+                                    "/tmp/project/.venv/bin/ruff")
+                        (setq-local flycheck-python-pycompile-executable
+                                    "/tmp/project/.venv/bin/python"))))
+                  (my/python-pet-finalize-buffer-tools))
+                (unless (equal lsp-pyright-langserver-command "pyright")
+                  (error "Pyright protocol name was not restored: %S"
+                         lsp-pyright-langserver-command))
+                (unless (and
+                         (equal lsp-pyright-python-executable-cmd
+                                "/tmp/project/.venv/bin/python")
+                         (local-variable-p
+                          'flycheck-python-ruff-executable)
+                         (local-variable-p
+                          'flycheck-python-pycompile-executable)
+                         (equal flycheck-python-ruff-executable
+                                "/tmp/project/.venv/bin/ruff")
+                         (equal flycheck-python-pycompile-executable
+                                "/tmp/project/.venv/bin/python"))
+                  (error "Pet interpreter/Flycheck selection changed"))
+                (require 'lsp-pyright)
+                (let* ((client (gethash 'pyright lsp-clients))
+                       (handlers (lsp--client-notification-handlers client))
+                       (dependency (gethash 'pyright lsp--dependencies))
+                       (missing (make-symbol "missing")))
+                  (unless client
+                    (error "Pyright client was not registered"))
+                  (unless (equal (plist-get (car dependency) :system)
+                                 "pyright-langserver")
+                    (error "Wrong Pyright dependency: %S" dependency))
+                  (dolist (setting '("pyright.disableLanguageServices"
+                                     "pyright.disableOrganizeImports"
+                                     "pyright.disableTaggedHints"))
+                    (when (eq (gethash setting lsp-client-settings missing)
+                              missing)
+                      (error "Missing Pyright setting: %s" setting)))
+                  (dolist (notification '("pyright/beginProgress"
+                                           "pyright/reportProgress"
+                                           "pyright/endProgress"))
+                    (when (eq (gethash notification handlers missing) missing)
+                      (error "Missing Pyright handler: %s" notification)))
+                  (when (seq-some
+                         (lambda (name)
+                           (string-prefix-p "/tmp/project/" name))
+                         (append (hash-table-keys handlers)
+                                 (hash-table-keys lsp-client-settings)))
+                    (error "Absolute path leaked into Pyright protocol keys"))
+                  (let ((buffer-file-name "/tmp/project/example.py")
+                        captured-command)
+                    (cl-letf (((symbol-function 'lsp-send-execute-command)
+                               (lambda (command _arguments)
+                                 (setq captured-command command))))
+                      (lsp-pyright-organize-imports))
+                    (unless (equal captured-command "pyright.organizeimports")
+                      (error "Wrong organize command: %S" captured-command)))))))))
+    (ert-info ((cdr result))
+      (should (= 0 (car result))))))
 ;;; python-lsp-isolation-test.el ends here

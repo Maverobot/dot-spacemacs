@@ -55,7 +55,8 @@ This function should only modify configuration layer settings."
              python-lsp-server 'pyright
              python-formatter 'ruff
              python-sort-imports-on-save nil
-             python-format-on-save t)
+             python-format-on-save t
+             python-virtualenv-management 'pet)
      (c-c++ :variables
             c-c++-backend 'lsp-ccls
             c-c++-adopt-subprojects t
