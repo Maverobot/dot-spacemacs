@@ -119,6 +119,7 @@ and selects its project-local interpreter when present.
 
   (defun my/python-pet-finalize-buffer-tools ()
     "Finalize order-sensitive Python tool variables after Pet setup."
+    (setq-local python-shell-interpreter (pet-executable-find "python"))
     (setq-local lsp-pyright-langserver-command "pyright")
     (when (bound-and-true-p flycheck-mode)
       (pet-flycheck-toggle-local-vars)))

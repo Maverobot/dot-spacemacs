@@ -312,7 +312,7 @@
       (delete-directory temporary-directory t))))
 
 (ert-deftest my/python-pet-finalizes-order-sensitive-tools ()
-  "Pet must finalize Pyright naming and already-active Flycheck locals."
+  "Pet must finalize shell, Pyright naming, and active Flycheck locals."
   (let* ((block (my/python-lsp-test-org-block
                  "Isolate Python LSP servers by project"))
          (result
@@ -324,6 +324,7 @@
               (with-temp-buffer
                 (insert ,block)
                 (eval-buffer))
+              (setq-default python-shell-interpreter "/usr/bin/python3")
               (with-temp-buffer
                 (setq-local lsp-pyright-langserver-command
                             "/tmp/project/.venv/bin/pyright")
@@ -332,14 +333,29 @@
                 (setq-local flycheck-mode t)
                 (unless (fboundp 'my/python-pet-finalize-buffer-tools)
                   (error "Pet finalizer function is missing"))
-                (cl-letf
-                    (((symbol-function 'pet-flycheck-toggle-local-vars)
-                      (lambda ()
-                        (setq-local flycheck-python-ruff-executable
-                                    "/tmp/project/.venv/bin/ruff")
-                        (setq-local flycheck-python-pycompile-executable
-                                    "/tmp/project/.venv/bin/python"))))
-                  (my/python-pet-finalize-buffer-tools))
+                (let (pet-executable-requests)
+                  (cl-letf
+                      (((symbol-function 'pet-executable-find)
+                        (lambda (executable &optional _search-globally)
+                          (push executable pet-executable-requests)
+                          (if (equal executable "python")
+                              "/tmp/project/.venv/bin/python"
+                            (error "Unexpected Pet executable: %S"
+                                   executable))))
+                       ((symbol-function 'pet-flycheck-toggle-local-vars)
+                        (lambda ()
+                          (setq-local flycheck-python-ruff-executable
+                                      "/tmp/project/.venv/bin/ruff")
+                          (setq-local flycheck-python-pycompile-executable
+                                      "/tmp/project/.venv/bin/python"))))
+                    (my/python-pet-finalize-buffer-tools))
+                  (unless (and
+                           (local-variable-p 'python-shell-interpreter)
+                           (equal python-shell-interpreter
+                                  "/tmp/project/.venv/bin/python")
+                           (equal pet-executable-requests '("python")))
+                    (error "Pet shell interpreter was not finalized: %S %S"
+                           python-shell-interpreter pet-executable-requests)))
                 (unless (equal lsp-pyright-langserver-command "pyright")
                   (error "Pyright protocol name was not restored: %S"
                          lsp-pyright-langserver-command))
