@@ -1881,7 +1881,8 @@ directory."
       (user-error "Not in an Org buffer"))
     (unless (executable-find "pandoc")
       (user-error "Pandoc not found in PATH"))
-    (let ((input-file (or (buffer-file-name)
+    (let ((export-info (org-export-get-environment 'pandoc-eisvogel))
+          (input-file (or (buffer-file-name)
                           (user-error "Current Org buffer is not visiting a file")))
           (output-file (my/org-pandoc-eisvogel--ensure-pdf-extension
                         (or output-file
@@ -1911,22 +1912,25 @@ directory."
                         input-file
                         output-buffer
                         nil
-                        (list "--from" "org"
-                              "--output" output-file
-                              "--pdf-engine=xelatex"
-                              "--template" "eisvogel"
-                              "--listings"
-                              "--toc"
-                              "--number-sections"
-                              "--include-in-header" header-file
-                              "--variable" "geometry:margin=0.8in"
-                              "--variable" (format "mainfont=%s" main-font)
-                              "--variable" (format "sansfont=%s" sans-font)
-                              "--variable" (format "monofont=%s" mono-font)
-                              "--variable" (format "mathfont=%s" math-font)
-                              "--variable" "mainfontoptions=Ligatures=TeX"
-                              "--variable" (format "monofontoptions=%s" mono-font-options)
-                              "--variable" "code-block-font-size=\\small"))))
+                        (append
+                         (list "--from" "org"
+                               "--output" output-file
+                               "--pdf-engine=xelatex"
+                               "--template" "eisvogel"
+                               "--listings")
+                         (when (plist-get export-info :with-toc)
+                           (list "--toc"))
+                         (when (plist-get export-info :section-numbers)
+                           (list "--number-sections"))
+                         (list "--include-in-header" header-file
+                               "--variable" "geometry:margin=0.8in"
+                               "--variable" (format "mainfont=%s" main-font)
+                               "--variable" (format "sansfont=%s" sans-font)
+                               "--variable" (format "monofont=%s" mono-font)
+                               "--variable" (format "mathfont=%s" math-font)
+                               "--variable" "mainfontoptions=Ligatures=TeX"
+                               "--variable" (format "monofontoptions=%s" mono-font-options)
+                               "--variable" "code-block-font-size=\\small")))))
             (if (zerop exit-code)
                 (progn
                   (message "Exported Org to PDF: %s" output-file)
