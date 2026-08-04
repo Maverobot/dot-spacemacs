@@ -1064,6 +1064,244 @@ Use evil keybindings for selecting items in popup menus.
     (define-key scad-preview-mode-map (kbd "M-k") 'scad-preview-translate-z+)
     (define-key scad-preview-mode-map (kbd "M-j") 'scad-preview-translate-z-))
 #+END_SRC
+**** STL review
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (require 'cl-lib)
+
+  (defvar-local my/stl-review-source-buffer nil
+    "Visited STL source buffer associated with an adapter or preview buffer.")
+
+  (defvar-local my/stl-review-source-path nil
+    "Validated STL path associated with an adapter or preview buffer.")
+
+  (defvar-local my/stl-review-adapter-buffer nil
+    "Hidden SCAD buffer that imports the STL being reviewed.")
+
+  (defvar-local my/stl-review-preview-buffer nil
+    "SCAD preview buffer for the STL being reviewed.")
+
+  (defvar-local my/stl-review-preview-state nil
+    "Persistent STL preview state: source buffer, adapter buffer, and executable.")
+
+  (put 'my/stl-review-source-path 'permanent-local t)
+  (put 'my/stl-review-adapter-buffer 'permanent-local t)
+  (put 'my/stl-review-preview-buffer 'permanent-local t)
+  (put 'my/stl-review-preview-state 'permanent-local t)
+
+  (defun my/stl-review--validate-source-file (source)
+    "Return local regular SOURCE or signal an actionable error."
+    (when (file-remote-p source)
+      (user-error "STL review supports local .stl files only: %s" source))
+    (setq source (expand-file-name source))
+    (unless (file-regular-p source)
+      (user-error "STL review source is missing or is not a regular file: %s"
+                  source))
+    source)
+
+  (defun my/stl-review--source-file ()
+    "Return the current local STL file or signal an actionable error."
+    (let ((source (buffer-file-name)))
+      (unless source
+        (user-error "STL review requires a visited local .stl file"))
+      (my/stl-review--validate-source-file source)))
+
+  (defun my/stl-review--openscad ()
+    "Return the OpenSCAD executable resolved from PATH."
+    (let ((openscad (executable-find "openscad")))
+      (unless (and openscad (file-executable-p openscad))
+        (user-error
+         "OpenSCAD is not executable. Install OpenSCAD and ensure `openscad` is on PATH"))
+      openscad))
+
+  (defun my/stl-review--scad-string (string)
+    "Return STRING quoted and escaped for an OpenSCAD string literal."
+    (concat
+     "\""
+     (mapconcat
+      (lambda (character)
+        (pcase character
+          (?\\ "\\\\")
+          (?\" "\\\"")
+          (?\n "\\n")
+          (?\r "\\r")
+          (?\t "\\t")
+          (_ (char-to-string character))))
+      string
+      "")
+     "\""))
+
+  (defun my/stl-review--write-adapter (source)
+    "Replace the current hidden buffer with an import of SOURCE."
+    (let ((inhibit-read-only t))
+      (erase-buffer)
+      (insert (format "import(%s);\n" (my/stl-review--scad-string source)))
+      (set-buffer-modified-p nil)))
+
+  (defun my/stl-review--configure-preview ()
+    "Restore STL-specific preview state after `scad-preview-mode' resets."
+    (when my/stl-review-preview-state
+      (let ((source-path (plist-get my/stl-review-preview-state :source-path))
+            (source-buffer (plist-get my/stl-review-preview-state :source-buffer))
+            (adapter (plist-get my/stl-review-preview-state :adapter))
+            (openscad (plist-get my/stl-review-preview-state :openscad)))
+        (setq-local my/stl-review-source-path source-path
+                    my/stl-review-source-buffer source-buffer
+                    my/stl-review-adapter-buffer adapter
+                    scad-command (shell-quote-argument openscad))
+        (use-local-map (copy-keymap scad-preview-mode-map))
+        (local-set-key (kbd "g") #'my/stl-review-rerender)
+        (when (fboundp 'evil-local-set-key)
+          (evil-local-set-key 'normal (kbd "g") #'my/stl-review-rerender))
+        (add-hook 'kill-buffer-hook #'my/stl-review--preview-killed nil t))))
+
+  (add-hook 'scad-preview-mode-hook #'my/stl-review--configure-preview)
+
+  (defun my/stl-review--preview-killed ()
+    "Clean the hidden adapter and clear the owning STL workflow buffer."
+    (let* ((state my/stl-review-preview-state)
+           (owner (plist-get state :owner))
+           (adapter my/stl-review-adapter-buffer)
+           (preview (current-buffer)))
+      (when (buffer-live-p adapter)
+        (kill-buffer adapter))
+      (when (buffer-live-p owner)
+        (with-current-buffer owner
+          (when (eq my/stl-review-preview-buffer preview)
+            (setq-local my/stl-review-source-path nil
+                        my/stl-review-preview-buffer nil
+                        my/stl-review-adapter-buffer nil)
+            (remove-hook 'post-command-hook
+                         #'my/ranger-stl-preview--watch-entry-change t))))))
+
+  (defun my/stl-review--cleanup ()
+    "Clean the preview and hidden adapter associated with the current STL buffer."
+    (remove-hook 'post-command-hook #'my/stl-review--select-preview t)
+    (remove-hook 'post-command-hook
+                 #'my/ranger-stl-preview--watch-entry-change t)
+    (let ((preview my/stl-review-preview-buffer)
+          (adapter my/stl-review-adapter-buffer))
+      (setq-local my/stl-review-source-path nil
+                  my/stl-review-preview-buffer nil
+                  my/stl-review-adapter-buffer nil)
+      (when (buffer-live-p preview)
+        (kill-buffer preview))
+      (when (buffer-live-p adapter)
+        (kill-buffer adapter))))
+
+  (defun my/stl-review--owner-killed ()
+    "Clean STL review buffers when their owning buffer is killed."
+    (my/stl-review--cleanup))
+
+  (defun my/stl-review--select-preview ()
+    "Select the STL preview after an interactive file visit completes."
+    (remove-hook 'post-command-hook #'my/stl-review--select-preview t)
+    (when (buffer-live-p my/stl-review-preview-buffer)
+      (pop-to-buffer my/stl-review-preview-buffer)))
+
+  (defun my/stl-review-rerender ()
+    "Rerender the current STL preview from its source file on disk."
+    (interactive)
+    (unless (derived-mode-p 'scad-preview-mode)
+      (user-error "STL review rerender is only available in an STL preview"))
+    (let ((source-path my/stl-review-source-path)
+          (adapter my/stl-review-adapter-buffer))
+      (unless (buffer-live-p adapter)
+        (user-error "The STL review adapter is no longer available"))
+      (let ((source (my/stl-review--validate-source-file source-path))
+            (openscad (my/stl-review--openscad)))
+        (with-current-buffer adapter
+          (my/stl-review--write-adapter source))
+        (setq-local my/stl-review-source-path source
+                    my/stl-review-preview-state
+                    (plist-put (copy-sequence my/stl-review-preview-state)
+                               :source-path source))
+        (setq-local my/stl-review-preview-state
+                    (plist-put my/stl-review-preview-state :openscad openscad))
+        (my/stl-review--configure-preview)
+        (scad--preview-render))))
+
+  (defun my/stl-review--create-preview (source &optional source-buffer)
+    "Create a preview for validated SOURCE, optionally linked to SOURCE-BUFFER.
+
+When SOURCE-BUFFER is nil, the current buffer owns a passive preview and no
+STL file buffer is visited."
+    (require 'scad-mode)
+    (let* ((owner (current-buffer))
+           (openscad (my/stl-review--openscad))
+           (adapter (generate-new-buffer
+                     (format " *stl review adapter: %s*"
+                             (file-name-nondirectory source))))
+           preview)
+      (condition-case err
+          (progn
+            (with-current-buffer adapter
+              (setq-local default-directory (file-name-directory source))
+              (my/stl-review--write-adapter source)
+              (scad-mode)
+              (when (bound-and-true-p flymake-mode)
+                (flymake-mode -1))
+              (let ((scad-command (shell-quote-argument openscad)))
+                (if source-buffer
+                    (scad-preview)
+                  (cl-letf (((symbol-function 'display-buffer)
+                             (lambda (&rest _arguments) nil)))
+                    (scad-preview))))
+              (setq preview scad--preview-buffer))
+            (unless (buffer-live-p preview)
+              (error "scad-preview-mode did not create a preview buffer"))
+            (with-current-buffer owner
+              (setq-local my/stl-review-source-path source
+                          my/stl-review-adapter-buffer adapter
+                          my/stl-review-preview-buffer preview))
+            (with-current-buffer adapter
+              (setq-local my/stl-review-source-buffer source-buffer
+                          my/stl-review-preview-buffer preview))
+            (with-current-buffer preview
+              (setq-local my/stl-review-preview-state
+                          (list :source-path source :source-buffer source-buffer
+                                :owner owner :adapter adapter :openscad openscad))
+              (my/stl-review--configure-preview))
+            preview)
+        (error
+         (let ((created-preview
+                (and (buffer-live-p adapter)
+                     (buffer-local-value 'scad--preview-buffer adapter))))
+           (when (buffer-live-p created-preview)
+             (kill-buffer created-preview)))
+         (when (buffer-live-p adapter)
+           (kill-buffer adapter))
+         (signal (car err) (cdr err))))))
+
+  (defun my/stl-review--start ()
+    "Create and select a standalone preview for the current visited STL."
+    (my/stl-review--cleanup)
+    (let ((preview (my/stl-review--create-preview
+                    (my/stl-review--source-file) (current-buffer))))
+      (add-hook 'kill-buffer-hook #'my/stl-review--owner-killed nil t)
+      (add-hook 'post-command-hook #'my/stl-review--select-preview nil t)
+      preview))
+
+  (defun my/stl-review--show-error (message)
+    "Replace binary content with MESSAGE in the read-only STL review buffer."
+    (let ((inhibit-read-only t))
+      (erase-buffer)
+      (insert "STL review unavailable: " message "\n\n"
+              "Install OpenSCAD and ensure `openscad` is on PATH, then revert this buffer.")
+      (goto-char (point-min))
+      (set-buffer-modified-p nil))
+    (setq-local buffer-read-only t))
+
+  (define-derived-mode my/stl-review-mode special-mode "STL-Review"
+    "Read-only OpenSCAD preview workflow for a visited STL file."
+    (condition-case err
+        (my/stl-review--start)
+      (error
+       (let ((message (error-message-string err)))
+         (my/stl-review--show-error message)
+         (user-error "%s" message)))))
+
+  (add-to-list 'auto-mode-alist '("\\.stl\\'" . my/stl-review-mode))
+#+END_SRC
 *** Style for linux kernel development
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   ;; Linux kernel development
@@ -2023,6 +2261,111 @@ deferred OAuth path and reports a later, less useful GPG error."
     (define-key ranger-mode-map (kbd "M-l") 'ranger-next-tab)
     (define-key ranger-mode-map (kbd "M-n") 'ranger-new-tab))
   (spacemacs/set-leader-keys "ar" 'ranger)
+#+END_SRC
+**** Ranger STL preview
+#+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (defun my/ranger-stl-preview-file-p (entry-name)
+    "Return non-nil when ENTRY-NAME names an STL file."
+    (string-equal (downcase (or (file-name-extension entry-name) "")) "stl"))
+
+  (defun my/ranger-stl-preview-error-buffer (source message owner)
+    "Return an OWNER-linked passive Ranger error buffer for SOURCE and MESSAGE."
+    (let ((buffer (generate-new-buffer
+                   (format " *ranger STL error: %s*"
+                           (file-name-nondirectory source)))))
+      (with-current-buffer buffer
+        (special-mode)
+        ;; Ranger adds a mouse binding with `local-set-key'; isolate that
+        ;; mutation from the shared `special-mode-map'.
+        (use-local-map (copy-keymap special-mode-map))
+        (setq-local my/stl-review-preview-state
+                    (list :source-path source :source-buffer nil
+                          :owner owner :adapter nil))
+        (add-hook 'kill-buffer-hook #'my/stl-review--preview-killed nil t)
+        (my/stl-review--show-error message))
+      buffer))
+
+  (defun my/ranger-stl-preview--owns-state-p ()
+    "Return non-nil when the current Ranger buffer owns STL state."
+    (or (buffer-live-p my/stl-review-preview-buffer)
+        (buffer-live-p my/stl-review-adapter-buffer)))
+
+  (defun my/ranger-stl-preview--owns-live-source-p (source)
+    "Return non-nil when the current Ranger buffer owns live SOURCE preview state."
+    (and (equal source my/stl-review-source-path)
+         (buffer-live-p my/stl-review-preview-buffer)
+         (buffer-live-p my/stl-review-adapter-buffer)))
+
+  (defun my/ranger-stl-preview--entry-path ()
+    "Return the current Ranger entry path, or nil when there is no entry."
+    (condition-case nil
+        (let ((entry-name (dired-get-filename nil t)))
+          (and entry-name (expand-file-name entry-name)))
+      (error nil)))
+
+  (defun my/ranger-stl-preview-cleanup-stale-owner ()
+    "Clean STL state only after this Ranger owner's entry path changes."
+    (let ((entry-path (my/ranger-stl-preview--entry-path)))
+      (when (and (my/ranger-stl-preview--owns-state-p)
+                 (not (equal entry-path my/stl-review-source-path)))
+        (my/stl-review--cleanup))))
+
+  (defun my/ranger-stl-preview--watch-entry-change ()
+    "Clean this Ranger owner's STL state as soon as its entry changes."
+    (my/ranger-stl-preview-cleanup-stale-owner))
+
+  (defun my/ranger-stl-preview--watch-owner ()
+    "Install buffer-local cleanup hooks while this Ranger owns STL state."
+    (when (my/ranger-stl-preview--owns-state-p)
+      (add-hook 'kill-buffer-hook #'my/stl-review--owner-killed nil t)
+      (add-hook 'post-command-hook
+                #'my/ranger-stl-preview--watch-entry-change nil t)))
+
+  (defun my/ranger-stl-preview-setup-preview (original-function &rest arguments)
+    "Apply Ranger STL ownership cleanup before ORIGINAL-FUNCTION runs."
+    (when (derived-mode-p 'ranger-mode)
+      (my/ranger-stl-preview-cleanup-stale-owner))
+    (apply original-function arguments))
+
+  (defun my/ranger-stl-preview-buffer (original-function entry-name)
+    "Return a passive STL preview for Ranger, else delegate ORIGINAL-FUNCTION."
+    (if (and (derived-mode-p 'ranger-mode)
+             (my/ranger-stl-preview-file-p entry-name))
+        (let ((source (expand-file-name entry-name)))
+          (condition-case err
+              (progn
+                (setq source (my/stl-review--validate-source-file source))
+                (let ((preview
+                       (if (my/ranger-stl-preview--owns-live-source-p source)
+                           my/stl-review-preview-buffer
+                         (my/stl-review--cleanup)
+                         (my/stl-review--create-preview source))))
+                  (my/ranger-stl-preview--watch-owner)
+                  preview))
+            (error
+             (my/stl-review--cleanup)
+             (let ((error-buffer
+                    (my/ranger-stl-preview-error-buffer
+                     source (error-message-string err) (current-buffer))))
+               (setq-local my/stl-review-source-path source
+                           my/stl-review-adapter-buffer nil
+                           my/stl-review-preview-buffer error-buffer)
+               (my/ranger-stl-preview--watch-owner)
+               error-buffer))))
+      (when (derived-mode-p 'ranger-mode)
+        (my/stl-review--cleanup))
+      (funcall original-function entry-name)))
+
+  (defun my/ranger-stl-preview-install-advice ()
+    "Install the Ranger STL advice once, replacing any prior copy."
+    (advice-remove 'ranger-preview-buffer #'my/ranger-stl-preview-buffer)
+    (advice-add 'ranger-preview-buffer :around #'my/ranger-stl-preview-buffer)
+    (advice-remove 'ranger-setup-preview #'my/ranger-stl-preview-setup-preview)
+    (advice-add 'ranger-setup-preview :around
+                #'my/ranger-stl-preview-setup-preview))
+
+  (with-eval-after-load 'ranger
+    (my/ranger-stl-preview-install-advice))
 #+END_SRC
 *** cheat.sh
 The one and only one cheatsheet.
