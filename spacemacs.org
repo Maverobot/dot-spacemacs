@@ -863,6 +863,13 @@ Manage the local IceBear =codex-proxy= Docker Compose service used by Minuet's C
                       (expand-file-name my/codex-proxy-directory))))
       (unless (file-directory-p directory)
         (user-error "codex-proxy directory does not exist: %s" directory))
+      (unless (catch 'compose-file-found
+                (dolist (name '("compose.yaml" "compose.yml"
+                                "docker-compose.yaml" "docker-compose.yml"))
+                  (when (file-readable-p (expand-file-name name directory))
+                    (throw 'compose-file-found t))))
+        (user-error "codex-proxy Compose file is missing in %s (expected compose.yaml, compose.yml, docker-compose.yaml, or docker-compose.yml)"
+                    directory))
       directory))
 
   (defun my/codex-proxy--run-docker-compose (arguments)
