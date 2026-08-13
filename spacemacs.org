@@ -2171,11 +2171,11 @@ Setup instructions (one-time, manual):
     (let ((gpg-key-id (auth-source-pick-first-password :host "org-gcal-gpg-key-id")))
       (when gpg-key-id
         (add-to-list 'plstore-encrypt-to gpg-key-id)))
-    ;; Use loopback pinentry so Emacs prompts for GPG passphrases in the minibuffer.
-    ;; Requires allow-loopback-pinentry in ~/.gnupg/gpg-agent.conf.
-    ;; NOTE: loopback needs an interactive minibuffer; timer-driven syncs cannot
-    ;; prompt reliably, so every fetch primes the gpg-agent cache first and aborts
-    ;; before org-gcal starts if the OAuth token store cannot be decrypted.
+    ;; Manual fetches use loopback pinentry so Emacs prompts for GPG passphrases
+    ;; in the minibuffer.  Background OAuth store access enforces
+    ;; `epg-pinentry-mode' `error', so an expired gpg-agent cache fails promptly
+    ;; instead of blocking Emacs on a passphrase request.  Loopback requires
+    ;; allow-loopback-pinentry in ~/.gnupg/gpg-agent.conf.
     (setq epg-pinentry-mode 'loopback)
     :config
     ;; Map each calendar ID to its dedicated org file.
@@ -2204,34 +2204,51 @@ Setup instructions (one-time, manual):
     ;; Suppress popup notifications.
     (setq org-gcal-notify-p nil))
 
-  ;; Safe fetch wrapper: primes GPG and clears stale sync lock before fetching.
-  ;; Uses org-gcal-fetch (read-only — never pushes local changes back to Google).
-  (defun my/org-gcal-fetch-safe ()
-    "Fetch Google Calendar events after verifying the OAuth token store decrypts."
-    (interactive)
-    (let ((interactive-call (called-interactively-p 'interactive)))
-      (condition-case err
-          (progn
-            (my/org-gcal--prime-gpg-cache)
-            (require 'org-gcal)
-            (when (bound-and-true-p org-gcal--sync-lock)
-              (warn "org-gcal: stale sync lock detected, clearing it.")
-              (org-gcal--sync-unlock))
-            (org-gcal-fetch))
-        (error
-         (if interactive-call
-             (signal (car err) (cdr err))
-           (message "org-gcal: fetch skipped: %s"
-                    (error-message-string err)))))))
+  ;; A policy token remains active until the Deferred returned by org-gcal settles.
+  ;; This is required because OAuth token reads happen in later Deferred callbacks,
+  ;; after a normal dynamic binding of `epg-pinentry-mode' would have unwound.
+  (defvar my/org-gcal--active-gpg-policies nil)
+  (defvar my/org-gcal--operation-depth 0)
+  (defvar my/org-gcal--requested-gpg-policy nil)
 
-  (defun my/org-gcal--prime-gpg-cache (&optional noerror)
-    "Decrypt the org-gcal plstore once to prime the gpg-agent passphrase cache.
+  (defun my/org-gcal--pinentry-mode ()
+    "Return the active org-gcal GPG policy, defaulting to non-prompting mode.
 
-Return non-nil when there is no token store yet or decryption succeeds. If
-NOERROR is non-nil, report failures as messages and return nil. Otherwise signal
-`user-error' so manual and timer-driven fetches stop before org-gcal enters its
-deferred OAuth path and reports a later, less useful GPG error."
+An overlapping background operation takes precedence over a manual operation so
+it can never inherit a loopback prompt."
+    (if (catch 'background
+          (dolist (entry my/org-gcal--active-gpg-policies)
+            (when (eq (cdr entry) 'error)
+              (throw 'background t))))
+        'error
+      (if my/org-gcal--active-gpg-policies 'loopback 'error)))
+
+  (defun my/org-gcal--remove-gpg-policy (token &rest _)
+    "Remove TOKEN after its org-gcal Deferred settles or is cancelled."
+    (setq my/org-gcal--active-gpg-policies
+          (assq-delete-all token my/org-gcal--active-gpg-policies)))
+
+  (defun my/org-gcal--cancel-gpg-policy (token original-cancel deferred)
+    "Remove TOKEN, then restore and invoke DEFERRED's ORIGINAL-CANCEL function."
+    (my/org-gcal--remove-gpg-policy token)
+    ;; A second cancellation uses the original function directly, so the token
+    ;; cleanup wrapper runs exactly once while preserving Deferred cancellation.
+    (setf (deferred-cancel deferred) original-cancel)
+    (funcall original-cancel deferred))
+
+  (defun my/org-gcal--background-gpg-error (err)
+    "Report ERR from a non-prompting org-gcal OAuth store operation."
+    (message "org-gcal: background fetch will not prompt for GPG; run SPC a o s manually to unlock the gpg-agent cache (%s)"
+             (error-message-string err))
+    (signal (car err) (cdr err)))
+
+  (defun my/org-gcal--prime-gpg-cache (policy &optional noerror)
+    "Decrypt the org-gcal plstore once under POLICY without retaining plaintext.
+
+POLICY is `loopback' for a manual command and `error' for all background work.
+If NOERROR is non-nil, report failures and return nil; otherwise re-signal them."
     (let ((plstore-file (expand-file-name "oauth2-auto.plist" user-emacs-directory))
+          (epg-pinentry-mode policy)
           store)
       (if (not (file-exists-p plstore-file))
           t
@@ -2240,41 +2257,107 @@ deferred OAuth path and reports a later, less useful GPG error."
                 (progn
                   (setq store (plstore-open plstore-file))
                   ;; `plstore-find' consults/decrypts secret entries through the
-                  ;; public plstore API, which is stable across Emacs versions.
-                  ;; The plaintext values are intentionally discarded.
+                  ;; public plstore API.  The plaintext values are discarded.
                   (dolist (entry (plstore-find store nil))
                     (plstore-get store (car entry)))
                   t)
               (when store
                 (plstore-close store)))
           (error
-           (if noerror
-               (progn
-                 (message "org-gcal: failed to prime gpg-agent cache: %s"
-                          (error-message-string err))
-                 nil)
-             (user-error
-              "org-gcal: cannot decrypt %s; fetch aborted before reading OAuth tokens (%s)"
-              (file-name-nondirectory plstore-file)
-              (error-message-string err))))))))
+           (cond
+            (noerror
+             (message "org-gcal: failed to prime gpg-agent cache: %s"
+                      (error-message-string err))
+             nil)
+            ((eq policy 'error)
+             (my/org-gcal--background-gpg-error err))
+            (t
+             (signal (car err) (cdr err)))))))))
 
-  (defun my/org-gcal--prime-gpg-cache-before-sync (&rest _)
-    "Prime GPG before any direct `org-gcal-sync' or `org-gcal-fetch' call."
-    (my/org-gcal--prime-gpg-cache))
+  (defun my/org-gcal--with-gpg-policy (original &rest args)
+    "Prime once and retain a GPG policy around a top-level org-gcal operation."
+    (if (> my/org-gcal--operation-depth 0)
+        (apply original args)
+      (let* ((policy (or my/org-gcal--requested-gpg-policy
+                         (if (called-interactively-p 'interactive) 'loopback 'error)))
+             (token (make-symbol "org-gcal-gpg-policy"))
+             (my/org-gcal--operation-depth (1+ my/org-gcal--operation-depth)))
+        (push (cons token policy) my/org-gcal--active-gpg-policies)
+        (condition-case err
+            (progn
+              (my/org-gcal--prime-gpg-cache policy)
+              (let ((result (apply original args)))
+                (if (deferred-p result)
+                    ;; `deferred:watch' runs on success and error, preserves the
+                    ;; value/error, and re-signals errors into the original chain.
+                    (let ((watcher
+                           (deferred:watch result
+                             (apply-partially #'my/org-gcal--remove-gpg-policy token))))
+                      ;; `deferred:cancel' bypasses watch callbacks, so wrap the
+                      ;; returned watcher's existing cancel function as well.
+                      (setf (deferred-cancel watcher)
+                            (apply-partially #'my/org-gcal--cancel-gpg-policy
+                                             token (deferred-cancel watcher)))
+                      watcher)
+                  (my/org-gcal--remove-gpg-policy token)
+                  result)))
+          (error
+           (my/org-gcal--remove-gpg-policy token)
+           (signal (car err) (cdr err)))))))
+
+  (defun my/org-gcal--with-oauth2-auto-gpg-policy (original username provider &rest args)
+    "Apply the active org-gcal GPG policy to OAuth plstore access only.
+
+This advises oauth2-auto's private read/write seams in the installed package;
+keep the `fboundp' guards because that package may change those internals."
+    (if (not (eq provider 'org-gcal))
+        (apply original username provider args)
+      (let ((policy (my/org-gcal--pinentry-mode)))
+        (condition-case err
+            (let ((epg-pinentry-mode policy))
+              (apply original username provider args))
+          (error
+           (if (eq policy 'error)
+               (my/org-gcal--background-gpg-error err)
+             (signal (car err) (cdr err))))))))
+
+  ;; Safe fetch wrapper: read-only fetch plus stale-lock handling.  The dynamic
+  ;; request makes this interactive command loopback-capable before fetch calls
+  ;; its nested sync operation.
+  (defun my/org-gcal-fetch-safe ()
+    "Fetch Google Calendar events without pushing local changes to Google."
+    (interactive)
+    (let ((my/org-gcal--requested-gpg-policy
+           (if (called-interactively-p 'interactive) 'loopback 'error)))
+      (condition-case err
+          (progn
+            (require 'org-gcal)
+            (when (bound-and-true-p org-gcal--sync-lock)
+              (warn "org-gcal: stale sync lock detected, clearing it.")
+              (org-gcal--sync-unlock))
+            (org-gcal-fetch))
+        (error
+         (if (called-interactively-p 'interactive)
+             (signal (car err) (cdr err))
+           (message "org-gcal: fetch skipped: %s"
+                    (error-message-string err)))))))
+
+  (with-eval-after-load 'oauth2-auto
+    (dolist (function '(oauth2-auto--plstore-read oauth2-auto--plstore-write))
+      (when (fboundp function)
+        (unless (advice-member-p #'my/org-gcal--with-oauth2-auto-gpg-policy function)
+          (advice-add function :around #'my/org-gcal--with-oauth2-auto-gpg-policy)))))
 
   (with-eval-after-load 'org-gcal
-    (unless (advice-member-p #'my/org-gcal--prime-gpg-cache-before-sync
-                             'org-gcal-sync)
-      (advice-add 'org-gcal-sync :before
-                  #'my/org-gcal--prime-gpg-cache-before-sync)))
+    (dolist (function '(org-gcal-fetch org-gcal-sync))
+      (unless (advice-member-p #'my/org-gcal--with-gpg-policy function)
+        (advice-add function :around #'my/org-gcal--with-gpg-policy))))
 
-  ;; Prime once after startup so the first decrypt happens with a minibuffer
-  ;; available (loopback pinentry needs it). Run slightly deferred so other
-  ;; startup activity doesn't compete for the minibuffer. Fetches still prime
-  ;; again and abort safely if this startup attempt fails.
+  ;; Prime once after startup without prompting.  If the cache is locked, use
+  ;; SPC a o s manually before the next scheduled fetch.
   (add-hook 'emacs-startup-hook
             (lambda ()
-              (run-with-idle-timer 2 nil #'my/org-gcal--prime-gpg-cache :noerror)))
+              (run-with-idle-timer 2 nil #'my/org-gcal--prime-gpg-cache 'error :noerror)))
 
   ;; Auto-fetch every 30 minutes. Adjust the interval as needed.
   (run-at-time "30 min" 1800 #'my/org-gcal-fetch-safe)
