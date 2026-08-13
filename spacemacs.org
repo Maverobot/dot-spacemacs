@@ -849,13 +849,27 @@ Switch profiles at runtime with =SPC a i C= for Codex proxy, =SPC a i Q= for loc
     (my/minuet-apply-openai-compatible-settings))
 #+END_SRC
 *** codex-proxy
-Manage the local IceBear =codex-proxy= Docker Compose service used by Minuet's Codex profile. The service lives in =~/.local/share/codex-proxy= and exposes the dashboard/API at =http://127.0.0.1:8787=.
+Manage the local IceBear =codex-proxy= Docker Compose service used by Minuet's Codex profile. The service lives in =~/.local/share/codex-proxy= and exposes the dashboard/API at =http://127.0.0.1:8787=. Run =SPC a i d i= once to explicitly install a missing setup from the official upstream files; it never overwrites an existing or partial setup and does not start Docker. Run =SPC a i d u= afterwards to start the installed service.
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (defvar my/codex-proxy-directory "~/.local/share/codex-proxy"
     "Directory containing the local codex-proxy Docker Compose setup.")
 
   (defvar my/codex-proxy-dashboard-url "http://127.0.0.1:8787"
     "Dashboard URL for the local codex-proxy service.")
+
+  (require 'cl-lib)
+
+  (defconst my/codex-proxy--compose-url
+    "https://raw.githubusercontent.com/icebear0828/codex-proxy/master/docker-compose.yml"
+    "Official upstream Docker Compose URL for codex-proxy.")
+
+  (defconst my/codex-proxy--environment-url
+    "https://raw.githubusercontent.com/icebear0828/codex-proxy/master/.env.example"
+    "Official upstream environment-template URL for codex-proxy.")
+
+  (defconst my/codex-proxy--installation-files
+    '("docker-compose.yml" ".env.example" ".env")
+    "Files managed by `my/codex-proxy-install'.")
 
   (defun my/codex-proxy--default-directory ()
     "Return the codex-proxy Compose directory or signal a user error."
@@ -871,6 +885,109 @@ Manage the local IceBear =codex-proxy= Docker Compose service used by Minuet's C
         (user-error "codex-proxy Compose file is missing in %s (expected compose.yaml, compose.yml, docker-compose.yaml, or docker-compose.yml)"
                     directory))
       directory))
+
+  (defun my/codex-proxy--installation-paths (directory)
+    "Return absolute managed installation paths within DIRECTORY."
+    (mapcar (lambda (name) (expand-file-name name directory))
+            my/codex-proxy--installation-files))
+
+  (defun my/codex-proxy--file-exists-or-symlink-p (path)
+    "Return non-nil when PATH exists, including a dangling symbolic link."
+    (or (file-exists-p path) (file-symlink-p path)))
+
+  (defun my/codex-proxy--download-file (url destination)
+    "Download URL into DESTINATION, rejecting a non-200 response."
+    (require 'url-http)
+    (let ((buffer (url-retrieve-synchronously url t t 30)))
+      (unless buffer
+        (error "Unable to download codex-proxy setup from %s" url))
+      (unwind-protect
+          (with-current-buffer buffer
+            (unless (= url-http-response-status 200)
+              (error "codex-proxy setup download failed for %s (HTTP %s)"
+                     url url-http-response-status))
+            (write-region url-http-end-of-headers (point-max) destination nil 'silent))
+        (kill-buffer buffer))))
+
+  (defun my/codex-proxy--replace-required-seam (content regexp replacement label)
+    "Replace exactly one REGEXP in CONTENT or signal LABEL's upstream drift."
+    (let ((start 0)
+          (count 0))
+      (while (string-match regexp content start)
+        (setq count (1+ count)
+              start (match-end 0)))
+      (unless (= count 1)
+        (error "codex-proxy upstream %s seam expected once, found %d" label count))
+      (replace-regexp-in-string regexp replacement content t t)))
+
+  (defun my/codex-proxy--prepare-installation (temporary-directory)
+    "Download and transform codex-proxy files into TEMPORARY-DIRECTORY."
+    (let* ((compose-file (expand-file-name "docker-compose.yml" temporary-directory))
+           (environment-example-file (expand-file-name ".env.example" temporary-directory))
+           (environment-file (expand-file-name ".env" temporary-directory)))
+      (my/codex-proxy--download-file my/codex-proxy--compose-url compose-file)
+      (my/codex-proxy--download-file my/codex-proxy--environment-url
+                                     environment-example-file)
+      (with-temp-buffer
+        (insert-file-contents compose-file)
+        (let ((content (my/codex-proxy--replace-required-seam
+                        (buffer-string)
+                        "^[[:space:]]*- \"127\\.0\\.0\\.1:\\${PORT:-8080}:8080\"$"
+                        "      - \"127.0.0.1:${PORT:-8080}:8080\""
+                        "Compose loopback API port")))
+          (write-region
+           (my/codex-proxy--replace-required-seam
+            content "^[[:space:]]*- \"1455:1455\"$"
+            "      - \"127.0.0.1:1455:1455\"" "Compose port 1455")
+           nil compose-file nil 'silent)))
+      (with-temp-buffer
+        (insert-file-contents environment-example-file)
+        (write-region
+         (my/codex-proxy--replace-required-seam
+          (buffer-string) "^PORT=8080$" "PORT=8787" "environment PORT")
+         nil environment-file nil 'silent))))
+
+  (defun my/codex-proxy-install ()
+    "Install a new local codex-proxy Compose setup without starting Docker."
+    (interactive)
+    (let* ((directory (file-name-as-directory
+                       (expand-file-name my/codex-proxy-directory)))
+           (target-files (my/codex-proxy--installation-paths directory))
+           (directory-existed (file-directory-p directory)))
+      (when (cl-some #'my/codex-proxy--file-exists-or-symlink-p target-files)
+        (user-error "codex-proxy setup already exists in %s; refusing to overwrite it"
+                    directory))
+      (let ((temporary-directory (make-temp-file "codex-proxy-install-" t))
+            installed-files
+            completed)
+        (unwind-protect
+            (progn
+              (my/codex-proxy--prepare-installation temporary-directory)
+              (unless directory-existed
+                (make-directory directory t))
+              (when (cl-some #'my/codex-proxy--file-exists-or-symlink-p target-files)
+                (user-error "codex-proxy setup appeared in %s; refusing to overwrite it"
+                            directory))
+              (dolist (name my/codex-proxy--installation-files)
+                (let ((source (expand-file-name name temporary-directory))
+                      (target (expand-file-name name directory)))
+                  (rename-file source target)
+                  (when (string= name ".env")
+                    (set-file-modes target #o600))
+                  (push target installed-files)))
+              (setq completed t)
+              (message "Installed codex-proxy setup in %s; run SPC a i d u to start it."
+                       directory))
+          (unless completed
+            (dolist (file installed-files)
+              (when (my/codex-proxy--file-exists-or-symlink-p file)
+                (delete-file file)))
+            (when (and (not directory-existed)
+                       (file-directory-p directory)
+                       (null (directory-files directory nil directory-files-no-dot-files-regexp)))
+              (delete-directory directory)))
+          (when (file-directory-p temporary-directory)
+            (delete-directory temporary-directory t))))))
 
   (defun my/codex-proxy--run-docker-compose (arguments)
     "Run docker compose with ARGUMENTS in `my/codex-proxy-directory'."
@@ -909,6 +1026,7 @@ Manage the local IceBear =codex-proxy= Docker Compose service used by Minuet's C
 
   (spacemacs/declare-prefix "aid" "codex-proxy")
   (spacemacs/set-leader-keys
+    "aidi" 'my/codex-proxy-install
     "aidu" 'my/codex-proxy-docker-up
     "aidd" 'my/codex-proxy-docker-down
     "aidr" 'my/codex-proxy-docker-restart
