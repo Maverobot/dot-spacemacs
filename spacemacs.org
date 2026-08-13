@@ -585,8 +585,13 @@ Switch profiles at runtime with =SPC a i C= for Codex proxy, =SPC a i Q= for loc
       "Maximum number of staged diff characters to include in Minuet prompts.")
 
     (defun my/minuet-git-root ()
-      "Return the current Git repository root, or nil outside a Git repo."
-      (locate-dominating-file default-directory ".git"))
+      "Return Git's worktree root for the current directory, or nil."
+      (require 'subr-x)
+      (with-temp-buffer
+        (when (zerop (process-file "git" nil t nil
+                                   "rev-parse" "--show-toplevel"))
+          (file-name-as-directory
+           (string-trim-right (buffer-string))))))
 
     (defun my/minuet-git-command-output (&rest args)
       "Return output from git ARGS in the current repository, or nil on failure."
