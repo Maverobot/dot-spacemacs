@@ -1838,7 +1838,15 @@ pre.src > code {
     (define-key org-agenda-mode-map "m" 'org-agenda-month-view)
     (define-key org-agenda-mode-map "y" 'org-agenda-year-view))
 
-  (spacemacs/set-leader-keys "aou" 'scan-new-agenda-files)
+  (defun my/org-agenda-refresh-and-open ()
+    "Refresh agenda files, then open the agenda dispatcher."
+    (interactive)
+    (scan-new-agenda-files)
+    (call-interactively #'org-agenda))
+
+  (spacemacs/set-leader-keys
+   "aoo" 'my/org-agenda-refresh-and-open
+   "aou" 'scan-new-agenda-files)
 
   ;; Add category into the ~org-todo-list~ view
   (setq org-agenda-prefix-format
