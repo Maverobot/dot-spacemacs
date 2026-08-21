@@ -1759,8 +1759,15 @@ E.g. when visiting a soft/hard link.
     (interactive)
     (org-insert-time-stamp (current-time) t))
 
+  (defun my/org-insert-current-date-time-inactive ()
+    "Insert an inactive Org timestamp for the current date and time."
+    (interactive)
+    (org-insert-time-stamp (current-time) t t))
+
   (spacemacs/set-leader-keys-for-major-mode
-    'org-mode "dn" #'my/org-insert-current-date-time)
+    'org-mode
+    "dn" #'my/org-insert-current-date-time
+    "dN" #'my/org-insert-current-date-time-inactive)
 #+END_SRC
 *** Do not hide the macro markers
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
@@ -1773,6 +1780,15 @@ Modern visual styling for org-mode: clean TODO keywords, tables, timestamps, tag
   (use-package org-modern
     :hook (org-mode . org-modern-mode)
     :hook (org-agenda-finalize . org-modern-agenda)
+    :custom-face
+    (org-modern-date-active
+     ((t (:inherit (success org-modern-label) :weight bold))))
+    (org-modern-time-active
+     ((t (:inherit (success org-modern-label) :weight bold))))
+    (org-modern-date-inactive
+     ((t (:inherit (shadow org-modern-label) :weight normal))))
+    (org-modern-time-inactive
+     ((t (:inherit (shadow org-modern-label) :weight normal))))
     :custom
     ;; Disable org-modern TODO styling to preserve our custom keyword faces
     (org-modern-todo nil)
