@@ -19,6 +19,28 @@ It is called immediately after
 useful for variables that need to be set before packages are loaded. If you are
 unsure, you should try in setting them in `dotspacemacs/user-config' first.
 #+end_quote
+** Generated binding mode
+Declare dynamic binding explicitly in the generated file. This preserves the
+existing configuration semantics while satisfying Emacs 31's file-header check.
+#+BEGIN_SRC emacs-lisp :tangle user-init.el :comments no
+  ;; -*- lexical-binding: nil; -*-
+#+END_SRC
+** Suppress known legacy binding warnings
+The system-generated mu4e configuration and two legacy private Org-Babel
+backends do not declare a binding mode. Suppress only those exact file warnings;
+other missing-cookie warnings remain visible.
+#+BEGIN_SRC emacs-lisp :tangle user-init.el
+  (dolist (source
+           (list "/usr/share/emacs/site-lisp/elpa-src/mu4e-1.10.8/mu4e-config.el"
+                 (abbreviate-file-name
+                  (expand-file-name "private/ob-lean4/ob-lean4.el"
+                                    dotspacemacs-directory))
+                 (abbreviate-file-name
+                  (expand-file-name "private/ob-cmake/ob-cmake.el"
+                                    dotspacemacs-directory))))
+    (add-to-list 'warning-suppress-log-types
+                 `(files missing-lexbind-cookie ,source)))
+#+END_SRC
 ** Custom variables
 #+BEGIN_SRC emacs-lisp :tangle user-init.el
   ;; Keep Emacs Custom output out of tracked init.el. Spacemacs otherwise copies
@@ -219,6 +241,12 @@ Configuration function for user code.
 This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code.
 #+end_quote
+** Generated binding mode
+Declare dynamic binding explicitly in the generated file, matching the existing
+configuration semantics.
+#+BEGIN_SRC emacs-lisp :tangle user-config.el :comments no
+  ;; -*- lexical-binding: nil; -*-
+#+END_SRC
 ** Performance
 *** gcmh (Garbage Collection Magic Hack)
 Use idle-time garbage collection instead of a static threshold.
