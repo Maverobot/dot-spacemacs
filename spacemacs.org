@@ -38,6 +38,32 @@ unsure, you should try in setting them in `dotspacemacs/user-config' first.
                                       spacemacs-dark
                                       doom-zenburn))
 #+END_SRC
+*** Emacs 31 Doom theme compatibility
+Emacs 31 rejects two constructs in =doom-themes= 2.3.0. The
+=gnus-group-news-low-empty= face inherits from =gnus-group-news-low=, while the
+built-in Gnus face points back to the empty face. The Custom button faces also
+use the invalid box style =none=. Apply the corrected upstream definitions
+before a Doom theme expands its shared face specifications.
+#+BEGIN_SRC emacs-lisp :tangle user-init.el
+  (with-eval-after-load 'doom-themes
+    (let ((gnus-face-spec (assq 'gnus-group-news-low-empty
+                                doom-themes-base-faces)))
+      (when gnus-face-spec
+        (setcdr gnus-face-spec
+                '(:inherit 'gnus-group-mail-1-empty :weight 'normal))))
+    (dolist (face '(custom-button
+                    custom-button-unraised
+                    custom-button-pressed-unraised
+                    custom-button-pressed
+                    custom-button-mouse))
+      (let ((button-face-spec (assq face doom-themes-base-faces)))
+        (when button-face-spec
+          (setcdr button-face-spec
+                  (plist-put (cdr button-face-spec)
+                             :box
+                             (list 'quote
+                                   '(:line-width 1 :style nil))))))))
+#+END_SRC
 ** ROS
 #+BEGIN_SRC emacs-lisp :tangle user-init.el
   (defun spacemacs/update-ros-envs ()
