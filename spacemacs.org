@@ -110,7 +110,10 @@ Stable. Ranger is pinned to rolling MELPA because its current compatibility fix 
 not yet available from MELPA Stable. mu4e-alert is also pinned to rolling MELPA
 because MELPA Stable 1.0 reads the removed =mu4e~context-current= variable;
 rolling 20251022.2130 supports mu4e 1.7+ APIs and passes the installed mu4e
-1.10.8 context-switch repro.
+1.10.8 context-switch repro. evil-org is pinned because MELPA Stable 1.0.2 calls
+the removed =evil-redirect-digit-argument= function; rolling 20221001.2335 uses
+Evil's current minor-mode keymap API and matches the build that worked with the
+previous Emacs 30.2 package tree.
 #+BEGIN_SRC emacs-lisp :tangle user-init.el
   (setq configuration-layer-elpa-archives
         '(("melpa-stable" . "stable.melpa.org/packages/")
@@ -124,7 +127,8 @@ rolling 20251022.2130 supports mu4e 1.7+ APIs and passes the installed mu4e
           ("gnu"          . 1)))
   (setq package-pinned-packages
         '((ranger . "melpa")
-          (mu4e-alert . "melpa")))
+          (mu4e-alert . "melpa")
+          (evil-org . "melpa")))
 #+END_SRC
 *** Isolate Python LSP servers by project
 Pyright and Ruff copy their multi-root variables when their lsp-mode clients
