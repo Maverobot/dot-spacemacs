@@ -107,7 +107,10 @@ build tarballs are available.  Giving MELPA Stable a higher priority lets
 ~package.el~ use stable releases for packages that exist in both archives while
 still falling back to rolling MELPA for packages that are not released on MELPA
 Stable. Ranger is pinned to rolling MELPA because its current compatibility fix is
-not yet available from MELPA Stable.
+not yet available from MELPA Stable. mu4e-alert is also pinned to rolling MELPA
+because MELPA Stable 1.0 reads the removed =mu4e~context-current= variable;
+rolling 20251022.2130 supports mu4e 1.7+ APIs and passes the installed mu4e
+1.10.8 context-switch repro.
 #+BEGIN_SRC emacs-lisp :tangle user-init.el
   (setq configuration-layer-elpa-archives
         '(("melpa-stable" . "stable.melpa.org/packages/")
@@ -119,7 +122,9 @@ not yet available from MELPA Stable.
           ("melpa"        . 4)
           ("nongnu"       . 2)
           ("gnu"          . 1)))
-  (setq package-pinned-packages '((ranger . "melpa")))
+  (setq package-pinned-packages
+        '((ranger . "melpa")
+          (mu4e-alert . "melpa")))
 #+END_SRC
 *** Isolate Python LSP servers by project
 Pyright and Ruff copy their multi-root variables when their lsp-mode clients
