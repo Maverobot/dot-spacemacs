@@ -101,19 +101,19 @@ Set shell to be ~bash~ explicitly because my default shell ~fish~ does not work 
     (message (concat default-groovy-lsp-jar-path " does not exist")))
 #+END_SRC
 ** Workarounds
-*** Prefer MELPA Stable for shared packages
-MELPA occasionally updates ~archive-contents~ before all referenced rolling
-build tarballs are available.  Giving MELPA Stable a higher priority lets
-~package.el~ use stable releases for packages that exist in both archives while
-still falling back to rolling MELPA for packages that are not released on MELPA
-Stable. Ranger is pinned to rolling MELPA because its current compatibility fix is
-not yet available from MELPA Stable. mu4e-alert is also pinned to rolling MELPA
-because MELPA Stable 1.0 reads the removed =mu4e~context-current= variable;
-rolling 20251022.2130 supports mu4e 1.7+ APIs and passes the installed mu4e
-1.10.8 context-switch repro. evil-org is pinned because MELPA Stable 1.0.2 calls
-the removed =evil-redirect-digit-argument= function; rolling 20221001.2335 uses
-Evil's current minor-mode keymap API and matches the build that worked with the
-previous Emacs 30.2 package tree.
+*** Prefer rolling MELPA for shared packages
+This configuration follows the Spacemacs develop branch and current Emacs APIs,
+so rolling MELPA is the primary package source. MELPA Stable remains available
+at a lower priority for deliberate package-specific fallback. If rolling MELPA
+publishes archive metadata before a referenced tarball is available, retry later
+or pin that package to Stable; ~package.el~ does not retry a failed download from
+a lower-priority archive automatically.
+
+Ranger, mu4e-alert, and evil-org remain explicitly pinned to rolling MELPA to
+record their verified compatibility requirements. Stable Ranger calls
+=window--display-buffer= with a removed argument, Stable mu4e-alert reads the
+removed =mu4e~context-current= variable, and Stable evil-org calls the removed
+=evil-redirect-digit-argument= function.
 #+BEGIN_SRC emacs-lisp :tangle user-init.el
   (setq configuration-layer-elpa-archives
         '(("melpa-stable" . "stable.melpa.org/packages/")
@@ -121,8 +121,8 @@ previous Emacs 30.2 package tree.
           ("gnu"          . "elpa.gnu.org/packages/")
           ("nongnu"       . "elpa.nongnu.org/nongnu/")))
   (setq package-archive-priorities
-        '(("melpa-stable" . 20)
-          ("melpa"        . 4)
+        '(("melpa"        . 20)
+          ("melpa-stable" . 4)
           ("nongnu"       . 2)
           ("gnu"          . 1)))
   (setq package-pinned-packages
