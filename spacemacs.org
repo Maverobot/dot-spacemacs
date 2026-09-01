@@ -1180,10 +1180,23 @@ Use evil keybindings for selecting items in popup menus.
     )
 #+END_SRC
 *** nvm
+Resolve NVM's default alias through =nvm.sh= before activating it with =nvm-use=.
+This supports aliases such as a major version or =lts/*= without pinning the
+Emacs configuration to a specific Node release.
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  ;; TODO: use the default version instead of hard-coding the specific version
+  (defun my/nvm-default-version ()
+    "Return the installed Node version selected by NVM's default alias."
+    (let ((nvm-script (expand-file-name "nvm.sh" nvm-dir))
+          (process-environment (copy-sequence process-environment)))
+      (unless (file-readable-p nvm-script)
+        (error "NVM initialization script is not readable: %s" nvm-script))
+      (setenv "NVM_DIR" (directory-file-name nvm-dir))
+      (car (process-lines shell-file-name
+                          "-c"
+                          ". \"$NVM_DIR/nvm.sh\" >/dev/null 2>&1 && nvm version default"))))
+
   (condition-case err
-      (nvm-use "22")
+      (nvm-use (my/nvm-default-version))
     (error (message "Could not initialize nvm for emacs. %s" (error-message-string err))))
 #+END_SRC
 *** conf-mode
