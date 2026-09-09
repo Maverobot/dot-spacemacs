@@ -447,7 +447,83 @@ cannot compile against an unknown `lsp-session-folders' setter."
     (my/lsp-prune-missing-workspace-folders-safely))
 #+END_SRC
 *** ccls
+ccls can skip indexing a header opened during startup. Probe each opened ccls
+file once; only its exact =-32600 not indexed= response requests targeted indexing
+with a =textDocument/didSave= notification. This never saves the buffer or changes
+its modified state. ccls indexes the on-disk text by default, so recovery does not
+promise symbols for unsaved edits. Other errors retain normal LSP reporting;
+there is no polling, restart, or project-specific path mapping.
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
+  (defvar-local my/ccls-index-probes nil
+    "Workspace/token pairs for the current document-open lifecycles.
+  A token's car is non-nil until its one probe response is handled.")
+
+  (defun my/ccls-index-before-open ()
+    "Invalidate the previous probe when ccls opens this document again."
+    (when (and lsp--cur-workspace
+               (eq (lsp--client-server-id
+                    (lsp--workspace-client lsp--cur-workspace)) 'ccls))
+      (setq my/ccls-index-probes
+            (assq-delete-all lsp--cur-workspace my/ccls-index-probes))))
+
+  (defun my/ccls-index-forget-file ()
+    "Invalidate pending probes when the buffer changes its visited file."
+    (setq my/ccls-index-probes nil))
+
+  (defun my/ccls-index-probe-result
+      (buffer workspace process file uri token error-handler error)
+    "Handle one probe ERROR, or nil on success, in its original context."
+    (when (buffer-live-p buffer)
+      (with-current-buffer buffer
+        (when (and (eq token (cdr (assq workspace my/ccls-index-probes)))
+                   (car token)
+                   (equal buffer-file-name file)
+                   (memq workspace lsp--buffer-workspaces)
+                   (memq buffer (lsp--workspace-buffers workspace))
+                   (eq (lsp--workspace-status workspace) 'initialized)
+                   (eq process (lsp--workspace-proc workspace))
+                   (process-live-p process))
+          (setcar token nil)
+          (when error
+            (let ((lsp--cur-workspace workspace))
+              (if (and (equal (lsp-get error :code) -32600)
+                       (equal (lsp-get error :message) "not indexed"))
+                  (lsp-notify "textDocument/didSave"
+                              (list :textDocument (list :uri uri)))
+                (funcall error-handler error))))))))
+
+  (defun my/ccls-index-probe-success (callback _symbols)
+    "Complete CALLBACK without requesting indexing after a successful probe."
+    (funcall callback nil))
+
+  (defun my/ccls-index-after-open ()
+    "Probe this ccls document once, without broadcasting to other servers."
+    (let ((workspace lsp--cur-workspace))
+      (when (and workspace buffer-file-name
+                 (eq (lsp--client-server-id
+                      (lsp--workspace-client workspace)) 'ccls)
+                 (not (assq workspace my/ccls-index-probes)))
+        (let* ((token (list t))
+               (uri (lsp--buffer-uri))
+               (callback
+                (apply-partially
+                 #'my/ccls-index-probe-result
+                 (current-buffer) workspace (lsp--workspace-proc workspace)
+                 buffer-file-name uri token
+                 (lsp--create-default-error-handler "textDocument/documentSymbol"))))
+          (push (cons workspace token) my/ccls-index-probes)
+          ;; Invalidate before lsp-mode reconnects, even after it re-adds its hook.
+          (add-hook 'after-set-visited-file-name-hook
+                    #'my/ccls-index-forget-file -90 t)
+          (lsp-request-async
+           "textDocument/documentSymbol" (list :textDocument (list :uri uri))
+           (apply-partially #'my/ccls-index-probe-success callback)
+           :mode 'alive :no-merge t :error-handler callback)))))
+
+  (with-eval-after-load 'lsp-mode
+    (add-hook 'lsp-before-open-hook #'my/ccls-index-before-open)
+    (add-hook 'lsp-ccls-after-open-hook #'my/ccls-index-after-open))
+
   (with-eval-after-load 'ccls
     (setq ccls-root-files (add-to-list 'ccls-root-files "build/compile_commands.json" t))
     (setq ccls-sem-highlight-method 'font-lock)
