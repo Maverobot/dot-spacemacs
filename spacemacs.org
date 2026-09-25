@@ -2793,13 +2793,6 @@ The one and only one cheatsheet.
       (cheat-sh ":random")))
   (spacemacs/declare-prefix "acR" "cheat.sh/:random")
 #+END_SRC
-*** chatgpt-shell
-#+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (use-package chatgpt-shell
-    :load-path "~/.spacemacs.d/private/chatgpt-shell")
-  (setq chatgpt-shell-openai-key
-        (auth-source-pick-first-password :host "api.openai.com"))
-#+END_SRC
 ** mu4e
 Email client using =mu4e= (Spacemacs layer) + =mbsync= (isync) for IMAP sync.
 Two Gmail accounts: personal and work. Credentials stored in =~/.authinfo= (not committed).

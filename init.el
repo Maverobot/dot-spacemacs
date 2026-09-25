@@ -519,7 +519,8 @@ It should only modify the values of Spacemacs settings."
    ;; If t, enable the `package-quickstart' feature to avoid full package
    ;; loading, otherwise no `package-quickstart' attemption (default nil).
    ;; Refer the FAQ.org "package-quickstart" section for details.
-   dotspacemacs-enable-package-quickstart t
+   ;; Doom needs early package initialization, so quickstart provides no benefit.
+   dotspacemacs-enable-package-quickstart nil
 
    ;; If non-nil a progress bar is displayed when spacemacs is loading. This
    ;; may increase the boot time on some systems and emacs builds, set it to
