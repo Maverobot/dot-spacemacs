@@ -1334,10 +1334,52 @@ Emacs configuration to a specific Node release.
 #+END_SRC
 
 *** scad-mode
+=scad-mode= is installed through Spacemacs' additional packages using the
+configured archive priorities. Upstream supports relative =use=/=include= in
+preview and Flymake, while preserving an existing =OPENSCADPATH=.
+Preview images now automatically fit their window instead of using the fork's
+=M-+=/=M--= image-size controls. Camera zoom and rotation keys are unchanged.
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (use-package scad-mode
-    :load-path "~/.spacemacs.d/private/scad-mode")
+  (require 'cl-lib)
+  (use-package scad-mode)
   (add-hook 'scad-mode-hook 'flymake-mode-on)
+
+  (defun my/scad--make-process-with-cleanup (make-process-function &rest arguments)
+    "Call MAKE-PROCESS-FUNCTION with ARGUMENTS, cleaning failed SCAD startups."
+    (condition-case err
+        (apply make-process-function arguments)
+      (error
+       ;; Upstream derives its input and output from the same temporary stem.
+       ;; If process creation fails, its sentinel cannot release these files.
+       (let* ((name (plist-get arguments :name))
+              (command (plist-get arguments :command))
+              (output (cadr (member "-o" command)))
+              (suffix (pcase name
+                        ("scad-preview" ".tmp.png")
+                        ("scad-flymake" ".ast")))
+              (buffer (plist-get arguments :buffer)))
+         (when (and suffix output (string-suffix-p suffix output))
+           (delete-file (concat (substring output 0 (- (length suffix))) ".scad"))
+           (delete-file output)
+           ;; Flymake creates a private buffer; preview uses a shared log name.
+           (when (and (equal name "scad-flymake") (buffer-live-p buffer))
+             (kill-buffer buffer))))
+       (signal (car err) (cdr err)))))
+
+  (defun my/scad--cleanup-failed-start (original-function &rest arguments)
+    "Run a SCAD operation with cleanup for synchronous process startup errors."
+    (cl-letf (((symbol-function 'make-process)
+               (apply-partially #'my/scad--make-process-with-cleanup
+                                (symbol-function 'make-process))))
+      (apply original-function arguments)))
+
+  (defun my/scad--order-preview-cleanup ()
+    "Delete the final image only after terminating the preview process."
+    ;; Termination may run a pending sentinel that installs the final PNG.
+    (remove-hook 'kill-buffer-hook #'scad--preview-delete t)
+    (add-hook 'kill-buffer-hook #'scad--preview-delete 90 t))
+
+  (add-hook 'scad-preview-mode-hook #'my/scad--order-preview-cleanup)
   (with-eval-after-load 'scad-mode
     (define-key scad-preview-mode-map (kbd "C-h") 'scad-preview-rotate-z-)
     (define-key scad-preview-mode-map (kbd "C-l") 'scad-preview-rotate-z+)
@@ -1346,7 +1388,10 @@ Emacs configuration to a specific Node release.
     (define-key scad-preview-mode-map (kbd "M-h") 'scad-preview-distance-)
     (define-key scad-preview-mode-map (kbd "M-l") 'scad-preview-distance+)
     (define-key scad-preview-mode-map (kbd "M-k") 'scad-preview-translate-z+)
-    (define-key scad-preview-mode-map (kbd "M-j") 'scad-preview-translate-z-))
+    (define-key scad-preview-mode-map (kbd "M-j") 'scad-preview-translate-z-)
+    (dolist (operation '(scad--preview-render scad-flymake))
+      (advice-remove operation #'my/scad--cleanup-failed-start)
+      (advice-add operation :around #'my/scad--cleanup-failed-start)))
 #+END_SRC
 **** STL review
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
@@ -1431,7 +1476,7 @@ Emacs configuration to a specific Node release.
         (setq-local my/stl-review-source-path source-path
                     my/stl-review-source-buffer source-buffer
                     my/stl-review-adapter-buffer adapter
-                    scad-command (shell-quote-argument openscad))
+                    scad-command openscad)
         (use-local-map (copy-keymap scad-preview-mode-map))
         (local-set-key (kbd "g") #'my/stl-review-rerender)
         (when (fboundp 'evil-local-set-key)
@@ -1524,7 +1569,8 @@ STL file buffer is visited."
               (scad-mode)
               (when (bound-and-true-p flymake-mode)
                 (flymake-mode -1))
-              (let ((scad-command (shell-quote-argument openscad)))
+              ;; Upstream passes the executable directly to `make-process'.
+              (let ((scad-command openscad))
                 (if source-buffer
                     (scad-preview)
                   (cl-letf (((symbol-function 'display-buffer)

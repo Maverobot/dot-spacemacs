@@ -213,6 +213,7 @@ This function should only modify configuration layer settings."
                                       org-roam-ui
                                       platformio-mode
                                       posframe
+                                      scad-mode
                                       ssh-agency
                                       org-modern
                                       gcmh
