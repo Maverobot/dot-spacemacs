@@ -189,7 +189,7 @@ This function should only modify configuration layer settings."
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '((lean4-mode :location (recipe :fetcher github :repo "leanprover/lean4-mode" :files ("*.el" "data")))
                                       (gptel :location (recipe :fetcher github :repo "karthink/gptel" :files ("*.el")))
-                                      (pi-coding-agent :location (recipe :fetcher github :repo "dnouri/pi-coding-agent" :files ("*.el")))
+                                      pilish
                                       (term-cursor :location (recipe :fetcher github :repo "h0d/term-cursor.el" ))
                                       (ultra-scroll :location (recipe :fetcher github :repo "jdtsmith/ultra-scroll"))
                                       arduino-mode

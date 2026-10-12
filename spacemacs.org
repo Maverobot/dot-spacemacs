@@ -1199,19 +1199,24 @@ Use gptel's direct OpenAI OAuth backend for the ChatGPT Plus/Pro Codex subscript
                           "OpenAI-sub"
                           :request-params '(:reasoning (:effort "xhigh")))))
 #+END_SRC
-*** pi-coding-agent
+*** pilish
 Emacs frontend for the [[https://pi.dev][pi coding agent]]. Requires the =pi= CLI to be installed, available in =PATH=, and authenticated with =pi --login= (or provider API keys configured).
+
+=pilish= is the MELPA package formerly named =pi-coding-agent=. Install it from
+MELPA so =package.el= tracks its =md-ts-mode= and =markdown-table-wrap=
+dependencies; the old GitHub recipe has no main file to declare them, so
+Spacemacs removes them as orphans.
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
-  (use-package pi-coding-agent
-    :commands (pi-coding-agent
-               pi-coding-agent-toggle)
+  (use-package pilish
+    :commands (pilish
+               pilish-toggle)
     :init
-    (defalias 'pi 'pi-coding-agent)
+    (defalias 'pi 'pilish)
 
     (spacemacs/declare-prefix "ai" "AI tools")
     (spacemacs/set-leader-keys
-      "aip" 'pi-coding-agent
-      "aiP" 'pi-coding-agent-toggle))
+      "aip" 'pilish
+      "aiP" 'pilish-toggle))
 #+END_SRC
 *** lsp-ui
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
