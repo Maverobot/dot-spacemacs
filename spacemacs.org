@@ -26,9 +26,10 @@ existing configuration semantics while satisfying Emacs 31's file-header check.
   ;; -*- lexical-binding: nil; -*-
 #+END_SRC
 ** Suppress known legacy binding warnings
-The system-generated mu4e configuration and two legacy private Org-Babel
-backends do not declare a binding mode. Suppress only those exact file warnings;
-other missing-cookie warnings remain visible.
+The system-generated mu4e configuration, two legacy private Org-Babel backends,
+and the generated company-statistics cache do not declare a binding mode.
+Suppress only those exact file warnings; other missing-cookie warnings remain
+visible.
 #+BEGIN_SRC emacs-lisp :tangle user-init.el
   (dolist (source
            (list "/usr/share/emacs/site-lisp/elpa-src/mu4e-1.10.8/mu4e-config.el"
@@ -37,7 +38,10 @@ other missing-cookie warnings remain visible.
                                     dotspacemacs-directory))
                  (abbreviate-file-name
                   (expand-file-name "private/ob-cmake/ob-cmake.el"
-                                    dotspacemacs-directory))))
+                                    dotspacemacs-directory))
+                 (abbreviate-file-name
+                  (expand-file-name "company-statistics-cache.el"
+                                    spacemacs-cache-directory))))
     (add-to-list 'warning-suppress-log-types
                  `(files missing-lexbind-cookie ,source)))
 #+END_SRC
