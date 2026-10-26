@@ -2189,21 +2189,54 @@ pre.src > code {
   (spacemacs/set-leader-keys-for-major-mode 'org-mode "Th" 'org-hugo-auto-export-mode)
 #+END_SRC
 *** org-pandoc PDF export
+Use =C-c C-e E= for Pandoc/Eisvogel PDF export. Async, subtree, visible-only,
+body-only, active-region and narrowed-buffer exports are supported. Export uses
+buffer contents, including unsaved edits, without evaluating Babel blocks.
+
+Whole-file output defaults to =<basename>.pdf=; subtree output adds the heading,
+and body-only output adds =-body=. The chosen-file command uses the same defaults.
+Relative images resolve from the source file's directory. Async exports keep
+separate =*Org Pandoc export*= logs and open the PDF only after success.
+
+Requires Pandoc, XeLaTeX, Eisvogel, xeCJK and suitable fonts on Linux or macOS.
+Code uses Pandoc's Shaded highlighting, with =shell= mapped to =bash= and
+=C++=/=c++= to =cpp= in the temporary input. No listings header is required.
+The CJK defaults are Noto Serif CJK SC, Noto Sans CJK SC and Noto Sans Mono CJK SC;
+override them with =PDF_CJKFONT=, =PDF_CJKSANSFONT= and =PDF_CJKMONOFONT= if needed.
+Fontconfig is used when available; otherwise the first font candidate is used.
+Use =#+LATEX_CLASS_OPTIONS: [9pt]= for a document's font size and, for example,
+=#+LATEX_HEADER: \geometry{left=12mm,right=12mm}= for its side margins.
+These settings also apply to scoped exports; wide tables may still overflow
+because their column widths are not adjusted automatically.
+
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (defconst my/org-pandoc-eisvogel-unicode-header
-    "\\usepackage{newunicodechar}
-\\newunicodechar{→}{$\\to$}
-\\newunicodechar{×}{$\\times$}
-\\newunicodechar{≈}{$\\approx$}
-\\newunicodechar{ε}{$\\epsilon$}
-\\lstset{literate={→}{{$\\to$}}1 {×}{{$\\times$}}1 {≈}{{$\\approx$}}1 {ε}{{$\\epsilon$}}1}")
+      "\\usepackage{newunicodechar}
+  \\newunicodechar{→}{$\\to$}
+  \\newunicodechar{×}{$\\times$}
+  \\newunicodechar{≈}{$\\approx$}
+  \\newunicodechar{ε}{$\\epsilon$}"
+    "Text-mode Unicode substitutions, independent of the highlighting package.
+Code blocks use glyphs from the mono and CJK-mono fonts.")
+
+  (defconst my/org-pandoc-eisvogel-cjk-main-candidates
+    '("Noto Serif CJK SC" "Noto Sans CJK SC" "AR PL UMing CN")
+    "CJK serif candidates, checked in order by `fc-match'.")
+
+  (defconst my/org-pandoc-eisvogel-cjk-sans-candidates
+    '("Noto Sans CJK SC" "Noto Serif CJK SC" "AR PL UKai CN")
+    "CJK sans candidates, checked in order by `fc-match'.")
+
+  (defconst my/org-pandoc-eisvogel-cjk-mono-candidates
+    '("Noto Sans Mono CJK SC" "Noto Sans CJK SC" "AR PL UMing CN")
+    "CJK monospace candidates, checked in order by `fc-match'.")
 
   (defun my/org-pandoc-eisvogel--trim-whitespace (value)
     "Trim whitespace from VALUE."
     (replace-regexp-in-string "^[[:space:]]+\\|[[:space:]]+$" "" value))
 
   (defun my/org-pandoc-eisvogel--font-available-p (font)
-    "Return non-nil when FONT is available via `fc-match`."
+    "Return non-nil when FONT is available via `fc-match'."
     (when (executable-find "fc-match")
       (with-temp-buffer
         (when (zerop (call-process "fc-match" nil (current-buffer) nil
@@ -2224,135 +2257,287 @@ pre.src > code {
       (or selected (car candidates))))
 
   (defun my/org-pandoc-eisvogel--ensure-pdf-extension (path)
-    "Ensure PATH ends with `.pdf`."
+    "Ensure PATH ends with `.pdf'."
     (if (string-match-p "\\.pdf\\'" path)
         path
       (concat path ".pdf")))
 
-  (defun my/org-pandoc-eisvogel--default-output-path ()
-    "Return `<basename>.pdf` for the current Org file."
+  (defun my/org-pandoc-eisvogel--heading-slug (heading)
+    "Return a filesystem-safe, readable form of subtree HEADING.
+
+  Link syntax collapses to its description, characters that are awkward in file
+  names become hyphens, and the result is capped so that long headings still
+  produce usable paths.  Returns nil when nothing readable is left."
+    (let* ((s (org-link-display-format heading))
+           (s (replace-regexp-in-string "[\t\n\r]+" " " s))
+           (s (replace-regexp-in-string "[/:*?\"'<>|\\\\]+" "-" s))
+           (s (replace-regexp-in-string "[[:space:]]+" "-" s))
+           (s (replace-regexp-in-string "\\`-+\\|-+\\'" "" s))
+           (s (truncate-string-to-width s 48 nil nil t))
+           (s (replace-regexp-in-string "\\s-*\\'\\|-+\\'" "" s)))
+      (if (string-empty-p s) nil s)))
+
+  (defun my/org-pandoc-eisvogel--default-output-path (&optional heading body-only)
+    "Return the default PDF path for the current Org buffer.
+
+Whole-buffer exports use `<basename>.pdf'.  A subtree export adds its
+HEADING to the basename.  BODY-ONLY adds `-body' after any heading suffix."
     (unless (buffer-file-name)
       (user-error "Current Org buffer is not visiting a file"))
-    (concat (file-name-sans-extension (buffer-file-name)) ".pdf"))
+    (let* ((base (file-name-sans-extension (buffer-file-name)))
+           (slug (when heading (my/org-pandoc-eisvogel--heading-slug heading)))
+           (suffix (if heading (concat "-" (or slug "subtree")) "")))
+      (concat base suffix (if body-only "-body" "") ".pdf")))
 
-  (defun my/org-pandoc-eisvogel-export (&optional output-file)
-    "Export current Org file to a Pandoc + Eisvogel PDF.
+  (defun my/org-pandoc-eisvogel--read-output-path (&optional subtree body-only)
+    "Read the output path, accounting for SUBTREE and BODY-ONLY."
+    (let* ((heading (when subtree
+                      (save-excursion
+                        (org-back-to-heading t)
+                        (org-get-heading t t t t))))
+           (default (my/org-pandoc-eisvogel--default-output-path heading body-only)))
+      (read-file-name "Export PDF to: "
+                     (file-name-directory default)
+                     default
+                     nil
+                     (file-name-nondirectory default))))
 
-If OUTPUT-FILE is nil, export to `<basename>.pdf` in the current file's
-directory."
+  (defun my/org-pandoc-eisvogel--org-input (subtree visible-only body-only latex-info)
+    "Return a snapshot of the requested Org content for Pandoc.
+SUBTREE, VISIBLE-ONLY and BODY-ONLY follow Org export selection rules.
+LATEX-INFO supplies document layout settings.  Do not execute Babel blocks."
+    (let ((text
+           (if (or subtree visible-only body-only (use-region-p) (buffer-narrowed-p))
+               (progn
+                 (require 'ox-org)
+                 (let* ((org-export-use-babel nil)
+                        (result (org-export-as 'org subtree visible-only body-only))
+                        (class-options (plist-get latex-info :latex-class-options))
+                        (case-fold-search t))
+                   ;; ox-org omits file-level keywords outside a selected subtree.
+                   (if (and class-options
+                            (not (string-match-p "^#\\+LATEX_CLASS_OPTIONS:" result)))
+                       (concat "#+LATEX_CLASS_OPTIONS: " class-options "\n" result)
+                     result)))
+             (buffer-string))))
+      (with-temp-buffer
+        (insert text)
+        (delay-mode-hooks (org-mode))
+        ;; Normalize only real source-block language tokens, not examples or code.
+        (let (replacements)
+          (org-element-map (org-element-parse-buffer) 'src-block
+            (lambda (block)
+              (let ((language (cdr (assoc (org-element-property :language block)
+                                          '(("shell" . "bash")
+                                            ("C++" . "cpp") ("c++" . "cpp"))))))
+                (when language
+                  (push (cons (org-element-property :begin block) language)
+                        replacements)))))
+          (dolist (replacement replacements)
+            (goto-char (car replacement))
+            (let ((case-fold-search t))
+              (when (re-search-forward
+                     "^[ \t]*#\\+begin_src[ \t]+\\([^ \t\n]+\\)" nil t)
+                (replace-match (cdr replacement) t t nil 1)))))
+        (buffer-string))))
+
+  (defun my/org-pandoc-eisvogel--cleanup (header-file temp-input)
+    "Delete HEADER-FILE and, when TEMP-INPUT is non-nil, the snapshot org file."
+    (ignore-errors (delete-file header-file))
+    (when temp-input (ignore-errors (delete-file temp-input))))
+
+  (defun my/org-pandoc-eisvogel--pandoc-command (output-file
+                                                  header-file
+                                                  input-file
+                                                  source-file
+                                                  export-info
+                                                  main sans mono math
+                                                  cjk-main cjk-sans cjk-mono
+                                                  mono-options)
+    "Return the complete pandoc argv, starting with the program name.
+
+HEADER-FILE is the LaTeX include and INPUT-FILE is the Org snapshot.
+SOURCE-FILE supplies the resource directory for relative images.
+EXPORT-INFO contains Org options; the remaining arguments select fonts."
+    (append
+     (list "pandoc" input-file
+           "--output" output-file
+           "--from" "org"
+           "--pdf-engine=xelatex"
+           "--template" "eisvogel")
+     (when (plist-get export-info :with-toc) (list "--toc"))
+     (when (plist-get export-info :section-numbers) (list "--number-sections"))
+     (list "--resource-path"
+           (mapconcat #'identity
+                     (delete-dups
+                      (list (file-name-directory (expand-file-name source-file))
+                           (expand-file-name default-directory)))
+                     path-separator)
+           "--include-in-header" header-file
+           "--variable" "geometry:margin=0.8in"
+           "--variable" (format "mainfont=%s" main)
+           "--variable" (format "sansfont=%s" sans)
+           "--variable" (format "monofont=%s" mono)
+           "--variable" (format "mathfont=%s" math)
+           "--variable" (format "CJKmainfont=%s" cjk-main)
+           "--variable" (format "CJKsansfont=%s" cjk-sans)
+           "--variable" (format "CJKmonofont=%s" cjk-mono)
+           "--variable" "mainfontoptions=Ligatures=TeX"
+           "--variable" (format "monofontoptions=%s" mono-options)
+           "--variable" "code-block-font-size=\\small")))
+
+  (defun my/org-pandoc-eisvogel--async-sentinel (process _event)
+    "Finish the asynchronous export named by PROCESS.
+
+  The header file, snapshot and open flag are passed through the process
+  plist because lambdas in a `lexical-binding: nil' environment cannot see
+  the let bindings of the function that created them."
+    (let ((state (process-get process 'org-pandoc-state)))
+      (when (and state (memq (process-status process) '(exit signal)))
+        (process-put process 'org-pandoc-state nil)
+        (my/org-pandoc-eisvogel--cleanup
+         (plist-get state :header) (plist-get state :input))
+        (if (and (eq (process-status process) 'exit)
+                 (zerop (process-exit-status process)))
+            (progn
+              (message "Exported Org to PDF: %s" (plist-get state :output))
+              (when (plist-get state :open)
+                (browse-url-of-file (plist-get state :output))))
+          (message "Pandoc export failed (exit %s): see buffer %s"
+                   (process-exit-status process)
+                   (buffer-name (process-buffer process)))))))
+
+  (defun my/org-pandoc-eisvogel-process-name (output-file)
+    "Return the process name used for the asynchronous export to OUTPUT-FILE."
+    (format "org-pandoc-eisvogel<%s>" (expand-file-name output-file)))
+
+  (defun my/org-pandoc-eisvogel-export (&optional output-file async subtree visible-only body-only open)
+    "Export the current Org buffer to a Pandoc + Eisvogel PDF.
+
+OUTPUT-FILE defaults to `<basename>.pdf'.  SUBTREE adds the heading to the
+filename; BODY-ONLY adds `-body'.  VISIBLE-ONLY excludes folded content.
+Active regions and buffer narrowing follow Org's export selection rules.
+ASYNC runs Pandoc in the background; OPEN browses the PDF after success.
+Return the output path, which may not exist yet for an asynchronous export."
     (interactive)
     (unless (derived-mode-p 'org-mode)
       (user-error "Not in an Org buffer"))
     (unless (executable-find "pandoc")
       (user-error "Pandoc not found in PATH"))
-    (let ((export-info (org-export-get-environment 'pandoc-eisvogel))
-          (input-file (or (buffer-file-name)
-                          (user-error "Current Org buffer is not visiting a file")))
-          (output-file (my/org-pandoc-eisvogel--ensure-pdf-extension
-                        (or output-file
-                            (my/org-pandoc-eisvogel--default-output-path))))
-          (main-font (or (getenv "PDF_MAINFONT")
-                         (my/org-pandoc-eisvogel--choose-font
-                          '("TeX Gyre Pagella" "Noto Serif" "DejaVu Serif"))))
-          (sans-font (or (getenv "PDF_SANSFONT")
-                         (my/org-pandoc-eisvogel--choose-font
-                          '("Noto Sans" "DejaVu Sans"))))
-          (mono-font (or (getenv "PDF_MONOFONT")
-                         (my/org-pandoc-eisvogel--choose-font
-                          '("Fira Code" "Noto Sans Mono" "DejaVu Sans Mono"))))
-          (math-font (or (getenv "PDF_MATHFONT")
-                         (my/org-pandoc-eisvogel--choose-font
-                          '("TeX Gyre Pagella Math" "Latin Modern Math"))))
-          (mono-font-options (or (getenv "PDF_MONOFONT_OPTIONS") "Scale=0.88"))
-          (header-file (make-temp-file "org-pandoc-eisvogel" nil ".tex"))
-          (output-buffer (get-buffer-create " *org-pandoc-eisvogel*")))
-      (with-current-buffer output-buffer (erase-buffer))
-      (with-temp-file header-file
-        (insert my/org-pandoc-eisvogel-unicode-header))
+    (require 'ox-latex)
+    (let* ((source-file (or (buffer-file-name)
+                            (user-error "Current Org buffer is not visiting a file")))
+           (export-info (org-export-get-environment 'pandoc-eisvogel subtree))
+           (latex-info (org-export-get-environment 'latex subtree))
+           (text (my/org-pandoc-eisvogel--org-input subtree visible-only body-only latex-info))
+           (heading (when subtree
+                      (save-excursion
+                        (org-back-to-heading t)
+                        (org-get-heading t t t t))))
+           (output-file
+            (expand-file-name
+             (my/org-pandoc-eisvogel--ensure-pdf-extension
+              (or output-file
+                  (my/org-pandoc-eisvogel--default-output-path heading body-only)))))
+           (main-font (or (getenv "PDF_MAINFONT")
+                          (my/org-pandoc-eisvogel--choose-font
+                           '("TeX Gyre Pagella" "Noto Serif" "DejaVu Serif"))))
+           (sans-font (or (getenv "PDF_SANSFONT")
+                          (my/org-pandoc-eisvogel--choose-font
+                           '("Noto Sans" "DejaVu Sans"))))
+           (mono-font (or (getenv "PDF_MONOFONT")
+                          (my/org-pandoc-eisvogel--choose-font
+                           '("Fira Code" "Noto Sans Mono" "DejaVu Sans Mono"))))
+           (math-font (or (getenv "PDF_MATHFONT")
+                          (my/org-pandoc-eisvogel--choose-font
+                           '("TeX Gyre Pagella Math" "Latin Modern Math"))))
+           (cjk-main-font (or (getenv "PDF_CJKFONT")
+                              (my/org-pandoc-eisvogel--choose-font
+                               my/org-pandoc-eisvogel-cjk-main-candidates)))
+           (cjk-sans-font (or (getenv "PDF_CJKSANSFONT")
+                              (my/org-pandoc-eisvogel--choose-font
+                               my/org-pandoc-eisvogel-cjk-sans-candidates)))
+           (cjk-mono-font (or (getenv "PDF_CJKMONOFONT")
+                              (my/org-pandoc-eisvogel--choose-font
+                               my/org-pandoc-eisvogel-cjk-mono-candidates)))
+           (mono-font-options (or (getenv "PDF_MONOFONT_OPTIONS") "Scale=0.88"))
+           (name (my/org-pandoc-eisvogel-process-name output-file))
+           header-file input-file async-owned)
+      (when (and (get-process name) (process-live-p (get-process name)))
+        (user-error "An export to %s is already running" output-file))
       (unwind-protect
-          (let ((exit-code
-                 (apply #'call-process
-                        "pandoc"
-                        input-file
-                        output-buffer
-                        nil
-                        (append
-                         (list "--from" "org"
-                               "--output" output-file
-                               "--pdf-engine=xelatex"
-                               "--template" "eisvogel"
-                               "--listings")
-                         (when (plist-get export-info :with-toc)
-                           (list "--toc"))
-                         (when (plist-get export-info :section-numbers)
-                           (list "--number-sections"))
-                         (list "--include-in-header" header-file
-                               "--variable" "geometry:margin=0.8in"
-                               "--variable" (format "mainfont=%s" main-font)
-                               "--variable" (format "sansfont=%s" sans-font)
-                               "--variable" (format "monofont=%s" mono-font)
-                               "--variable" (format "mathfont=%s" math-font)
-                               "--variable" "mainfontoptions=Ligatures=TeX"
-                               "--variable" (format "monofontoptions=%s" mono-font-options)
-                               "--variable" "code-block-font-size=\\small")))))
-            (if (zerop exit-code)
-                (progn
+          (progn
+            (setq input-file (make-temp-file "org-pandoc-eisvogel" nil ".org")
+                  header-file (make-temp-file "org-pandoc-eisvogel" nil ".tex"))
+            (with-temp-file input-file (insert text))
+            (with-temp-file header-file
+              (insert my/org-pandoc-eisvogel-unicode-header "\n")
+              ;; --include-in-header replaces Pandoc's header-includes metadata.
+              (when-let* ((header (plist-get latex-info :latex-header)))
+                (insert header "\n")))
+            (let ((output-buffer (if async
+                                     (generate-new-buffer "*Org Pandoc export*")
+                                   (get-buffer-create " *org-pandoc-eisvogel*")))
+                  (command (my/org-pandoc-eisvogel--pandoc-command
+                            output-file header-file input-file source-file export-info
+                            main-font sans-font mono-font math-font
+                            cjk-main-font cjk-sans-font cjk-mono-font mono-font-options)))
+              (with-current-buffer output-buffer (erase-buffer))
+              (if async
+                  (let ((process
+                         (condition-case err
+                             (make-process :name name :command command
+                                           :buffer output-buffer :connection-type 'pipe
+                                           :noquery t :sentinel #'ignore)
+                           (error
+                            (kill-buffer output-buffer)
+                            (signal (car err) (cdr err))))))
+                    (process-put process 'org-pandoc-state
+                                 (list :output output-file :header header-file
+                                       :input input-file :open open))
+                    (set-process-sentinel process #'my/org-pandoc-eisvogel--async-sentinel)
+                    (setq async-owned t)
+                    (my/org-pandoc-eisvogel--async-sentinel process ""))
+                (let ((exit-code (apply #'call-process (car command)
+                                        nil output-buffer nil (cdr command))))
+                  (unless (and (integerp exit-code) (zerop exit-code))
+                    (user-error "Pandoc export failed (exit %s):\n%s"
+                                exit-code (with-current-buffer output-buffer (buffer-string))))
                   (message "Exported Org to PDF: %s" output-file)
-                  output-file)
-              (with-current-buffer output-buffer
-                (user-error "Pandoc export failed (exit %s):
-%s"
-                            exit-code
-                            (buffer-string)))))
-        (delete-file header-file))
-      output-file))
+                  (when open (browse-url-of-file output-file)))))
+            output-file)
+        (unless async-owned
+          (my/org-pandoc-eisvogel--cleanup header-file input-file)))))
 
-  (defun my/org-pandoc-eisvogel-export-and-open ()
-    "Export current Org buffer to `<basename>.pdf` and open it."
+  (defun my/org-pandoc-eisvogel-export-and-open (&optional async subtree visible-only body-only)
+    "Export the current Org buffer and browse the resulting PDF."
     (interactive)
-    (let ((output (my/org-pandoc-eisvogel-export)))
-      (browse-url-of-file output)
-      output))
+    (my/org-pandoc-eisvogel-export nil async subtree visible-only body-only t))
 
-  (defun my/org-pandoc-eisvogel-export-to-file (output-file)
-    "Export current Org buffer to a chosen PDF output path."
+  (defun my/org-pandoc-eisvogel-export-to-file (output-file &optional async subtree visible-only body-only open)
+    "Export the current Org buffer to a chosen OUTPUT-FILE."
     (interactive
-     (list
-      (let ((default (my/org-pandoc-eisvogel--default-output-path)))
-        (read-file-name "Export PDF to: "
-                       (file-name-directory default)
-                       default
-                       nil
-                       (file-name-nondirectory default)))))
+     (list (my/org-pandoc-eisvogel--read-output-path)))
     (my/org-pandoc-eisvogel-export
-     (my/org-pandoc-eisvogel--ensure-pdf-extension output-file)))
-
-  (defun my/org-pandoc-eisvogel--reject-dispatch-options
-      (async subtreep visible-only body-only)
-    "Reject Org export dispatcher options not supported by this Pandoc path."
-    (when (or async subtreep visible-only body-only)
-      (user-error "Pandoc/Eisvogel export only supports synchronous whole-file PDF export")))
+     (my/org-pandoc-eisvogel--ensure-pdf-extension output-file)
+     async subtree visible-only body-only open))
 
   (defun my/org-pandoc-eisvogel-export-dispatch
       (async subtreep visible-only body-only)
-    "Org export-dispatch entry for `my/org-pandoc-eisvogel-export`."
-    (my/org-pandoc-eisvogel--reject-dispatch-options
-     async subtreep visible-only body-only)
-    (my/org-pandoc-eisvogel-export))
+    "Org export-dispatch entry passing all exporter options through."
+    (my/org-pandoc-eisvogel-export nil async subtreep visible-only body-only nil))
 
   (defun my/org-pandoc-eisvogel-export-and-open-dispatch
       (async subtreep visible-only body-only)
-    "Org export-dispatch entry for `my/org-pandoc-eisvogel-export-and-open`."
-    (my/org-pandoc-eisvogel--reject-dispatch-options
-     async subtreep visible-only body-only)
-    (my/org-pandoc-eisvogel-export-and-open))
+    "Org export-dispatch entry for exporting and browsing the PDF."
+    (my/org-pandoc-eisvogel-export-and-open async subtreep visible-only body-only))
 
   (defun my/org-pandoc-eisvogel-export-to-file-dispatch
       (async subtreep visible-only body-only)
-    "Org export-dispatch entry for `my/org-pandoc-eisvogel-export-to-file`."
-    (my/org-pandoc-eisvogel--reject-dispatch-options
-     async subtreep visible-only body-only)
-    (call-interactively #'my/org-pandoc-eisvogel-export-to-file))
+    "Org export-dispatch entry that asks for the output path first."
+    (my/org-pandoc-eisvogel-export-to-file
+     (my/org-pandoc-eisvogel--read-output-path subtreep body-only)
+     async subtreep visible-only body-only nil))
 
   (with-eval-after-load 'ox
     (org-export-define-backend 'pandoc-eisvogel nil
