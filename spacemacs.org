@@ -610,7 +610,7 @@ Use Minuet with an OpenAI-compatible completion endpoint. The default profile is
 
 Switch profiles at runtime with =SPC a i C= for Codex proxy, =SPC a i Q= for local Qwen, or =SPC a i R= to choose a named profile. Override startup defaults with =MINUET_OPENAI_COMPATIBLE_PROFILE= (=codex-proxy= or =local-qwen=), =MINUET_OPENAI_COMPATIBLE_ENDPOINT=, =MINUET_OPENAI_COMPATIBLE_MODEL=, or =MINUET_OPENAI_COMPATIBLE_API_KEY_SOURCE=. At runtime, use =SPC a i M= to select another endpoint/model; models are fetched automatically from the endpoint's =/models= API when available.
 
-Auto-suggestions run in programming, text, and Git commit buffers, but not in mail composition buffers (=message-mode= and mu4e). The Codex proxy profile sends no few-shot examples, because the proxy would chain such requests to a stale =previous_response_id= that the Codex API rejects.
+Auto-suggestions run in programming, text, and Git commit buffers, but not in mail composition buffers (=message-mode= and mu4e). The Codex proxy profile sends no few-shot examples, because the proxy would chain such requests to a stale =previous_response_id= that the Codex API rejects. The proxy also drops =max_tokens=, so long completions can hit =minuet-request-timeout=; Codex proxy requests therefore stream uncompressed, which lets Minuet show the partial completion on timeout. The proxy's =[Error] Codex returned an empty response= text is not shown as a suggestion.
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
   (use-package minuet
     :commands (minuet-complete-with-minibuffer
@@ -819,6 +819,29 @@ conversation history and chains the request to a stored
          ("codex-proxy" '(:reasoning_effort "low"))
          ("local-qwen" '(:chat_template_kwargs (:enable_thinking :false))))))
 
+    (defconst my/minuet-codex-proxy-empty-response-prefix
+      "[Error] Codex returned an empty response"
+      "Prefix of the text codex-proxy sends as content when Codex returns none.")
+
+    (defun my/minuet-codex-proxy-placeholder-p (item)
+      "Return non-nil when completion ITEM is the proxy's empty-response text."
+      (string-prefix-p my/minuet-codex-proxy-empty-response-prefix item))
+
+    (defun my/minuet-codex-proxy-deliver-items (callback items)
+      "Pass ITEMS to CALLBACK without the proxy's empty-response placeholder."
+      (when-let* ((items (seq-remove #'my/minuet-codex-proxy-placeholder-p items)))
+        (funcall callback items)))
+
+    (defun my/minuet-codex-proxy-complete (complete context callback)
+      "Run Minuet's COMPLETE with CONTEXT and CALLBACK tuned for the Codex proxy.
+With curl's `--compressed', the proxy buffers the whole stream, so a
+timeout leaves no partial text to show."
+      (if (not (equal my/minuet-openai-compatible-profile "codex-proxy"))
+          (funcall complete context callback)
+        (let ((plz-curl-default-args (remove "--compressed" plz-curl-default-args)))
+          (funcall complete context
+                   (apply-partially #'my/minuet-codex-proxy-deliver-items callback)))))
+
     (defun my/minuet-openai-compatible-models-endpoint (endpoint)
       "Return the OpenAI-compatible models endpoint for chat ENDPOINT."
       (cond
@@ -1001,6 +1024,8 @@ Mail drafts and quoted messages must not be sent to the completion model."
           minuet-auto-suggestion-debounce-delay 0.8
           minuet-auto-suggestion-throttle-delay 1.5)
 
+    (advice-add 'minuet--openai-compatible-complete :around
+                #'my/minuet-codex-proxy-complete)
     (my/minuet-apply-openai-compatible-settings))
 #+END_SRC
 *** codex-proxy
