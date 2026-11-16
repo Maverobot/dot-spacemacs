@@ -608,7 +608,7 @@ Creates a new terminal each time; buffers are named with incrementing numbers."
 *** minuet-ai
 Use Minuet with an OpenAI-compatible completion endpoint. The default profile is IceBear =codex-proxy= at =http://127.0.0.1:8787/v1/chat/completions= with model =gpt-6-luna= and low reasoning effort, using Codex Pro/ChatGPT quota through the local proxy. Run the proxy locally, log in through its dashboard, and export =CODEX_PROXY_API_KEY= with the dashboard API key.
 
-Switch profiles at runtime with =SPC a i C= for Codex proxy, =SPC a i Q= for local Qwen, or =SPC a i R= to choose a named profile. Override startup defaults with =MINUET_OPENAI_COMPATIBLE_PROFILE= (=codex-proxy= or =local-qwen=), =MINUET_OPENAI_COMPATIBLE_ENDPOINT=, =MINUET_OPENAI_COMPATIBLE_MODEL=, or =MINUET_OPENAI_COMPATIBLE_API_KEY_SOURCE=. At runtime, use =SPC a i M= to select another endpoint/model; models are fetched automatically from the endpoint's =/models= API when available.
+Switch profiles at runtime with =SPC a i C= for Codex proxy, =SPC a i Q= for local Qwen, or =SPC a i R= to choose a named profile. The local Qwen profile uses the NInfer server at =http://127.0.0.1:13838/v1/chat/completions= and the model that its =/models= API lists; set =MINUET_QWEN_ENDPOINT= or =MINUET_QWEN_MODEL= to override them. Override startup defaults with =MINUET_OPENAI_COMPATIBLE_PROFILE= (=codex-proxy= or =local-qwen=), =MINUET_OPENAI_COMPATIBLE_ENDPOINT=, =MINUET_OPENAI_COMPATIBLE_MODEL=, or =MINUET_OPENAI_COMPATIBLE_API_KEY_SOURCE=. At runtime, use =SPC a i M= to select another endpoint/model; models are fetched automatically from the endpoint's =/models= API when available.
 
 Auto-suggestions run in programming, text, and Git commit buffers, but not in mail composition buffers (=message-mode= and mu4e). The Codex proxy profile sends no few-shot examples, because the proxy would chain such requests to a stale =previous_response_id= that the Codex API rejects. The proxy also drops =max_tokens=, so long completions can hit =minuet-request-timeout=; Codex proxy requests therefore stream uncompressed, which lets Minuet show the partial completion on timeout. The proxy's =[Error] Codex returned an empty response= text is not shown as a suggestion.
 #+BEGIN_SRC emacs-lisp :tangle user-config.el
@@ -645,9 +645,10 @@ Auto-suggestions run in programming, text, and Git commit buffers, but not in ma
       (pcase profile
         ("local-qwen"
          (list :end-point (or (getenv "MINUET_QWEN_ENDPOINT")
-                              "http://127.0.0.1:13636/v1/chat/completions")
-               :model (or (getenv "MINUET_QWEN_MODEL")
-                          "qwen3.6-27b")
+                              "http://127.0.0.1:13838/v1/chat/completions")
+               ;; nil: use the model the server lists, see
+               ;; `my/minuet-openai-compatible-ensure-model'.
+               :model (getenv "MINUET_QWEN_MODEL")
                :api-key-source (or (getenv "MINUET_QWEN_API_KEY_SOURCE")
                                    "local")))
         ("codex-proxy"
@@ -911,8 +912,20 @@ timeout leaves no partial text to show."
                      nil))))
             (kill-buffer buffer)))))
 
+    (defun my/minuet-openai-compatible-ensure-model ()
+      "Use the first model from the endpoint's /models API when none is set."
+      (unless my/minuet-openai-compatible-model
+        (setq my/minuet-openai-compatible-model
+              (car (my/minuet-openai-compatible-fetch-models
+                    my/minuet-openai-compatible-endpoint
+                    my/minuet-openai-compatible-api-key-source)))
+        (unless my/minuet-openai-compatible-model
+          (message "Minuet found no model at %s; choose one with SPC a i M"
+                   my/minuet-openai-compatible-endpoint))))
+
     (defun my/minuet-apply-openai-compatible-settings ()
       "Apply OpenAI-compatible settings to Minuet."
+      (my/minuet-openai-compatible-ensure-model)
       (setq minuet-provider 'openai-compatible)
       (plist-put minuet-openai-compatible-options
                  :end-point
@@ -985,7 +998,8 @@ timeout leaves no partial text to show."
               my/minuet-openai-compatible-api-key-source api-key-source
               my/minuet-openai-compatible-model model)
         (my/minuet-apply-openai-compatible-settings)
-        (message "Minuet profile set to %s (%s at %s)" profile model endpoint)))
+        (message "Minuet profile set to %s (%s at %s)"
+                 profile my/minuet-openai-compatible-model endpoint)))
 
     (defun my/minuet-use-codex-proxy ()
       "Switch Minuet to the Codex proxy profile."
